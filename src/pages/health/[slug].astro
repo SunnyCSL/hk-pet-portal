@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Read article content from pet-health-library
+import fs from 'node:fs';
+import path from 'node:path';
+
+const articlesDir = new URL('../../../pet-health-library/content/health-articles/', import.meta.url);
+const allSlugs = fs.readdirSync(articlesDir).filter((f: string) => f.endsWith('.md')).map((f: string) => f.replace('.md', ''));
+
+export async function getStaticPaths() {
+  return allSlugs.map((slug: string) => ({
+    params: { slug },
+    props: { slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+// Read the markdown file
+const filePath = path.join(articlesDir.pathname, `${slug}.md`);
+let frontmatter: Record<string, any> = {};
+let content = '';
+
+try {
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  const parts = raw.split('---', 3);
+  if (parts.length >= 3) {
+    // Parse YAML frontmatter (simple)
+    const fmLines = parts[1].split('\n');
+    fmLines.forEach((line: string) => {
+      const [key, ...rest] = line.split(':');
+      if (key && rest.length) {
+        let val = rest.join(':').trim();
+        // Handle arrays like tags: [a, b, c]
+        if (val.startsWith('[') && val.endsWith(']')) {
+          val = val.slice(1, -1).split(',').map((s: string) => s.trim()).join(', ');
+        }
+        frontmatter[key.trim()] = val;
+      }
+    });
+    content = parts[2].trim();
+  } else {
+    content = raw;
+  }
+} catch {
+  return Astro.redirect('/404');
+}
+
+const title = frontmatter.title || slug;
+const tags = frontmatter.tags || '';
+const category = frontmatter.category || 'general';
+const disclaimer = frontmatter.disclaimer || '';
+const source = frontmatter.source || '';
+
+// Get category label
+const catLabels: Record<string, string> = {
+  nutrition: '營養',
+  tcm: '中醫',
+  care: '護理',
+  behavior: '行為',
+};
+const catLabel = catLabels[category] || '一般';
+
+// Render markdown content to HTML (simple conversion)
+function renderMarkdown(md: string): string {
+  let html = '';
+  const lines = md.split('\n');
+  let inTable = false;
+  let inCode = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // Code block
+    if (line.startsWith('```')) {
+      inCode = !inCode;
+      html += inCode ? '<pre class="bg-gray-50 rounded-lg p-3 text-xs overflow-x-auto my-3">' : '</pre>';
+      continue;
+    }
+    if (inCode) {
+      html += line + '\n';
+      continue;
+    }
+    
+    // Headers
+    if (line.startsWith('## ')) html += `<h2 class="text-lg font-bold text-near-black mt-6 mb-2">${line.slice(3)}</h2>`;
+    else if (line.startsWith('### ')) html += `<h3 class="text-base font-semibold text-near-black mt-5 mb-1.5">${line.slice(4)}</h3>`;
+    // Table separator
+    else if (/^\|[-:| ]+\|$/.test(line)) continue;
+    // Table row
+    else if (line.startsWith('|')) {
+      if (!inTable) { html += '<div class="overflow-x-auto my-3"><table class="w-full text-xs border-collapse">'; inTable = true; }
+      const cells = line.split('|').filter(c => c.trim());
+      html += '<tr>';
+      cells.forEach(c => {
+        // First row = header
+        if (lines[i-1] && lines[i-1].startsWith('|') && !lines[i-1].includes('---')) {
+          html += `<td class="border border-gray-100 px-3 py-2 text-gray-600">${c.trim()}</td>`;
+        } else {
+          html += `<th class="border border-gray-100 px-3 py-2 bg-gray-50 text-gray-700 text-left font-medium">${c.trim()}</th>`;
+        }
+      });
+      html += '</tr>';
+    } else if (inTable) {
+      html += '</table></div>';
+      inTable = false;
+    }
+    // List items
+    else if (line.match(/^[-*]\s/)) html += `<li class="text-sm text-gray-600 ml-4 list-disc">${line.replace(/^[-*]\s/, '')}</li>`;
+    // Paragraph
+    else if (line.trim()) {
+      // Bold
+      let processed = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Links
+      processed = processed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-brand hover:underline">$1</a>');
+      html += `<p class="text-sm text-gray-600 leading-relaxed mb-2">${processed}</p>`;
+    }
+  }
+  if (inTable) html += '</table></div>';
+  
+  // Convert section breaks
+  html = html.replace(/---/g, '<hr class="my-6 border-gray-100" />');
+  
+  return html;
+}
+
+const renderedContent = renderMarkdown(content);
+---
+
+<BaseLayout title={title} lang="zh">
+  <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
+    <!-- Back -->
+    <a href="/health" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-brand no-underline mb-4">
+      ← 健康圖書館
+    </a>
+
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{catLabel}</span>
+        {tags && <span class="text-[10px] text-gray-300">{tags}</span>}
+      </div>
+      <h1 class="text-xl md:text-2xl font-bold text-near-black leading-tight">{title}</h1>
+      {source && <p class="text-xs text-gray-400 mt-2">{source}</p>}
+    </div>
+
+    <!-- Article content -->
+    <div class="bg-white rounded-xl border border-gray-100 p-4 md:p-6">
+      <div class="prose-custom">
+        {renderedContent}
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    {disclaimer && (
+      <div class="mt-6 bg-amber-50 border border-amber-100 rounded-xl p-4">
+        <p class="text-xs text-amber-700 leading-relaxed">{disclaimer}</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>

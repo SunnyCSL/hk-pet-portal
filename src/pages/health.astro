@@ -1,20 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { readFileSync } from 'fs';
-
-// Read health articles from pet-health-library
-const healthDir = new URL('../../pet-health-library/content/health-articles/', import.meta.url);
-import glob from 'node:fs';
 
 const articles = [
-  { emoji: '🥩', title: '狗狗營養缺乏症完整指南', desc: '症狀識別與補充方法', cat: 'nutrition', catName: '營養', date: 'Jul 7' },
-  { emoji: '💆', title: '狗狗家居按摩治療基礎', desc: '放鬆肌肉與促進血液循環', cat: 'care', catName: '護理', date: 'Jul 7' },
-  { emoji: '🥘', title: '狗狗鮮食營養指南', desc: '自煮鮮食的營養比例與食材選擇', cat: 'nutrition', catName: '營養', date: 'Jul 7' },
-  { emoji: '🌿', title: '狗隻中醫五元素養生法', desc: '體質辨識與食療調理', cat: 'tcm', catName: '中醫', date: 'Jul 7' },
-  { emoji: '🌸', title: '狗狗季節性中醫養生', desc: '春夏秋冬飲食調整要點', cat: 'tcm', catName: '中醫', date: 'Jul 7' },
-  { emoji: '📊', title: '狗隻營養標準對比', desc: 'AAFCO vs NRC vs 鮮食營養學', cat: 'nutrition', catName: '營養', date: 'Jul 7' },
-  { emoji: '🐕', title: '狗狗行為解讀手冊', desc: '從肢體語言了解毛孩心聲', cat: 'behavior', catName: '行為', date: 'Jul 7' },
-  { emoji: '🆘', title: '狗狗急救應對手冊', desc: '家居常見意外處理與緊急護理', cat: 'care', catName: '護理', date: 'Jul 7' },
+  { emoji: '🥩', title: '狗狗營養缺乏症完整指南', desc: '症狀識別與補充方法', cat: 'nutrition', catName: '營養', date: 'Jul 7', slug: 'pet-nutrition-deficiency-guide' },
+  { emoji: '💆', title: '狗狗家居按摩治療基礎', desc: '放鬆肌肉與促進血液循環', cat: 'care', catName: '護理', date: 'Jul 7', slug: 'dog-massage-therapy-basics' },
+  { emoji: '🥘', title: '狗狗鮮食營養指南', desc: '自煮鮮食的營養比例與食材選擇', cat: 'nutrition', catName: '營養', date: 'Jul 7', slug: 'dog-fresh-food-nutrition-guide' },
+  { emoji: '🌿', title: '狗隻中醫五元素養生法', desc: '體質辨識與食療調理', cat: 'tcm', catName: '中醫', date: 'Jul 7', slug: 'dog-tcm-five-elements-guide' },
+  { emoji: '🌸', title: '狗狗季節性中醫養生', desc: '春夏秋冬飲食調整要點', cat: 'tcm', catName: '中醫', date: 'Jul 7', slug: 'dog-seasonal-health-tcm' },
+  { emoji: '📊', title: '狗隻營養標準對比', desc: 'AAFCO vs NRC vs 鮮食營養學', cat: 'nutrition', catName: '營養', date: 'Jul 7', slug: 'dog-nutrition-standards-comparison' },
+  { emoji: '🐕', title: '狗狗行為解讀手冊', desc: '從肢體語言了解毛孩心聲', cat: 'behavior', catName: '行為', date: 'Jul 7', slug: 'dog-behavior-understanding-guide' },
+  { emoji: '🆘', title: '狗狗急救應對手冊', desc: '家居常見意外處理與緊急護理', cat: 'care', catName: '護理', date: 'Jul 7', slug: 'dog-firstaid-emergency-guide' },
 ];
 
 const catFilter = Astro.url.searchParams.get('cat') || '';
@@ -49,8 +44,8 @@ const categories = [
 
     <!-- Article grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {filtered.map((a: { emoji: string; title: string; desc: string; cat: string; catName: string; date: string }) => (
-        <a href={`/health/${a.title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '')}`}
+      {filtered.map((a: { emoji: string; title: string; desc: string; cat: string; catName: string; date: string; slug: string }) => (
+        <a href={`/health/${a.slug}`}
           class="group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
         >
           <div class="flex items-start gap-3">
