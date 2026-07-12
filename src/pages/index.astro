@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Read restaurant stats
+import { readFileSync } from 'fs';
+const statsPath = new URL('../data/restaurant-stats.json', import.meta.url);
+let stats = { total: 0, districts: 0 };
+try {
+  stats = JSON.parse(readFileSync(statsPath, 'utf-8'));
+} catch {}
+---
+
+<BaseLayout title="HK Pet Portal" lang="zh">
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-b from-brand-light to-white pt-20 pb-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-near-black mb-4">
+        🐾 帶毛孩・食盡香港
+      </h1>
+      <p class="text-lg text-gray-500 mb-8">
+        全港 <strong class="text-brand">{stats.total}</strong> 間狗友善餐廳・一搜即找
+      </p>
+
+      <!-- Search Bar -->
+      <form action="/restaurants" method="GET" class="max-w-xl mx-auto">
+        <div class="flex gap-2 bg-white p-2 rounded-full shadow-sm border border-gray-100">
+          <input type="text" name="q" placeholder="搜尋餐廳名、地區或地址..." 
+            class="flex-1 px-4 py-2 text-sm outline-none border-none bg-transparent" />
+          <button type="submit" class="bg-brand text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-green-700 transition-colors">
+            🔍 搜尋
+          </button>
+        </div>
+      </form>
+
+      <!-- District Pills -->
+      <div class="flex flex-wrap justify-center gap-2 mt-6">
+        <a href="/district/灣仔區" class="px-3 py-1 text-xs bg-white border border-gray-100 rounded-full hover:border-brand hover:text-brand transition-colors no-underline text-gray-500">灣仔區</a>
+        <a href="/district/中西區" class="px-3 py-1 text-xs bg-white border border-gray-100 rounded-full hover:border-brand hover:text-brand transition-colors no-underline text-gray-500">中西區</a>
+        <a href="/district/油尖區" class="px-3 py-1 text-xs bg-white border border-gray-100 rounded-full hover:border-brand hover:text-brand transition-colors no-underline text-gray-500">油尖區</a>
+        <a href="/district/沙田區" class="px-3 py-1 text-xs bg-white border border-gray-100 rounded-full hover:border-brand hover:text-brand transition-colors no-underline text-gray-500">沙田區</a>
+        <a href="/district/西貢區" class="px-3 py-1 text-xs bg-white border border-gray-100 rounded-full hover:border-brand hover:text-brand transition-colors no-underline text-gray-500">西貢區</a>
+        <a href="/district/旺角區" class="px-3 py-1 text-xs bg-white border border-gray-100 rounded-full hover:border-brand hover:text-brand transition-colors no-underline text-gray-500">旺角區</a>
+        <a href="/restaurants" class="px-3 py-1 text-xs bg-brand-light border border-brand/20 rounded-full hover:bg-brand hover:text-white transition-colors no-underline text-brand">全部 18 區 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Stats -->
+  <section class="max-w-4xl mx-auto px-4 -mt-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
+        <div class="text-3xl mb-1">🍽️</div>
+        <div class="text-2xl font-bold text-near-black">{stats.total}</div>
+        <div class="text-xs text-gray-500">狗友善餐廳</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
+        <div class="text-3xl mb-1">📍</div>
+        <div class="text-2xl font-bold text-near-black">{stats.districts}</div>
+        <div class="text-xs text-gray-500">覆蓋地區</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
+        <div class="text-3xl mb-1">📚</div>
+        <div class="text-2xl font-bold text-near-black">8</div>
+        <div class="text-xs text-gray-500">健康文章</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
+        <div class="text-3xl mb-1">🐾</div>
+        <div class="text-2xl font-bold text-near-black">18</div>
+        <div class="text-xs text-gray-500">分區指南</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Links -->
+  <section class="max-w-4xl mx-auto px-4 mt-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <a href="/restaurants" class="bg-warm-white rounded-xl p-4 text-center hover:bg-brand-light transition-colors no-underline group">
+        <div class="text-2xl mb-1">🍽️</div>
+        <div class="text-sm font-medium text-gray-700 group-hover:text-brand">餐廳搜尋</div>
+      </a>
+      <a href="/health" class="bg-warm-white rounded-xl p-4 text-center hover:bg-brand-light transition-colors no-underline group">
+        <div class="text-2xl mb-1">📚</div>
+        <div class="text-sm font-medium text-gray-700 group-hover:text-brand">健康圖書館</div>
+      </a>
+      <a href="/news" class="bg-warm-white rounded-xl p-4 text-center hover:bg-brand-light transition-colors no-underline group">
+        <div class="text-2xl mb-1">📰</div>
+        <div class="text-sm font-medium text-gray-700 group-hover:text-brand">最新資訊</div>
+      </a>
+      <a href="/restaurants" class="bg-warm-white rounded-xl p-4 text-center hover:bg-brand-light transition-colors no-underline group">
+        <div class="text-2xl mb-1">🗺️</div>
+        <div class="text-sm font-medium text-gray-700 group-hover:text-brand">地區指南</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Preview Note -->
+  <section class="max-w-4xl mx-auto px-4 mt-16 mb-16">
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 text-sm text-amber-800">
+      <strong>🚧 網站開發中</strong>
+      <p class="mt-2 text-amber-700">我哋正逐步建立完整功能。餐廳搜尋同詳情頁即將上線，健康文章同寵物資訊亦會陸續加入。</p>
+    </div>
+  </section>
+</BaseLayout>

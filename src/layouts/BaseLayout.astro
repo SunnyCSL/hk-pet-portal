@@ -1,0 +1,99 @@
+---
+// Base Layout — supports bilingual (zh/en)
+export interface Props {
+  title: string;
+  description?: string;
+  lang?: 'zh' | 'en';
+}
+
+const { title, description, lang = 'zh' } = Astro.props;
+const isZh = lang === 'zh';
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | HK Pet Portal</title>
+    <meta name="description" content={description || (isZh ? '香港寵物友善資訊平台 — 狗餐廳搜尋、健康知識、寵物資訊' : 'HK Pet Information Portal — Dog-friendly restaurants, health library, pet news')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href={isZh ? '/' : '/en'} class="flex items-center gap-2 font-bold text-lg text-near-black no-underline">
+          <span class="text-brand">🐾</span>
+          <span>HK Pet Portal</span>
+        </a>
+        <div class="flex items-center gap-6 text-sm font-medium">
+          <a href={isZh ? '/restaurants' : '/en/restaurants'} class="hover:text-brand transition-colors no-underline text-gray-700">
+            {isZh ? '🍽️ 餐廳' : '🍽️ Restaurants'}
+          </a>
+          <a href={isZh ? '/health' : '/en/health'} class="hover:text-brand transition-colors no-underline text-gray-700">
+            {isZh ? '📚 健康' : '📚 Health'}
+          </a>
+          <a href={isZh ? '/news' : '/en/news'} class="hover:text-brand transition-colors no-underline text-gray-700">
+            {isZh ? '📰 資訊' : '📰 News'}
+          </a>
+          <a href={isZh ? '/' : '/en'} class="text-sm text-gray-400 hover:text-gray-600 transition-colors no-underline ml-2">
+            {isZh ? 'EN' : '繁'}
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-warm-white border-t border-gray-100 mt-16">
+      <div class="max-w-6xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h4 class="font-semibold text-sm text-gray-500 mb-3">
+              {isZh ? '🐾 HK Pet Portal' : '🐾 HK Pet Portal'}
+            </h4>
+            <p class="text-sm text-gray-500 leading-relaxed">
+              {isZh ? '香港寵物友善資訊平台 — 等你可以同毛孩一齊探索香港。' : 'Hong Kong pet-friendly information platform — explore HK with your furry friend.'}
+            </p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-sm text-gray-500 mb-3">
+              {isZh ? '快速連結' : 'Quick Links'}
+            </h4>
+            <div class="flex flex-col gap-2 text-sm text-gray-500">
+              <a href="https://www.fehd.gov.hk/tc_chi/licensing/license_general_restaurant_dog.html" target="_blank" class="hover:text-brand transition-colors no-underline">
+                {isZh ? '食環署官方名單 ↗' : 'FEHD Official List ↗'}
+              </a>
+              <a href={isZh ? '/about' : '/en/about'} class="hover:text-brand transition-colors no-underline">
+                {isZh ? '關於我們' : 'About Us'}
+              </a>
+              <a href={isZh ? '/terms' : '/en/terms'} class="hover:text-brand transition-colors no-underline">
+                {isZh ? '免責聲明' : 'Disclaimer'}
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4 class="font-semibold text-sm text-gray-500 mb-3">
+              {isZh ? '免責聲明' : 'Disclaimer'}
+            </h4>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              {isZh ? '餐廳資料來自食環署公開名單。健康資訊僅供參考，如有健康問題請諮詢註冊獸醫。' : 'Restaurant data from FEHD public list. Health info for reference only. Consult your vet for medical advice.'}
+            </p>
+          </div>
+        </div>
+        <div class="mt-8 pt-8 border-t border-gray-100 text-center text-xs text-gray-400">
+          © 2026 HK Pet Portal
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
