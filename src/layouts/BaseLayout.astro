@@ -21,7 +21,27 @@ const isZh = lang === 'zh';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/src/styles/global.css" />
+    <style>
+      @import "tailwindcss";
+      @theme {
+        --color-brand: #2D9B4E;
+        --color-brand-light: #E8F5E9;
+        --color-brand-coral: #FF6B6B;
+        --color-near-black: #1A1A1A;
+        --color-warm-white: #F8F6F3;
+        --color-gray-900: #1A1A1A;
+        --color-gray-700: #4A4A4A;
+        --color-gray-500: #7A7A7A;
+        --color-gray-300: #B0B0B0;
+        --color-gray-100: #E8E8E8;
+        --color-gray-50: #F5F5F5;
+        --color-paw-orange: #F59E0B;
+        --color-vet-blue: #3B82F6;
+        --color-healthy-green: #10B981;
+        --color-closed-red: #EF4444;
+      }
+      body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; color: var(--color-near-black); background: white; margin: 0; }
+    </style>
   </head>
   <body class="min-h-screen flex flex-col">
     <!-- Navigation -->

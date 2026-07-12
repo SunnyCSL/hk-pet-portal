@@ -1,10 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { readFileSync } from 'fs';
-
-const statsPath = new URL('../../data/restaurant-stats.json', import.meta.url);
-let stats = { total: 832, districts: 19 };
-try { stats = JSON.parse(readFileSync(statsPath, 'utf-8')); } catch {}
+import stats from '../../data/restaurant-stats.json';
 ---
 
 <BaseLayout title="HK Pet Portal" lang="en">
