@@ -22,7 +22,7 @@ const related = restaurants
   .sort(() => Math.random() - 0.5)
   .slice(0, 3);
 
-const displayName = restaurant.name_zh || restaurant.name_en;
+const displayName = restaurant.name_zh || restaurant.name_en || `${restaurant.district}狗友善餐廳`;
 ---
 
 <BaseLayout title={displayName} lang="zh">
