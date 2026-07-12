@@ -72,11 +72,11 @@ const displayName = restaurant.name_zh || restaurant.name_en;
     </div>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-    (function() {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+    <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
       var mapEl = document.getElementById('restaurant-map');
-      if (!mapEl || typeof L === 'undefined') return;
+      if (!mapEl || typeof L === 'undefined') { console.log('Leaflet not loaded'); return; }
 
       var name = mapEl.getAttribute('data-name') || '';
       var address = mapEl.getAttribute('data-address') || '';
@@ -93,9 +93,7 @@ const displayName = restaurant.name_zh || restaurant.name_en;
           lat = parseFloat(data[0].lat);
           lng = parseFloat(data[0].lon);
         } else {
-          // Default to Hong Kong center
-          lat = 22.3193;
-          lng = 114.1694;
+          lat = 22.3193; lng = 114.1694; // HK center
         }
 
         var map = L.map(mapEl, {
@@ -113,11 +111,14 @@ const displayName = restaurant.name_zh || restaurant.name_en;
         L.marker([lat, lng]).addTo(map)
           .bindPopup('<strong>' + name + '</strong><br>' + address)
           .openPopup();
+
+        // Fix map rendering in Astro/SPA context
+        setTimeout(function() { map.invalidateSize(); }, 200);
       })
       .catch(function() {
         mapEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">地圖載入失敗</div>';
       });
-    })();
+    });
     </script>
 
     <!-- FEHD License info -->
