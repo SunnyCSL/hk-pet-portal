@@ -51,17 +51,17 @@ const isZh = lang === 'zh';
           <span class="text-brand">🐾</span>
           <span>HK Pet Portal</span>
         </a>
-        <div class="flex items-center gap-6 text-sm font-medium">
-          <a href={isZh ? '/restaurants' : '/en/restaurants'} class="hover:text-brand transition-colors no-underline text-gray-700">
+        <div class="flex items-center gap-3 md:gap-6 text-sm font-medium">
+          <a href={isZh ? '/restaurants' : '/en/restaurants'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap">
             {isZh ? '🍽️ 餐廳' : '🍽️ Restaurants'}
           </a>
-          <a href={isZh ? '/health' : '/en/health'} class="hover:text-brand transition-colors no-underline text-gray-700">
+          <a href={isZh ? '/health' : '/en/health'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap">
             {isZh ? '📚 健康' : '📚 Health'}
           </a>
-          <a href={isZh ? '/news' : '/en/news'} class="hover:text-brand transition-colors no-underline text-gray-700">
+          <a href={isZh ? '/news' : '/en/news'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap">
             {isZh ? '📰 資訊' : '📰 News'}
           </a>
-          <a href={isZh ? '/' : '/en'} class="text-sm text-gray-400 hover:text-gray-600 transition-colors no-underline ml-2">
+          <a href={isZh ? '/' : '/en'} class="text-sm text-gray-400 hover:text-gray-600 transition-colors no-underline ml-1 md:ml-2 whitespace-nowrap">
             {isZh ? 'EN' : '繁'}
           </a>
         </div>

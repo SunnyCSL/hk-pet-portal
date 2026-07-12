@@ -51,17 +51,74 @@ const displayName = restaurant.name_zh || restaurant.name_en;
       </div>
     </div>
 
-    <!-- Address -->
-    <div class="bg-warm-white rounded-xl p-4 md:p-5 mb-4">
-      <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">地址</h2>
-      <p class="text-sm md:text-base text-near-black">{restaurant.address}</p>
-      <a href={`https://www.google.com/maps/search/${encodeURIComponent(restaurant.address + ' Hong Kong')}`}
-        target="_blank"
-        class="inline-flex items-center gap-1 text-xs text-brand hover:underline mt-2"
-      >
-        🗺️ Google Maps 搵路 →
-      </a>
+    <!-- Address + Interactive Map -->
+    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden mb-4">
+      <div class="p-4 md:p-5">
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">地址</h2>
+        <p class="text-sm md:text-base text-near-black">{restaurant.address}</p>
+      </div>
+      <!-- Leaflet Map -->
+      <div id="restaurant-map" class="h-48 md:h-64 bg-gray-50" data-lat="" data-lng="" data-name={displayName} data-address={restaurant.address}></div>
+      <div class="px-4 md:px-5 pb-4 pt-2 flex items-center gap-3 text-xs text-gray-400">
+        <a href={`https://www.google.com/maps/search/${encodeURIComponent(restaurant.address + ' Hong Kong')}`}
+          target="_blank"
+          class="inline-flex items-center gap-1 text-brand hover:underline"
+        >
+          🗺️ Google Maps 搵路 →
+        </a>
+        <span class="text-gray-200">·</span>
+        <span>拖動地圖・放大縮細</span>
+      </div>
     </div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    (function() {
+      var mapEl = document.getElementById('restaurant-map');
+      if (!mapEl || typeof L === 'undefined') return;
+
+      var name = mapEl.getAttribute('data-name') || '';
+      var address = mapEl.getAttribute('data-address') || '';
+      var query = encodeURIComponent((name + ' ' + address + ' Hong Kong').trim());
+
+      // Try Nominatim geocoding
+      fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + query, {
+        headers: { 'User-Agent': 'HKPetPortal/1.0' }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var lat, lng;
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+        } else {
+          // Default to Hong Kong center
+          lat = 22.3193;
+          lng = 114.1694;
+        }
+
+        var map = L.map(mapEl, {
+          center: [lat, lng],
+          zoom: 16,
+          zoomControl: true,
+          scrollWheelZoom: true
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap',
+          maxZoom: 19
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map)
+          .bindPopup('<strong>' + name + '</strong><br>' + address)
+          .openPopup();
+      })
+      .catch(function() {
+        mapEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">地圖載入失敗</div>';
+      });
+    })();
+    </script>
 
     <!-- FEHD License info -->
     <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6">
