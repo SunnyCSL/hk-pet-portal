@@ -1,15 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-// Read article content from pet-health-library
-import fs from 'node:fs';
-import path from 'node:path';
-
-const articlesDir = new URL('../../../pet-health-library/content/health-articles/', import.meta.url);
-const allSlugs = fs.readdirSync(articlesDir).filter((f: string) => f.endsWith('.md')).map((f: string) => f.replace('.md', ''));
-
 export async function getStaticPaths() {
-  return allSlugs.map((slug: string) => ({
+  const slugs = [
+    'pet-nutrition-deficiency-guide', 'dog-massage-therapy-basics',
+    'dog-fresh-food-nutrition-guide', 'dog-tcm-five-elements-guide',
+    'dog-seasonal-health-tcm', 'dog-nutrition-standards-comparison',
+    'dog-behavior-understanding-guide', 'dog-firstaid-emergency-guide',
+  ];
+  return slugs.map((slug: string) => ({
     params: { slug },
     props: { slug },
   }));
@@ -18,7 +17,9 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 
 // Read the markdown file
-const filePath = path.join(articlesDir.pathname, `${slug}.md`);
+import fs from 'node:fs';
+import path from 'node:path';
+const filePath = path.resolve(process.cwd(), '..', 'pet-health-library', 'content', 'health-articles', `${slug}.md`);
 let frontmatter: Record<string, any> = {};
 let content = '';
 
