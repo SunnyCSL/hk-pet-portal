@@ -54,7 +54,7 @@ const healthCards = [
       <div class="mt-5 overflow-x-auto -mx-4 px-4 scrollbar-hide">
         <div class="flex md:flex-wrap justify-start md:justify-center gap-2 w-max md:w-auto">
           {topDistricts.map(([name, count]) => (
-            <a href={`/district/${encodeURIComponent(name)}`}
+            <a href={`/restaurants?district=${encodeURIComponent(name)}`}
               class="shrink-0 px-3 py-1.5 bg-white border border-gray-100 rounded-full text-xs text-gray-500 hover:border-brand hover:text-brand hover:bg-brand-light transition-all no-underline font-medium whitespace-nowrap"
             >{name} <span class="text-gray-300">{count}</span></a>
           ))}
