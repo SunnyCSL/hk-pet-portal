@@ -25,7 +25,4 @@ jobs:
       - run: npm ci
       - run: npx astro build
       - name: Deploy to Vercel
-        run: |
-          npx vercel@latest pull --yes --token=$VERCEL_TOKEN
-          npx vercel@latest build --prod --token=$VERCEL_TOKEN
-          npx vercel@latest deploy --prebuilt --prod --token=$VERCEL_TOKEN
+        run: npx vercel@latest deploy --prebuilt --prod --token=$VERCEL_TOKEN
