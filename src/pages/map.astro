@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import restaurants from '../data/restaurants.json';
+import stats from '../data/restaurant-stats.json';
+import coords from '../data/restaurant-coords.json';
+
+// Build marker data
+const markers = restaurants
+  .filter((r: { id: number }) => coords[r.id])
+  .map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => ({
+    id: r.id,
+    name: r.name_zh || r.name_en || `${r.district}狗友善餐廳`,
+    district: r.district,
+    address: r.address,
+    lat: coords[r.id].lat,
+    lng: coords[r.id].lng,
+  }));
+---
+
+<BaseLayout title="🗺️ 狗友善餐廳地圖" lang="zh">
+  <div class="max-w-6xl mx-auto px-4 py-4 md:py-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <h1 class="text-lg md:text-xl font-bold text-near-black">🗺️ 餐廳地圖</h1>
+        <p class="text-xs text-gray-400 mt-0.5">{stats.total} 間狗友善餐廳</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <span class="w-2.5 h-2.5 rounded-full bg-brand shrink-0"></span>
+        <span>一間</span>
+        {Object.entries(coords).length > 0 && (
+          <span class="ml-2 px-2 py-0.5 bg-brand-light text-brand/80 rounded-full">{Object.keys(coords).length} 個標記</span>
+        )}
+      </div>
+    </div>
+
+    <!-- Full-screen map -->
+    <div id="all-restaurants-map" class="w-full h-[65vh] md:h-[75vh] rounded-xl border border-gray-100 z-0"
+      data-markers={JSON.stringify(markers)}
+    ></div>
+
+    <!-- Legend -->
+    <div class="flex flex-wrap items-center gap-3 mt-3 text-xs text-gray-400">
+      <span>🖱️ 拖動地圖・滾輪放大縮細</span>
+      <span>·</span>
+      <span>📍 Click 標記查看餐廳</span>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+  <script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('all-restaurants-map');
+    if (!el || typeof L === 'undefined') return;
+
+    var markers;
+    try {
+      markers = JSON.parse(el.getAttribute('data-markers') || '[]');
+    } catch(e) {
+      el.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-400">地圖資料載入失敗</div>';
+      return;
+    }
+
+    if (!markers || markers.length === 0) {
+      el.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-400">暫無餐廳位置資料</div>';
+      return;
+    }
+
+    // Calculate bounds from all markers
+    var bounds = L.latLngBounds();
+    markers.forEach(function(m) {
+      bounds.extend([m.lat, m.lng]);
+    });
+
+    var map = L.map(el, {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).fitBounds(bounds, { padding: [30, 30] });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Color per district
+    var districtColors = {
+      '中西區': '#3B82F6', '灣仔區': '#10B981', '東區': '#F59E0B',
+      '南區': '#8B5CF6', '油尖區': '#EF4444', '深水埗區': '#EC4899',
+      '九龍城區': '#14B8A6', '黃大仙區': '#F97316', '觀塘區': '#06B6D4',
+      '荃灣區': '#84CC16', '屯門區': '#6366F1', '元朗區': '#D946EF',
+      '北區': '#0EA5E9', '大埔區': '#22C55E', '沙田區': '#EAB308',
+      '西貢區': '#A855F7', '葵青區': '#F43F5E', '離島區': '#38BDF8',
+      '旺角區': '#FB923C',
+    };
+
+    markers.forEach(function(m) {
+      var color = districtColors[m.district] || '#2D9B4E';
+      var icon = L.divIcon({
+        className: 'custom-marker',
+        html: '<div style="width:12px;height:12px;background:' + color + ';border:2px solid white;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>',
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+      });
+
+      L.marker([m.lat, m.lng], { icon: icon }).addTo(map)
+        .bindPopup(
+          '<div style="font-size:13px;line-height:1.4;min-width:150px">' +
+          '<strong>' + m.name + '</strong><br>' +
+          '<span style="color:#666;font-size:11px">📍 ' + m.district + '</span><br>' +
+          '<span style="color:#999;font-size:10px">' + (m.address || '') + '</span><br>' +
+          '<a href="/restaurants/' + m.id + '" style="color:#2D9B4E;font-size:11px;text-decoration:none">查看詳情 →</a>' +
+          '</div>'
+        );
+    });
+  });
+  </script>
+
+  <!-- Map marker styles -->
+  <style>
+    .custom-marker { background: none !important; border: none !important; }
+    .leaflet-popup-content { margin: 10px 14px !important; }
+    .leaflet-popup-content-wrapper { border-radius: 10px !important; }
+  </style>
+</BaseLayout>
