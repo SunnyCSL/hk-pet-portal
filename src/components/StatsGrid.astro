@@ -1,0 +1,40 @@
+---
+// StatsGrid — stats cards = direct links
+interface Stat {
+  emoji: string;
+  value: number;
+  label_zh: string;
+  label_en: string;
+  href: string;
+}
+
+interface Props {
+  stats: { total: number; districts: number; };
+  lang?: 'zh' | 'en';
+}
+
+const { lang = 'zh' } = Astro.props;
+const isZh = lang === 'zh';
+
+const cards: Stat[] = [
+  { emoji: '🍽️', value: Astro.props.stats?.total || 0, label_zh: '狗友善餐廳', label_en: 'Dog-friendly', href: isZh ? '/restaurants' : '/en/restaurants' },
+  { emoji: '📍', value: Astro.props.stats?.districts || 0, label_zh: '覆蓋地區', label_en: 'Districts', href: isZh ? '/restaurants' : '/en/restaurants' },
+  { emoji: '📚', value: 8, label_zh: '健康文章', label_en: 'Health Articles', href: isZh ? '/health' : '/en/health' },
+  { emoji: '🗺️', value: Astro.props.stats?.districts || 0, label_zh: '分區指南', label_en: 'District Guides', href: isZh ? '/restaurants' : '/en/restaurants' },
+];
+---
+
+<section class="max-w-4xl mx-auto px-4 -mt-6">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    {cards.map((card) => (
+      <a
+        href={card.href}
+        class="group bg-white rounded-xl p-4 text-center border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+      >
+        <div class="text-2xl mb-1">{card.emoji}</div>
+        <div class="text-xl font-bold text-near-black group-hover:text-brand transition-colors">{card.value}</div>
+        <div class="text-xs text-gray-500">{isZh ? card.label_zh : card.label_en}</div>
+      </a>
+    ))}
+  </div>
+</section>

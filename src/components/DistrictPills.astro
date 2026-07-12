@@ -1,0 +1,40 @@
+---
+// DistrictPills — 地區快速篩選 pills
+import type { Restaurants } from '../data/restaurants.json';
+
+interface Props {
+  restaurants: Array<{ district: string }>;
+  lang?: 'zh' | 'en';
+}
+
+const { lang = 'zh' } = Astro.props;
+
+// Count restaurants per district
+const districts = (Astro.props.restaurants || []).reduce((acc: Record<string, number>, r) => {
+  acc[r.district] = (acc[r.district] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+// Top 6 districts by count
+const topDistricts = Object.entries(districts)
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 6);
+---
+
+<div class="flex flex-wrap justify-center gap-2">
+  {topDistricts.map(([name, count]) => (
+    <a
+      href={lang === 'zh' ? `/district/${encodeURIComponent(name)}` : `/en/district/${encodeURIComponent(name)}`}
+      class="group flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-100 rounded-full text-sm text-gray-500 hover:border-brand hover:text-brand hover:bg-brand-light transition-all no-underline"
+    >
+      <span class="font-medium">{name}</span>
+      <span class="text-xs text-gray-300 group-hover:text-brand/50">({count})</span>
+    </a>
+  ))}
+  <a
+    href={lang === 'zh' ? '/restaurants' : '/en/restaurants'}
+    class="flex items-center gap-1 px-4 py-2 bg-brand-light border border-brand/20 rounded-full text-sm text-brand font-medium hover:bg-brand hover:text-white transition-all no-underline"
+  >
+    {lang === 'zh' ? `全部 ${Object.keys(districts).length} 區 →` : `All ${Object.keys(districts).length} districts →`}
+  </a>
+</div>

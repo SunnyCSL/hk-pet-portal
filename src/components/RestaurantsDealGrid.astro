@@ -1,0 +1,55 @@
+---
+// RestaurantsDealGrid — Price-first restaurant cards
+import type { Restaurants } from '../data/restaurants.json';
+
+interface Props {
+  restaurants: Array<{
+    id: number;
+    name_zh: string;
+    name_en: string;
+    district: string;
+    address: string;
+  }>;
+  lang?: 'zh' | 'en';
+}
+
+const { lang = 'zh' } = Astro.props;
+const items = Astro.props.restaurants || [];
+const isZh = lang === 'zh';
+---
+
+{items.length > 0 && (
+  <section class="max-w-4xl mx-auto px-4 mt-12">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-near-black">
+        {isZh ? '⚡ 最新筍盤' : '⚡ Latest Deals'}
+      </h2>
+      <a
+        href={isZh ? '/restaurants' : '/en/restaurants'}
+        class="text-sm text-brand hover:text-green-700 no-underline font-medium"
+      >
+        {isZh ? '睇全部 →' : 'See all →'}
+      </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {items.slice(0, 6).map((r) => (
+        <a
+          href={isZh ? `/restaurants/${r.id}` : `/en/restaurants/${r.id}`}
+          class="group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-near-black group-hover:text-brand transition-colors truncate">
+                {isZh ? (r.name_zh || r.name_en) : (r.name_en || r.name_zh)}
+              </h3>
+              <p class="text-sm text-gray-500 mt-0.5 truncate">{r.district} · {r.address}</p>
+            </div>
+            <div class="text-xs text-gray-300 ml-2 shrink-0">
+              🐾
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
