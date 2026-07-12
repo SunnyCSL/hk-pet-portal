@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import restaurants from '../data/restaurants.json';
+import stats from '../data/restaurant-stats.json';
+
+// District filter logic
+const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
+const query = Astro.url.searchParams.get('q') || '';
+const districtFilter = Astro.url.searchParams.get('district') || '';
+
+let filtered = restaurants;
+if (query) {
+  const q = query.toLowerCase();
+  filtered = filtered.filter((r: { name_zh: string; name_en: string; address: string; district: string }) =>
+    (r.name_zh && r.name_zh.toLowerCase().includes(q)) ||
+    (r.name_en && r.name_en.toLowerCase().includes(q)) ||
+    (r.address && r.address.toLowerCase().includes(q)) ||
+    (r.district && r.district.toLowerCase().includes(q))
+  );
+}
+if (districtFilter) {
+  filtered = filtered.filter((r: { district: string }) => r.district === districtFilter);
+}
+---
+
+<BaseLayout title="🍽️ 餐廳搜尋" lang="zh">
+  <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-5">
+      <h1 class="text-xl md:text-2xl font-bold text-near-black">🍽️ 狗友善餐廳</h1>
+      <span class="text-sm text-gray-400 bg-gray-50 px-2.5 py-0.5 rounded-full">{filtered.length} 間</span>
+      {query || districtFilter ? (
+        <a href="/restaurants" class="text-xs text-gray-400 hover:text-brand ml-auto no-underline">清除篩選</a>
+      ) : null}
+    </div>
+
+    <!-- Search + Filter bar — compact row -->
+    <div class="flex gap-2 mb-5">
+      <form method="GET" action="/restaurants" class="flex-1 flex gap-2">
+        <input type="text" name="q" value={query} placeholder="搜尋餐廳、地區..."
+          class="flex-1 min-w-0 px-3.5 py-2 text-sm border border-gray-100 rounded-lg outline-none focus:border-brand/50 bg-white"
+        />
+        {districtFilter ? <input type="hidden" name="district" value={districtFilter} /> : null}
+        <button type="submit" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors shrink-0">🔍</button>
+      </form>
+    </div>
+
+    <!-- District quick filter pills — scrollable -->
+    <div class="overflow-x-auto -mx-4 px-4 mb-5 scrollbar-hide">
+      <div class="flex gap-1.5 w-max md:w-auto md:flex-wrap">
+        <a href="/restaurants"
+          class={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap ${
+            !districtFilter ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+          }`}
+        >全部</a>
+        {districts.map((d: string) => (
+          <a href={`/restaurants?district=${encodeURIComponent(d)}`}
+            class={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap ${
+              districtFilter === d ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+            }`}
+          >{d}</a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Results list — compact cards -->
+    {filtered.length === 0 ? (
+      <div class="text-center py-16 text-gray-400">
+        <div class="text-4xl mb-3">🔍</div>
+        <p class="text-sm">搵唔到相關餐廳</p>
+        <a href="/restaurants" class="text-brand text-sm hover:underline mt-2 inline-block">清除篩選重新搜尋</a>
+      </div>
+    ) : (
+      <div class="flex flex-col gap-2">
+        {filtered.map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => (
+          <a href={`/restaurants/${r.id}`}
+            class="group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
+              <div class="min-w-0 flex-1">
+                <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
+                  {r.name_zh || r.name_en}
+                </h3>
+                <p class="text-xs text-gray-400 mt-0.5 truncate">
+                  <span class="inline-flex items-center gap-1">
+                    <span class="text-gray-300">📍</span> {r.district}
+                  </span>
+                  <span class="mx-1.5 text-gray-200">·</span>
+                  <span class="text-gray-300">{r.address}</span>
+                </p>
+              </div>
+              <div class="text-gray-300 group-hover:text-brand transition-colors shrink-0">
+                <span class="text-xs">→</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>

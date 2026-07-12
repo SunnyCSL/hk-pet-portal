@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import restaurants from '../../data/restaurants.json';
+
+export async function getStaticPaths() {
+  return restaurants.map((r: { id: number }) => ({
+    params: { id: String(r.id) },
+    props: { restaurant: r },
+  }));
+}
+
+const { id } = Astro.params;
+const { restaurant } = Astro.props;
+
+if (!restaurant) {
+  return Astro.redirect('/404');
+}
+
+// Related restaurants (same district, random 3)
+const related = restaurants
+  .filter((r: { id: number; district: string }) => r.district === restaurant.district && r.id !== restaurant.id)
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 3);
+
+const displayName = restaurant.name_zh || restaurant.name_en;
+---
+
+<BaseLayout title={displayName} lang="zh">
+  <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
+    <!-- Back link -->
+    <a href="/restaurants" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-brand no-underline mb-4">
+      ← 餐廳列表
+    </a>
+
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight">{displayName}</h1>
+      {restaurant.name_zh && restaurant.name_en && (
+        <p class="text-sm text-gray-400 mt-1">{restaurant.name_en !== restaurant.name_zh ? restaurant.name_en : ''}</p>
+      )}
+      <div class="flex flex-wrap items-center gap-2 mt-3">
+        <span class="inline-flex items-center gap-1 text-xs bg-brand-light text-brand px-2.5 py-1 rounded-full font-medium">
+          📍 {restaurant.district}
+        </span>
+        <span class="inline-flex items-center gap-1 text-xs bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full">
+          🐾 狗友善餐廳
+        </span>
+        <span class="inline-flex items-center gap-1 text-xs bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full">
+          🪪 {restaurant.license_no}
+        </span>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="bg-warm-white rounded-xl p-4 md:p-5 mb-4">
+      <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">地址</h2>
+      <p class="text-sm md:text-base text-near-black">{restaurant.address}</p>
+      <a href={`https://www.google.com/maps/search/${encodeURIComponent(restaurant.address + ' Hong Kong')}`}
+        target="_blank"
+        class="inline-flex items-center gap-1 text-xs text-brand hover:underline mt-2"
+      >
+        🗺️ Google Maps 搵路 →
+      </a>
+    </div>
+
+    <!-- FEHD License info -->
+    <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6">
+      <h2 class="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">牌照資料</h2>
+      <p class="text-xs text-amber-600 leading-relaxed">
+        此餐廳已獲食環署批准容許狗隻進入。<br />
+        牌照號碼：<strong>{restaurant.license_no}</strong>
+      </p>
+      <a href="https://www.fehd.gov.hk/tc_chi/licensing/license_general_restaurant_dog.html"
+        target="_blank"
+        class="inline-flex items-center gap-1 text-xs text-amber-600 hover:underline mt-1.5"
+      >
+        🔗 食環署官方名單 ↗
+      </a>
+    </div>
+
+    <!-- Related restaurants -->
+    {related.length > 0 && (
+      <div class="mt-8 pt-6 border-t border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 mb-3">同區其他狗友善餐廳</h2>
+        <div class="flex flex-col gap-2">
+          {related.map((r: { id: number; name_zh: string; name_en: string; district: string }) => (
+            <a href={`/restaurants/${r.id}`}
+              class="group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 transition-all no-underline"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0 flex-1">
+                  <h3 class="text-sm font-medium text-near-black group-hover:text-brand transition-colors truncate">
+                    {r.name_zh || r.name_en}
+                  </h3>
+                </div>
+                <span class="text-xs text-gray-300 group-hover:text-brand transition-colors shrink-0">→</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>
