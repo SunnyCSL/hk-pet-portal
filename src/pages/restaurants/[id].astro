@@ -41,12 +41,12 @@ const restLng = restCoords?.lng || 114.1694;
     <!-- Header -->
     <div class="mb-6">
       <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight">{displayName}</h1>
-      {restaurant.name_zh && restaurant.name_en && (
-        <p class="text-sm text-gray-400 mt-1">{restaurant.name_en !== restaurant.name_zh ? restaurant.name_en : ''}</p>
+      {restaurant.name_zh && restaurant.name_en && restaurant.name_en !== restaurant.name_zh && (
+        <p class="text-sm text-gray-400 mt-1">{(restaurant.name_zh ? restaurant.name_en : '')}</p>
       )}
       <div class="flex flex-wrap items-center gap-2 mt-3">
         <span class="inline-flex items-center gap-1 text-xs bg-brand-light text-brand px-2.5 py-1 rounded-full font-medium">
-          📍 {restaurant.district}
+          📍 <span class="sub-area-label" data-addr={restaurant.address} data-name={displayName}>{restaurant.district}</span>
         </span>
         <span class="inline-flex items-center gap-1 text-xs bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full">
           🐾 狗友善餐廳
@@ -65,12 +65,19 @@ const restLng = restCoords?.lng || 114.1694;
       </div>
       <!-- Leaflet Map --->
       <div id="restaurant-map" class="h-48 md:h-64 bg-gray-50" data-lat={restLat} data-lng={restLng} data-name={displayName} data-address={restaurant.address}></div>
-      <div class="px-4 md:px-5 pb-4 pt-2 flex items-center gap-3 text-xs text-gray-400">
+      <div class="px-4 md:px-5 pb-4 pt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
         <a href={`https://www.google.com/maps/search/${encodeURIComponent(restaurant.address + ' Hong Kong')}`}
           target="_blank"
           class="inline-flex items-center gap-1 text-brand hover:underline"
         >
           🗺️ Google Maps 搵路 →
+        </a>
+        <span class="text-gray-200">·</span>
+        <a href={`https://www.openrice.com/zh/hongkong/restaurants?where=${encodeURIComponent((restaurant.name_zh || restaurant.name_en || '').trim())}`}
+          target="_blank"
+          class="inline-flex items-center gap-1 text-gray-500 hover:text-orange-500 hover:underline"
+        >
+          📖 OpenRice →
         </a>
         <span class="text-gray-200">·</span>
         <span>拖動地圖・放大縮細</span>
@@ -80,6 +87,19 @@ const restLng = restCoords?.lng || 114.1694;
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
     <script is:inline>
+    // Sub-area detection
+    var SUB_AREAS = ['馬鞍山','科學園','白石角','香港仔','黃竹坑','海洋公園','淺水灣','赤柱','薄扶林','數碼港','鴨脷洲','中環','上環','西營盤','堅尼地城','石塘咀','半山','山頂','金鐘','銅鑼灣','跑馬地','大坑','天后','北角','鰂魚涌','太古','西灣河','筲箕灣','柴灣','尖沙咀','尖東','佐敦','油麻地','旺角','太子','大角咀','長沙灣','荔枝角','美孚','土瓜灣','紅磡','何文田','啟德','九龍灣','觀塘','牛頭角','藍田','油塘','深井','馬灣','荃灣','屯門','黃金海岸','元朗','天水圍','錦田','上水','粉嶺','大埔','沙田','大圍','火炭','西貢','將軍澳','坑口','寶琳','調景嶺','康城','清水灣','葵涌','葵芳','青衣','東涌','愉景灣','迪士尼','機場','大澳','長洲','南丫島','坪洲','馬鞍山'];
+    document.querySelectorAll('.sub-area-label').forEach(function(el) {
+      var addr = el.getAttribute('data-addr') || '';
+      var name = el.getAttribute('data-name') || '';
+      var combined = addr + ' ' + name;
+      for (var i = 0; i < SUB_AREAS.length; i++) {
+        if (combined.indexOf(SUB_AREAS[i]) !== -1) {
+          el.textContent = SUB_AREAS[i];
+          break;
+        }
+      }
+    });
     document.addEventListener('DOMContentLoaded', function() {
       var mapEl = document.getElementById('restaurant-map');
       if (!mapEl || typeof L === 'undefined') { console.log('Leaflet not loaded'); return; }

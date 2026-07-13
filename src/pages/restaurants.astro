@@ -58,7 +58,7 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
               </h3>
               <p class="text-xs text-gray-400 mt-0.5 truncate">
                 <span class="inline-flex items-center gap-1">
-                  <span class="text-gray-300">📍</span> {r.district}
+                  <span class="text-gray-300">📍</span> <span class="sub-area-label" data-addr={r.address} data-name={r.name_zh||''}>{r.district}</span>
                 </span>
                 <span class="mx-1.5 text-gray-200">·</span>
                 <span class="text-gray-300">{r.address}</span>
@@ -81,6 +81,46 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
   </div>
 
   <script is:inline>
+  // Sub-area detection from address
+  var SUB_AREAS = [
+    ['馬鞍山',0],['科學園',0],['白石角',0],
+    ['香港仔',0],['黃竹坑',0],['海洋公園',0],['淺水灣',0],['赤柱',0],['薄扶林',0],['數碼港',0],['鴨脷洲',0],
+    ['中環',0],['上環',0],['西營盤',0],['堅尼地城',0],['石塘咀',0],['半山',0],['山頂',0],['金鐘',0],
+    ['銅鑼灣',0],['跑馬地',0],['大坑',0],['天后',0],
+    ['北角',0],['鰂魚涌',0],['太古',0],['西灣河',0],['筲箕灣',0],['柴灣',0],
+    ['尖沙咀',0],['尖東',0],['佐敦',0],['油麻地',0],
+    ['旺角',0],['太子',0],['大角咀',0],
+    ['長沙灣',0],['荔枝角',0],['美孚',0],
+    ['土瓜灣',0],['紅磡',0],['何文田',0],['啟德',0],
+    ['九龍灣',0],['觀塘',0],['牛頭角',0],['藍田',0],['油塘',0],
+    ['深井',0],['馬灣',0],['荃灣',0],
+    ['屯門',0],['黃金海岸',0],
+    ['元朗',0],['天水圍',0],['錦田',0],
+    ['上水',0],['粉嶺',0],
+    ['大埔',0],
+    ['沙田',0],['大圍',0],['火炭',0],
+    ['西貢',0],['將軍澳',0],['坑口',0],['寶琳',0],['調景嶺',0],['康城',0],['清水灣',0],
+    ['葵涌',0],['葵芳',0],['青衣',0],
+    ['東涌',0],['愉景灣',0],['迪士尼',0],['機場',0],['大澳',0],['長洲',0],['南丫島',0],['坪洲',0],
+  ];
+
+  function detectSubArea(addr, name) {
+    var combined = (addr || '') + ' ' + (name || '');
+    for (var i = 0; i < SUB_AREAS.length; i++) {
+      if (combined.indexOf(SUB_AREAS[i][0]) !== -1) {
+        return SUB_AREAS[i][0];
+      }
+    }
+    return null;
+  }
+
+  // Apply sub-area labels
+  document.querySelectorAll('.sub-area-label').forEach(function(el) {
+    var addr = el.getAttribute('data-addr') || '';
+    var name = el.getAttribute('data-name') || '';
+    var sub = detectSubArea(addr, name);
+    if (sub) el.textContent = sub;
+  });
   function filterList() {
     var q = (document.getElementById('search-input').value || '').toLowerCase();
     var items = document.querySelectorAll('.restaurant-item');
