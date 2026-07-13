@@ -3,100 +3,141 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import restaurants from '../data/restaurants.json';
 import stats from '../data/restaurant-stats.json';
 
-// District filter logic
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
-const query = Astro.url.searchParams.get('q') || '';
-const districtFilter = Astro.url.searchParams.get('district') || '';
-
-let filtered = restaurants;
-if (query) {
-  const q = query.toLowerCase();
-  filtered = filtered.filter((r: { name_zh: string; name_en: string; address: string; district: string }) =>
-    (r.name_zh && r.name_zh.toLowerCase().includes(q)) ||
-    (r.name_en && r.name_en.toLowerCase().includes(q)) ||
-    (r.address && r.address.toLowerCase().includes(q)) ||
-    (r.district && r.district.toLowerCase().includes(q))
-  );
-}
-if (districtFilter) {
-  filtered = filtered.filter((r: { district: string }) => r.district === districtFilter);
-}
 ---
 
 <BaseLayout title="🍽️ 餐廳搜尋" lang="zh">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <!-- Header -->
-    <div class="flex items-center gap-3 mb-5">
-      <h1 class="text-xl md:text-2xl font-bold text-near-black">🍽️ 狗友善餐廳</h1>
-      <span class="text-sm text-gray-400 bg-gray-50 px-2.5 py-0.5 rounded-full">{filtered.length} 間</span>
-      {query || districtFilter ? (
-        <a href="/restaurants" class="text-xs text-gray-400 hover:text-brand ml-auto no-underline">清除篩選</a>
-      ) : null}
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-3">
+        <h1 class="text-xl md:text-2xl font-bold text-near-black">🍽️ 狗友善餐廳</h1>
+        <span class="text-sm text-gray-400 bg-gray-50 px-2.5 py-0.5 rounded-full" id="result-count">{restaurants.length} 間</span>
+      </div>
+      <a href="/restaurants" class="text-xs text-gray-400 hover:text-brand no-underline hidden" id="clear-filter">清除篩選</a>
     </div>
 
-    <!-- Search + Filter bar — compact row -->
+    <!-- Search bar -->
     <div class="flex gap-2 mb-5">
-      <form method="GET" action="/restaurants" class="flex-1 flex gap-2">
-        <input type="text" name="q" value={query} placeholder="搜尋餐廳、地區..."
+      <div class="flex-1 flex gap-2">
+        <input type="text" id="search-input" placeholder="搜尋餐廳、地區..."
           class="flex-1 min-w-0 px-3.5 py-2 text-sm border border-gray-100 rounded-lg outline-none focus:border-brand/50 bg-white"
         />
-        {districtFilter ? <input type="hidden" name="district" value={districtFilter} /> : null}
-        <button type="submit" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors shrink-0">🔍</button>
-      </form>
+        <button onclick="filterList()" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors shrink-0">🔍</button>
+      </div>
     </div>
 
-    <!-- District quick filter pills — scrollable -->
+    <!-- District pills — clickable, triggers JS filter -->
     <div class="overflow-x-auto -mx-4 px-4 mb-5 scrollbar-hide">
       <div class="flex gap-1.5 w-max md:w-auto md:flex-wrap">
-        <a href="/restaurants"
-          class={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap ${
-            !districtFilter ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-          }`}
-        >全部</a>
+        <a href="/restaurants" onclick="setDistrict(''); return false;"
+          class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"
+          id="pill-all">全部</a>
         {districts.map((d: string) => (
-          <a href={`/restaurants?district=${encodeURIComponent(d)}`}
-            class={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap ${
-              districtFilter === d ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-            }`}
+          <a href={`/restaurants?district=${encodeURIComponent(d)}`} onclick={`setDistrict('${d}'); return false;`}
+            class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
+            id={`pill-${d.replace(/\s/g, '')}`}
           >{d}</a>
         ))}
       </div>
     </div>
 
-    <!-- Results list — compact cards -->
-    {filtered.length === 0 ? (
-      <div class="text-center py-16 text-gray-400">
-        <div class="text-4xl mb-3">🔍</div>
-        <p class="text-sm">搵唔到相關餐廳</p>
-        <a href="/restaurants" class="text-brand text-sm hover:underline mt-2 inline-block">清除篩選重新搜尋</a>
-      </div>
-    ) : (
-      <div class="flex flex-col gap-2">
-        {filtered.map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => (
-          <a href={`/restaurants/${r.id}`}
-            class="group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
-          >
-            <div class="flex items-center gap-3">
-              <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
-              <div class="min-w-0 flex-1">
-                <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
-                  {r.name_zh || r.name_en}
-                </h3>
-                <p class="text-xs text-gray-400 mt-0.5 truncate">
-                  <span class="inline-flex items-center gap-1">
-                    <span class="text-gray-300">📍</span> {r.district}
-                  </span>
-                  <span class="mx-1.5 text-gray-200">·</span>
-                  <span class="text-gray-300">{r.address}</span>
-                </p>
-              </div>
-              <div class="text-gray-300 group-hover:text-brand transition-colors shrink-0">
-                <span class="text-xs">→</span>
-              </div>
+    <!-- Results list -->
+    <div id="restaurant-list" class="flex flex-col gap-2">
+      {restaurants.map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => (
+        <a href={`/restaurants/${r.id}`}
+          class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+          data-name={(r.name_zh || r.name_en || '').toLowerCase()}
+          data-district={r.district}
+        >
+          <div class="flex items-center gap-3">
+            <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
+                {r.name_zh || r.name_en || `${r.district}狗友善餐廳`}
+              </h3>
+              <p class="text-xs text-gray-400 mt-0.5 truncate">
+                <span class="inline-flex items-center gap-1">
+                  <span class="text-gray-300">📍</span> {r.district}
+                </span>
+                <span class="mx-1.5 text-gray-200">·</span>
+                <span class="text-gray-300">{r.address}</span>
+              </p>
             </div>
-          </a>
-        ))}
-      </div>
-    )}
+            <div class="text-gray-300 group-hover:text-brand transition-colors shrink-0">
+              <span class="text-xs">→</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="text-center py-16 text-gray-400 hidden">
+      <div class="text-4xl mb-3">🔍</div>
+      <p class="text-sm">搵唔到相關餐廳</p>
+      <a href="/restaurants" onclick="resetFilter(); return false;" class="text-brand text-sm hover:underline mt-2 inline-block">清除篩選重新搜尋</a>
+    </div>
   </div>
+
+  <script is:inline>
+  function filterList() {
+    var q = (document.getElementById('search-input').value || '').toLowerCase();
+    var items = document.querySelectorAll('.restaurant-item');
+    var count = 0;
+    var activeDistrict = document.querySelector('[data-active-district]');
+    var district = activeDistrict ? activeDistrict.getAttribute('data-active-district') : '';
+
+    items.forEach(function(el) {
+      var name = el.getAttribute('data-name') || '';
+      var itemDistrict = el.getAttribute('data-district') || '';
+      var match = true;
+
+      if (district && itemDistrict !== district) match = false;
+      if (q && !name.includes(q) && !itemDistrict.includes(q)) match = false;
+
+      el.style.display = match ? '' : 'none';
+      if (match) count++;
+    });
+
+    document.getElementById('result-count').textContent = count + ' 間';
+    document.getElementById('empty-state').classList.toggle('hidden', count > 0);
+    document.getElementById('clear-filter').classList.toggle('hidden', !district && !q);
+  }
+
+  function setDistrict(d) {
+    // Update pill styles
+    document.querySelectorAll('[id^="pill-"]').forEach(function(el) {
+      el.className = el.className.replace(/bg-brand text-white/g, 'bg-gray-50 text-gray-500');
+    });
+    if (d) {
+      var pill = document.getElementById('pill-' + d.replace(/\s/g, ''));
+      if (pill) pill.className = pill.className.replace(/bg-gray-50 text-gray-500/g, 'bg-brand text-white');
+    } else {
+      document.getElementById('pill-all').className = document.getElementById('pill-all').className.replace(/bg-gray-50 text-gray-500/g, 'bg-brand text-white');
+    }
+
+    // Store active district
+    document.querySelectorAll('[data-active-district]').forEach(function(el) { el.removeAttribute('data-active-district'); });
+    if (d) document.body.setAttribute('data-active-district', d);
+
+    filterList();
+  }
+
+  function resetFilter() {
+    document.getElementById('search-input').value = '';
+    setDistrict('');
+  }
+
+  // On page load, apply filter from URL
+  window.addEventListener('DOMContentLoaded', function() {
+    var params = new URLSearchParams(window.location.search);
+    var q = params.get('q');
+    var d = params.get('district');
+
+    if (q) document.getElementById('search-input').value = q;
+    if (d) setDistrict(d);
+    if (q || d) filterList();
+  });
+  </script>
 </BaseLayout>
