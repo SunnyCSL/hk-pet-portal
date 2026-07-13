@@ -49,8 +49,9 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
           class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
           data-name={(r.name_zh || r.name_en || '').toLowerCase()}
           data-district={r.district}
+          data-addr={(r.address || '').toLowerCase()}
         >
-          <div class="flex items-center gap-3">
+           <div class="flex items-center gap-3">
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
             <div class="min-w-0 flex-1">
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
@@ -131,10 +132,11 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
     items.forEach(function(el) {
       var name = el.getAttribute('data-name') || '';
       var itemDistrict = el.getAttribute('data-district') || '';
+      var itemAddr = el.getAttribute('data-addr') || '';
       var match = true;
 
       if (district && itemDistrict !== district) match = false;
-      if (q && !name.includes(q) && !itemDistrict.includes(q)) match = false;
+      if (q && !name.includes(q) && !itemDistrict.includes(q) && !itemAddr.includes(q)) match = false;
 
       el.style.display = match ? '' : 'none';
       if (match) count++;
