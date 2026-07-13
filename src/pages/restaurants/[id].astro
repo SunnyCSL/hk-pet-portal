@@ -103,8 +103,8 @@ const displayName = restaurant.name_zh || restaurant.name_en || `${restaurant.di
           scrollWheelZoom: true
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap',
+        L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; CARTO &copy; OpenStreetMap',
           maxZoom: 19
         }).addTo(map);
 
