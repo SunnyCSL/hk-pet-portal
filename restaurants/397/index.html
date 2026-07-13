@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="zh" data-astro-cid-z4jru4n3><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>意樂 | HK Pet Portal</title><meta name="description" content="香港寵物友善資訊平台 — 狗餐廳搜尋、健康知識、寵物資訊"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/hk-pet-portal/_astro/BaseLayout.xvEEU3Ew.css"></head><body class="min-h-screen flex flex-col" data-astro-cid-z4jru4n3><!-- Navigation --><nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100" data-astro-cid-z4jru4n3><div class="max-w-6xl mx-auto px-3 md:px-4 h-12 md:h-16 flex items-center justify-between" data-astro-cid-z4jru4n3><a href="/" class="flex items-center gap-1.5 font-bold text-near-black no-underline shrink-0" data-astro-cid-z4jru4n3><span class="text-brand text-lg md:text-xl" data-astro-cid-z4jru4n3>🐾</span><span class="hidden sm:inline text-sm md:text-lg" data-astro-cid-z4jru4n3>HK Pet Portal</span></a><div class="overflow-x-auto scrollbar-hide -mr-3 md:mr-0" data-astro-cid-z4jru4n3><div class="flex items-center gap-2 md:gap-6 text-sm font-medium px-3 md:px-0" data-astro-cid-z4jru4n3><a href="/restaurants" class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0" data-astro-cid-z4jru4n3>🍽️ 餐廳</a><a href="/map" class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0" data-astro-cid-z4jru4n3>🗺️ 地圖</a><a href="/health" class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0" data-astro-cid-z4jru4n3>📚 健康</a><a href="/news" class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0" data-astro-cid-z4jru4n3>📰 資訊</a><a href="/" class="text-gray-400 hover:text-gray-600 transition-colors no-underline whitespace-nowrap shrink-0 font-semibold" data-astro-cid-z4jru4n3>EN</a></div></div></div></nav><!-- Main Content --><main class="flex-1" data-astro-cid-z4jru4n3><div class="max-w-3xl mx-auto px-4 py-6 md:py-8"><!-- Back link --><a href="/restaurants" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-brand no-underline mb-4">← 餐廳列表</a><!-- Header --><div class="mb-6"><h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight">意樂</h1><p class="text-sm text-gray-400 mt-1">Itamomo Plus</p><div class="flex flex-wrap items-center gap-2 mt-3"><span class="inline-flex items-center gap-1 text-xs bg-brand-light text-brand px-2.5 py-1 rounded-full font-medium">📍 荃灣區</span><span class="inline-flex items-center gap-1 text-xs bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full">🐾 狗友善餐廳</span><span class="inline-flex items-center gap-1 text-xs bg-gray-50 text-gray-500 px-2.5 py-1 rounded-full">🪪 2292807059</span></div></div><!-- Address + Interactive Map --><div class="bg-white rounded-xl border border-gray-100 overflow-hidden mb-4"><div class="p-4 md:p-5"><h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">地址</h2><p class="text-sm md:text-base text-near-black">新界荃灣青山公路338號荃錦中心 2樓 51-75號鋪</p></div><!-- Leaflet Map --><div id="restaurant-map" class="h-48 md:h-64 bg-gray-50" data-lat="" data-lng="" data-name="意樂" data-address="新界荃灣青山公路338號荃錦中心 2樓 51-75號鋪"></div><div class="px-4 md:px-5 pb-4 pt-2 flex items-center gap-3 text-xs text-gray-400"><a href="https://www.google.com/maps/search/%E6%96%B0%E7%95%8C%E8%8D%83%E7%81%A3%E9%9D%92%E5%B1%B1%E5%85%AC%E8%B7%AF338%E8%99%9F%E8%8D%83%E9%8C%A6%E4%B8%AD%E5%BF%83%202%E6%A8%93%2051-75%E8%99%9F%E9%8B%AA%20Hong%20Kong" target="_blank" class="inline-flex items-center gap-1 text-brand hover:underline">🗺️ Google Maps 搵路 →</a><span class="text-gray-200">·</span><span>拖動地圖・放大縮細</span></div></div><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var mapEl = document.getElementById('restaurant-map');
+      if (!mapEl || typeof L === 'undefined') { console.log('Leaflet not loaded'); return; }
+
+      var name = mapEl.getAttribute('data-name') || '';
+      var address = mapEl.getAttribute('data-address') || '';
+      var query = encodeURIComponent((name + ' ' + address + ' Hong Kong').trim());
+
+      // Try Nominatim geocoding
+      fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + query, {
+        headers: { 'User-Agent': 'HKPetPortal/1.0' }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var lat, lng;
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+        } else {
+          lat = 22.3193; lng = 114.1694; // HK center
+        }
+
+        var map = L.map(mapEl, {
+          center: [lat, lng],
+          zoom: 16,
+          zoomControl: true,
+          scrollWheelZoom: true
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap',
+          maxZoom: 19
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map)
+          .bindPopup('<strong>' + name + '</strong><br>' + address)
+          .openPopup();
+
+        // Fix map rendering in Astro/SPA context
+        setTimeout(function() { map.invalidateSize(); }, 200);
+      })
+      .catch(function() {
+        mapEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">地圖載入失敗</div>';
+      });
+    });
+    </script><!-- FEHD License info --><div class="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6"><h2 class="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">牌照資料</h2><p class="text-xs text-amber-600 leading-relaxed">此餐廳已獲食環署批准容許狗隻進入。<br>牌照號碼：<strong>2292807059</strong></p><a href="https://www.fehd.gov.hk/tc_chi/licensing/license_general_restaurant_dog.html" target="_blank" class="inline-flex items-center gap-1 text-xs text-amber-600 hover:underline mt-1.5">🔗 食環署官方名單 ↗</a></div><!-- Related restaurants --><div class="mt-8 pt-6 border-t border-gray-100"><h2 class="text-sm font-semibold text-gray-500 mb-3">同區其他狗友善餐廳</h2><div class="flex flex-col gap-2"><a href="/restaurants/324" class="group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 transition-all no-underline"><div class="flex items-center justify-between gap-2"><div class="min-w-0 flex-1"><h3 class="text-sm font-medium text-near-black group-hover:text-brand transition-colors truncate">FLEUR</h3></div><span class="text-xs text-gray-300 group-hover:text-brand transition-colors shrink-0">→</span></div></a><a href="/restaurants/632" class="group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 transition-all no-underline"><div class="flex items-center justify-between gap-2"><div class="min-w-0 flex-1"><h3 class="text-sm font-medium text-near-black group-hover:text-brand transition-colors truncate">Retold</h3></div><span class="text-xs text-gray-300 group-hover:text-brand transition-colors shrink-0">→</span></div></a><a href="/restaurants/491" class="group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 transition-all no-underline"><div class="flex items-center justify-between gap-2"><div class="min-w-0 flex-1"><h3 class="text-sm font-medium text-near-black group-hover:text-brand transition-colors truncate">美心皇宮</h3></div><span class="text-xs text-gray-300 group-hover:text-brand transition-colors shrink-0">→</span></div></a></div></div></div></main><!-- Footer --><footer class="bg-warm-white border-t border-gray-100 mt-16" data-astro-cid-z4jru4n3><div class="max-w-6xl mx-auto px-4 py-12" data-astro-cid-z4jru4n3><div class="grid grid-cols-1 md:grid-cols-3 gap-8" data-astro-cid-z4jru4n3><div data-astro-cid-z4jru4n3><h4 class="font-semibold text-sm text-gray-500 mb-3" data-astro-cid-z4jru4n3>🐾 HK Pet Portal</h4><p class="text-sm text-gray-500 leading-relaxed" data-astro-cid-z4jru4n3>香港寵物友善資訊平台 — 等你可以同毛孩一齊探索香港。</p></div><div data-astro-cid-z4jru4n3><h4 class="font-semibold text-sm text-gray-500 mb-3" data-astro-cid-z4jru4n3>快速連結</h4><div class="flex flex-col gap-2 text-sm text-gray-500" data-astro-cid-z4jru4n3><a href="https://www.fehd.gov.hk/tc_chi/licensing/license_general_restaurant_dog.html" target="_blank" class="hover:text-brand transition-colors no-underline" data-astro-cid-z4jru4n3>食環署官方名單 ↗</a><a href="/about" class="hover:text-brand transition-colors no-underline" data-astro-cid-z4jru4n3>關於我們</a><a href="/terms" class="hover:text-brand transition-colors no-underline" data-astro-cid-z4jru4n3>免責聲明</a></div></div><div data-astro-cid-z4jru4n3><h4 class="font-semibold text-sm text-gray-500 mb-3" data-astro-cid-z4jru4n3>免責聲明</h4><p class="text-xs text-gray-400 leading-relaxed" data-astro-cid-z4jru4n3>餐廳資料來自食環署公開名單。健康資訊僅供參考，如有健康問題請諮詢註冊獸醫。</p></div></div><div class="mt-8 pt-8 border-t border-gray-100 text-center text-xs text-gray-400" data-astro-cid-z4jru4n3>© 2026 HK Pet Portal</div></div></footer></body></html>
