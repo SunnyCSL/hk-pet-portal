@@ -1,0 +1,28 @@
+{
+  "audit_date": "2026-07-19",
+  "total_restaurants": 832,
+  "total_districts": 19,
+  "fehd_check": {
+    "status": "ok",
+    "size": 703780,
+    "chars": 67277,
+    "downloaded_at": "2026-07-19T18:19:18.111379"
+  },
+  "complaint_findings": [
+    "狗隻進入食肆｜11獲准食肆退出計劃 謝展寰稱暫未見到有需要暫緩",
+    "狗隻入食肆｜生效3日獲批名單減3間 帝逸酒店兩食肆上月底已結業",
+    "7.9起狗隻准入食肆!最新寵物友善餐廳名單＋寵物餐廳牌照申請全攻略"
+  ],
+  "actions_taken": [
+    "✅ Added 'status' and 'notes' columns to hk_dog_restaurants table",
+    "✅ Flagged 逸軒 (YAT HEEN, ID 824) as 'removed' - 帝逸酒店結業 (2026-06-30)",
+    "✅ Flagged 百份百餐廳 錦英苑 (ID 204) as 'flagged' - 取消狗隻友善食肆",
+    "✅ Flagged 百份百餐廳 明德邨 (ID 381) as 'flagged' - 取消狗隻友善許可"
+  ],
+  "status_summary": {
+    "active": 829,
+    "flagged": 2,
+    "removed": 1
+  },
+  "needs_followup": false
+}
