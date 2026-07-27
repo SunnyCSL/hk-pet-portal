@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import mealPlans from '../../data/meal-plans.json';
+
+export function getStaticPaths() {
+  return mealPlans.map(m => ({
+    params: { id: String(m.id) },
+    props: { meal: m }
+  }));
+}
+
+const { meal } = Astro.props;
+const related = mealPlans.filter(m => 
+  m.id !== meal.id && m.health_tags.some(t => meal.health_tags.includes(t))
+).slice(0, 3);
+---
+
+<BaseLayout title={`${meal.name} — 鮮食餐單`} lang="zh">
+  <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
+    <a href="/meals/" class="text-xs text-gray-400 hover:text-brand no-underline mb-3 inline-block">← 返回餐單庫</a>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-5 md:p-6">
+      <!-- Header -->
+      <div class="flex items-start gap-2 mb-3 flex-wrap">
+        <h1 class="text-lg md:text-xl font-bold text-near-black">{meal.name}</h1>
+        <span class="text-xs bg-gray-50 text-gray-400 px-2 py-1 rounded-full">{meal.meal_type}</span>
+        <span class="text-xs bg-gray-50 text-gray-400 px-2 py-1 rounded-full">{meal.difficulty}</span>
+      </div>
+      <p class="text-sm text-gray-400 mb-4">{meal.description}</p>
+
+      <div class="flex items-center gap-3 text-xs text-gray-400 mb-5">
+        <span>⏱ {meal.prep_time}</span>
+        <span>👤 {meal.author}</span>
+        <span>🥩 {meal.protein_source}</span>
+      </div>
+
+      <!-- Tags -->
+      <div class="flex gap-1.5 mb-5 flex-wrap">
+        {meal.health_tags.map(t => (
+          <a href={`/meals/?tag=${encodeURIComponent(t)}`} class="text-xs bg-brand-light text-brand/80 px-2.5 py-1 rounded-full no-underline hover:bg-brand hover:text-white transition">{t}</a>
+        ))}
+      </div>
+
+      <!-- Ingredients -->
+      <div class="mb-5">
+        <h2 class="text-sm font-semibold text-near-black mb-2">🥄 材料</h2>
+        <div class="bg-gray-50 rounded-xl p-3">
+          {meal.ingredients.map(i => (
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
+              <div>
+                <span class="text-sm font-medium text-near-black">{i.item}</span>
+                {i.note && <span class="text-xs text-gray-400 ml-1">({i.note})</span>}
+              </div>
+              <span class="text-sm text-gray-500 shrink-0 ml-2">{i.amount}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="mb-5">
+        <h2 class="text-sm font-semibold text-near-black mb-2">👨‍🍳 做法</h2>
+        <div class="bg-gray-50 rounded-xl p-3 text-sm text-gray-600 leading-relaxed whitespace-pre-line">{meal.instructions}</div>
+      </div>
+
+      <!-- Daily amount -->
+      <div class="mb-5">
+        <h2 class="text-sm font-semibold text-near-black mb-2">📊 每日建議份量</h2>
+        <div class="grid grid-cols-3 gap-2">
+          {Object.entries(meal.daily_amount).map(([weight, amount]) => (
+            <div class="bg-gray-50 rounded-xl p-2.5 text-center">
+              <div class="text-xs text-gray-400">{weight.replace('_', ' ')}</div>
+              <div class="text-sm font-semibold text-near-black">{amount}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Nutrition -->
+      <div>
+        <h2 class="text-sm font-semibold text-near-black mb-2">🥗 每100g營養</h2>
+        <div class="flex gap-2">
+          {Object.entries(meal.nutrition_per_100g).map(([key, val]) => (
+            <div class="bg-gray-50 rounded-xl p-2.5 text-center flex-1">
+              <div class="text-[10px] text-gray-400">{key}</div>
+              <div class="text-xs font-semibold text-near-black">{val}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Related -->
+    {related.length > 0 && (
+      <div class="mt-6">
+        <h2 class="text-sm font-semibold text-near-black mb-3">🔗 相關餐單</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+          {related.map(r => (
+            <a href={`/meals/${r.id}`} class="bg-white rounded-xl p-3 border border-gray-100 hover:border-brand/30 transition no-underline">
+              <div class="text-xs font-semibold text-near-black">{r.name}</div>
+              <div class="text-[10px] text-gray-400 mt-0.5">{r.description.slice(0, 40)}...</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>

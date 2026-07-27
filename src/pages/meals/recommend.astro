@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import mealPlans from '../../data/meal-plans.json';
+---
+
+<BaseLayout title="✨ 即時餐單推薦" lang="zh">
+  <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
+    <a href="/meals/" class="text-xs text-gray-400 hover:text-brand no-underline mb-3 inline-block">← 返回餐單庫</a>
+
+    <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">✨ 即時餐單推薦</h1>
+    <p class="text-sm text-gray-400 mb-5">輸入狗狗嘅基本資料，即刻幫你配對最適合嘅餐單</p>
+
+    <!-- Form -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-5 md:p-6 mb-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- Weight -->
+        <div>
+          <label class="text-xs font-medium text-gray-500 mb-1 block">體重 (kg)</label>
+          <input type="number" id="weight" min="2" max="60" value="15" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-brand/50">
+        </div>
+        <!-- Age -->
+        <div>
+          <label class="text-xs font-medium text-gray-500 mb-1 block">年齡</label>
+          <select id="age" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-brand/50">
+            <option value="puppy">幼犬 (<1歲)</option>
+            <option value="adult" selected>成犬 (1-7歲)</option>
+            <option value="senior">老年 (8歲+)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Health conditions -->
+      <div class="mb-4">
+        <label class="text-xs font-medium text-gray-500 mb-1.5 block">健康關注（可選多項）</label>
+        <div class="flex flex-wrap gap-1.5" id="conditions">
+          {['腸胃敏感', '皮膚敏感', '腎臟關注', '心臟護理', '關節問題', '體味問題', '肥胖/減重', '胃口差', '口臭', '過敏'].map(c => (
+            <label class="condition-chip cursor-pointer px-3 py-1.5 rounded-full text-xs border border-gray-200 hover:border-brand/30 transition flex items-center gap-1.5">
+              <input type="checkbox" value={c} class="hidden">
+              <span class="checkmark w-3 h-3 rounded-full border border-gray-300 inline-block shrink-0"></span>
+              {c}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <!-- Protein preference -->
+      <div class="mb-4">
+        <label class="text-xs font-medium text-gray-500 mb-1.5 block">蛋白質偏好（可選多項）</label>
+        <div class="flex flex-wrap gap-1.5" id="proteins">
+          {['雞肉', '火雞', '鴨肉', '羊肉', '袋鼠肉', '魚肉', '三文魚', '任何'].map(p => (
+            <label class="protein-chip cursor-pointer px-3 py-1.5 rounded-full text-xs border border-gray-200 hover:border-brand/30 transition flex items-center gap-1.5">
+              <input type="checkbox" value={p} class="hidden">
+              <span class="checkmark w-3 h-3 rounded-full border border-gray-300 inline-block shrink-0"></span>
+              {p}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <!-- Meal type -->
+      <div class="mb-4">
+        <label class="text-xs font-medium text-gray-500 mb-1.5 block">餐單類型</label>
+        <div class="flex gap-2" id="mealType">
+          {['主餐', '湯品', '零食'].map(t => (
+            <label class="type-chip cursor-pointer px-3 py-1.5 rounded-full text-xs border border-gray-200 hover:border-brand/30 transition flex items-center gap-1.5">
+              <input type="radio" name="mealType" value={t} checked={t === '主餐'}>
+              <span class="checkmark w-3 h-3 rounded-full border border-gray-300 inline-block shrink-0"></span>
+              {t}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <button id="recommendBtn" class="w-full bg-brand text-white py-3 rounded-xl text-sm font-medium hover:bg-brand/90 transition">
+        🔍 搵餐單
+      </button>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="hidden"></div>
+
+    <!-- All meals backup -->
+    <div class="text-center mt-4">
+      <a href="/meals/" class="text-xs text-gray-400 hover:text-brand no-underline">或者瀏覽全部 {mealPlans.length} 個餐單 📋</a>
+    </div>
+  </div>
+
+  <script>
+    const mealPlans = JSON.parse(document.getElementById('mealData')?.textContent || '[]');
+    
+    document.getElementById('recommendBtn').addEventListener('click', () => {
+      const weight = parseFloat(document.getElementById('weight').value) || 15;
+      const age = document.getElementById('age').value;
+      
+      const conditions = [...document.querySelectorAll('#conditions input:checked')].map(c => c.value);
+      const proteins = [...document.querySelectorAll('#proteins input:checked')].map(c => c.value);
+      const mealType = document.querySelector('#mealType input:checked')?.value || '主餐';
+
+      let scored = mealPlans.filter(m => m.meal_type === mealType).map(m => {
+        let score = 0;
+        let matches = [];
+
+        // Match health conditions
+        conditions.forEach(c => {
+          if (m.health_tags.some(t => t.includes(c) || c.includes(t))) {
+            score += 3;
+            matches.push(c);
+          }
+          if (m.suitable_for && m.suitable_for.some(s => s.includes(c) || c.includes(s))) {
+            score += 2;
+            if (!matches.includes(c)) matches.push(c);
+          }
+        });
+
+        // Match protein preference
+        if (proteins.length > 0 && !proteins.includes('任何')) {
+          if (proteins.some(p => m.protein_source.includes(p))) {
+            score += 2;
+            matches.push(m.protein_source);
+          }
+        } else if (proteins.includes('任何') || proteins.length === 0) {
+          score += 1; // no preference
+        }
+
+        // Senior dogs get extra for senior-friendly meals
+        if (age === 'senior' && m.health_tags.some(t => ['關節', '心臟', '腎臟', '老年'].includes(t))) {
+          score += 1;
+        }
+
+        // Weight match
+        const weightKey = Object.keys(m.daily_amount).find(k => {
+          const match = k.match(/(\d+)kg/);
+          return match && Math.abs(parseInt(match[1]) - weight) <= 10;
+        });
+        if (weightKey) score += 1;
+
+        return { ...m, score, matches };
+      });
+
+      // Filter to only scored meals, sort by score
+      scored = scored.filter(m => m.score > 0).sort((a, b) => b.score - a.score);
+
+      const resultsDiv = document.getElementById('results');
+      
+      if (scored.length === 0) {
+        resultsDiv.innerHTML = '<div class="bg-white rounded-2xl border border-gray-100 p-5 text-center"><p class="text-sm text-gray-400">搵唔到完全符合嘅餐單，試下放寬條件</p></div>';
+        resultsDiv.classList.remove('hidden');
+        return;
+      }
+
+      // Show top matches
+      const top = scored.slice(0, 5);
+      resultsDiv.innerHTML = `
+        <div class="bg-green-50 rounded-2xl p-4 mb-3 flex items-center gap-2">
+          <span class="text-lg">🎯</span>
+          <div>
+            <span class="text-sm font-semibold text-green-800">找到 ${scored.length} 個合適餐單</span>
+            <span class="text-xs text-green-600 ml-2">最高匹配度 Top ${Math.min(top.length, 5)}</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+          ${top.map((m, i) => `
+            <a href="/meals/${m.id}" class="bg-white rounded-xl p-3.5 border border-gray-100 hover:border-brand/30 transition no-underline flex items-center gap-3">
+              <div class="text-lg font-bold ${i === 0 ? 'text-brand' : 'text-gray-300'} shrink-0">#${i + 1}</div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold text-near-black">${m.name}</span>
+                  <span class="text-[10px] bg-brand-light text-brand/80 px-1.5 py-0.5 rounded-full">匹配度 ${m.score}</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-0.5">${m.description}</p>
+                <div class="flex items-center gap-2 mt-1 text-[10px] text-gray-400">
+                  <span>🥩 ${m.protein_source}</span>
+                  <span>⏱ ${m.prep_time}</span>
+                  <span>${m.difficulty}</span>
+                </div>
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      `;
+      resultsDiv.classList.remove('hidden');
+      resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Chip styling on click
+    document.querySelectorAll('.condition-chip, .protein-chip, .type-chip').forEach(chip => {
+      chip.addEventListener('click', function(e) {
+        // Don't toggle if clicking the checkbox directly
+        const cb = this.querySelector('input');
+        if (e.target !== cb) {
+          cb.checked = !cb.checked;
+        }
+        this.classList.toggle('bg-brand/10', cb.checked);
+        this.classList.toggle('border-brand/50', cb.checked);
+        this.classList.toggle('bg-gray-50', !cb.checked);
+        this.classList.toggle('border-gray-200', !cb.checked);
+        this.querySelector('.checkmark').classList.toggle('bg-brand', cb.checked);
+        this.querySelector('.checkmark').classList.toggle('border-brand/50', cb.checked);
+        this.querySelector('.checkmark').classList.toggle('border-gray-300', !cb.checked);
+      });
+    });
+  </script>
+
+  <div id="mealData" class="hidden">{JSON.stringify(mealPlans)}</div>
+</BaseLayout>
