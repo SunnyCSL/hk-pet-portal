@@ -29,7 +29,19 @@ import mealPlans from '../../data/meal-plans.json';
         </div>
       </div>
 
-      <!-- Health conditions -->
+      <label class="text-xs font-medium text-gray-500 mb-1.5 block">物種</label>
+    <div class="flex gap-2 mb-4" id="speciesSelect">
+      <label class="species-option cursor-pointer px-4 py-1.5 rounded-full text-xs border transition bg-brand text-white border-brand flex items-center gap-1.5">
+        <input type="radio" name="species" value="dog" checked class="hidden">
+        🐶 狗
+      </label>
+      <label class="species-option cursor-pointer px-4 py-1.5 rounded-full text-xs border transition bg-gray-50 text-gray-500 border-gray-200 flex items-center gap-1.5">
+        <input type="radio" name="species" value="cat" class="hidden">
+        🐱 貓
+      </label>
+    </div>
+
+    <!-- Health conditions -->
       <div class="mb-4">
         <label class="text-xs font-medium text-gray-500 mb-1.5 block">健康關注（可選多項）</label>
         <div class="flex flex-wrap gap-1.5" id="conditions">
@@ -91,12 +103,13 @@ import mealPlans from '../../data/meal-plans.json';
     document.getElementById('recommendBtn').addEventListener('click', () => {
       const weight = parseFloat(document.getElementById('weight').value) || 15;
       const age = document.getElementById('age').value;
+      const species = document.querySelector('input[name="species"]:checked')?.value || 'dog';
       
       const conditions = [...document.querySelectorAll('#conditions input:checked')].map(c => c.value);
       const proteins = [...document.querySelectorAll('#proteins input:checked')].map(c => c.value);
       const mealType = document.querySelector('#mealType input:checked')?.value || '主餐';
 
-      let scored = mealPlans.filter(m => m.meal_type === mealType).map(m => {
+      let scored = mealPlans.filter(m => m.meal_type === mealType && m.species === species).map(m => {
         let score = 0;
         let matches = [];
 
@@ -180,6 +193,16 @@ import mealPlans from '../../data/meal-plans.json';
       `;
       resultsDiv.classList.remove('hidden');
       resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Species chip styling
+    document.querySelectorAll('.species-option').forEach(chip => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.species-option').forEach(c => {
+          c.className = 'species-option cursor-pointer px-4 py-1.5 rounded-full text-xs border transition bg-gray-50 text-gray-500 border-gray-200 flex items-center gap-1.5';
+        });
+        this.className = 'species-option cursor-pointer px-4 py-1.5 rounded-full text-xs border transition bg-brand text-white border-brand flex items-center gap-1.5';
+      });
     });
 
     // Chip styling on click

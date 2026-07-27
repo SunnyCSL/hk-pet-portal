@@ -10,7 +10,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
 <BaseLayout title="🥘 鮮食餐單庫" lang="zh">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">🥘 鮮食餐單庫</h1>
-    <p class="text-sm text-gray-400 mb-3">為狗狗健康設計嘅鮮食餐單 — 共 {mealPlans.length} 款，輸入基本資料即時推薦</p>
+    <p class="text-sm text-gray-400 mb-3">為狗狗同貓貓設計嘅鮮食餐單 — 共 {mealPlans.length} 款（🐶{mealPlans.filter(m=>m.species==='dog').length}狗 · 🐱{mealPlans.filter(m=>m.species==='cat').length}貓）</p>
 
     <div class="flex gap-2 mb-5 flex-wrap">
       <a href="/meals/recommend/" class="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium no-underline hover:bg-brand/90 transition">
@@ -29,6 +29,13 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
           class="filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30"
         >{t}</button>
       ))}
+    </div>
+
+    <!-- Species filter -->
+    <div class="flex gap-1.5 mb-4" id="speciesFilters">
+      <button data-species="" class="species-chip active px-4 py-1.5 rounded-full text-xs font-medium border transition bg-brand text-white border-brand">🐶🐱 全部</button>
+      <button data-species="dog" class="species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30">🐶 狗 ({mealPlans.filter(m=>m.species==='dog').length})</button>
+      <button data-species="cat" class="species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30">🐱 貓 ({mealPlans.filter(m=>m.species==='cat').length})</button>
     </div>
 
     <!-- Type filter -->
@@ -50,6 +57,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
           data-tags={m.health_tags.join(',')}
           data-type={m.meal_type}
           data-protein={m.protein_source}
+          data-species={m.species || 'dog'}
           class="meal-card group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
         >
           <div class="flex items-start gap-3">
@@ -87,6 +95,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
     const cards = document.querySelectorAll('.meal-card');
     const chips = document.querySelectorAll('.filter-chip');
     const typeChips = document.querySelectorAll('.type-chip');
+    const speciesChips = document.querySelectorAll('.species-chip');
     const resultCount = document.getElementById('resultCount');
     const noResults = document.getElementById('noResults');
     const grid = document.getElementById('mealGrid');
@@ -94,15 +103,18 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
 
     let activeTag = '';
     let activeType = '';
+    let activeSpecies = '';
 
     function filterMeals() {
       let visible = 0;
       cards.forEach(card => {
         const tags = (card.dataset.tags || '').split(',');
         const type = card.dataset.type || '';
+        const species = card.dataset.species || 'dog';
         const matchesTag = !activeTag || tags.includes(activeTag);
         const matchesType = !activeType || type === activeType;
-        const show = matchesTag && matchesType;
+        const matchesSpecies = !activeSpecies || species === activeSpecies;
+        const show = matchesTag && matchesType && matchesSpecies;
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
@@ -138,16 +150,33 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
       });
     });
 
+    // Species filter chips
+    speciesChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeSpecies = chip.dataset.species;
+        speciesChips.forEach(c => {
+          const isActive = c.dataset.species === activeSpecies;
+          c.className = `species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
+        });
+        filterMeals();
+      });
+    });
+
     // Clear all filters
     clearBtn.addEventListener('click', () => {
       activeTag = '';
       activeType = '';
+      activeSpecies = '';
       chips.forEach(c => {
         const isActive = c.dataset.tag === '';
         c.className = `filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
       });
       typeChips.forEach(c => {
         c.className = `type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30`;
+      });
+      speciesChips.forEach(c => {
+        const isActive = c.dataset.species === '';
+        c.className = `species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
       });
       filterMeals();
     });

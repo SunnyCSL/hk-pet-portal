@@ -57,7 +57,8 @@
       "皮膚敏感",
       "食物過敏"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 2,
@@ -117,7 +118,8 @@
       "BUN偏高",
       "需要低磷飲食"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 3,
@@ -182,7 +184,8 @@
       "油脂分泌旺盛",
       "需要天然杜蟲"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 4,
@@ -243,7 +246,8 @@
       "老年犬",
       "手術後恢復"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 5,
@@ -308,7 +312,8 @@
       "老年犬",
       "抗炎需要"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 6,
@@ -370,7 +375,8 @@
       "夏天",
       "濕熱體質"
     ],
-    "meal_type": "湯品"
+    "meal_type": "湯品",
+    "species": "dog"
   },
   {
     "id": 7,
@@ -438,7 +444,8 @@
       "腎臟關注",
       "需要保留紅肉口味"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 8,
@@ -508,7 +515,8 @@
       "seizure史",
       "Omega-3需要"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 9,
@@ -568,7 +576,8 @@
       "胃口差",
       "無火煮食"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 10,
@@ -633,7 +642,8 @@
       "需要牛磺酸補充",
       "心血管健康"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 11,
@@ -694,7 +704,8 @@
       "皮膚出油",
       "體味重"
     ],
-    "meal_type": "湯品"
+    "meal_type": "湯品",
+    "species": "dog"
   },
   {
     "id": 12,
@@ -754,7 +765,8 @@
       "肥胖",
       "減肥中"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 13,
@@ -817,7 +829,8 @@
       "健康成犬",
       "日常餵食"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 14,
@@ -877,7 +890,8 @@
       "皮膚敏感",
       "甩毛"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 15,
@@ -943,7 +957,8 @@
       "牙齒問題",
       "胃口差"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 16,
@@ -1009,7 +1024,8 @@
       "食物不耐受",
       "皮膚敏感"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 17,
@@ -1070,7 +1086,8 @@
       "糖尿病",
       "低碳水需要"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 18,
@@ -1130,7 +1147,8 @@
       "腸胃虛弱",
       "需要B群"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 19,
@@ -1195,7 +1213,8 @@
       "心肌問題",
       "牛磺酸補充"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 20,
@@ -1257,7 +1276,8 @@
       "腸胃炎",
       "老年犬吞嚥困難"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 21,
@@ -1322,7 +1342,8 @@
       "老年犬",
       "白內障預防"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
   },
   {
     "id": 22,
@@ -1383,6 +1404,607 @@
       "需要轉蛋白質",
       "腸胃敏感"
     ],
-    "meal_type": "主餐"
+    "meal_type": "主餐",
+    "species": "dog"
+  },
+  {
+    "id": 23,
+    "name": "雞肉南瓜貓餐",
+    "name_en": "Chicken & Pumpkin for Cats",
+    "author": "Nexi 推薦",
+    "description": "簡單均衡嘅貓鮮食入門餐，適合大多數健康成貓",
+    "ingredients": [
+      {
+        "item": "雞腿肉（去皮）",
+        "amount": "80g",
+        "note": "貓需要更高蛋白質"
+      },
+      {
+        "item": "南瓜蓉",
+        "amount": "20g",
+        "note": "少量纖維"
+      },
+      {
+        "item": "雞心",
+        "amount": "10g",
+        "note": "牛磺酸來源"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/4茶匙",
+        "note": "Omega-3"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需，不能少"
+      }
+    ],
+    "instructions": "1. 雞腿肉蒸熟切粒\n2. 雞心蒸熟切碎\n3. 南瓜蒸熟壓蓉\n4. 全部拌勻，加入魚油和牛磺酸\n5. 放涼至室溫食用",
+    "nutrition_per_100g": {
+      "protein": "14g",
+      "fat": "5g",
+      "carbs": "2g",
+      "calories": "115kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "120g",
+      "for_5kg": "150g",
+      "for_6kg": "180g"
+    },
+    "health_tags": [
+      "貓貓",
+      "日常主食",
+      "牛磺酸補充"
+    ],
+    "protein_source": "雞肉",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "健康成貓",
+      "日常餵食"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 24,
+    "name": "三文魚貓貓亮毛餐",
+    "name_en": "Salmon Coat Care for Cats",
+    "author": "Nexi 推薦",
+    "description": "三文魚豐富Omega-3令貓毛更光澤順滑",
+    "ingredients": [
+      {
+        "item": "三文魚",
+        "amount": "60g",
+        "note": "新鮮/急凍，去骨拆肉"
+      },
+      {
+        "item": "雞肉",
+        "amount": "30g",
+        "note": "補充牛磺酸"
+      },
+      {
+        "item": "紅蘿蔔",
+        "amount": "10g",
+        "note": "刨絲蒸軟"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/4茶匙",
+        "note": "額外Omega-3"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需"
+      }
+    ],
+    "instructions": "1. 三文魚蒸熟拆肉（檢查細骨）\n2. 雞肉蒸熟切粒\n3. 紅蘿蔔刨絲蒸軟\n4. 全部拌勻，加入魚油和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "13g",
+      "fat": "6g",
+      "carbs": "1g",
+      "calories": "120kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "110g",
+      "for_5kg": "140g",
+      "for_6kg": "170g"
+    },
+    "health_tags": [
+      "貓貓",
+      "毛髮護理",
+      "Omega-3"
+    ],
+    "protein_source": "三文魚+雞肉",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "毛髮乾燥",
+      "皮膚健康",
+      "甩毛"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 25,
+    "name": "鴨肉貓貓低敏餐",
+    "name_en": "Duck Hypoallergenic for Cats",
+    "author": "Nexi 推薦",
+    "description": "單一蛋白低過敏，適合腸胃敏感嘅貓貓",
+    "ingredients": [
+      {
+        "item": "鴨胸肉",
+        "amount": "70g",
+        "note": "去皮，低致敏"
+      },
+      {
+        "item": "鴨心",
+        "amount": "10g",
+        "note": "天然牛磺酸"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "15g",
+        "note": "切粒蒸軟"
+      },
+      {
+        "item": "椰子油",
+        "amount": "1/4茶匙",
+        "note": "中鏈脂肪酸"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需"
+      }
+    ],
+    "instructions": "1. 鴨胸肉蒸熟切絲\n2. 鴨心蒸熟切碎\n3. 翠玉瓜蒸軟切粒\n4. 全部拌勻，加入椰子油和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "14g",
+      "fat": "3g",
+      "carbs": "1g",
+      "calories": "95kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "110g",
+      "for_5kg": "140g",
+      "for_6kg": "170g"
+    },
+    "health_tags": [
+      "貓貓",
+      "低過敏",
+      "腸胃敏感",
+      "單一蛋白"
+    ],
+    "protein_source": "鴨肉",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "腸胃敏感",
+      "食物過敏",
+      "皮膚敏感"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 26,
+    "name": "免治牛肉貓飯",
+    "name_en": "Beef Minced Cat Bowl",
+    "author": "Nexi 推薦",
+    "description": "牛肉提供豐富鐵質同維他命B，適合活潑貓貓",
+    "ingredients": [
+      {
+        "item": "瘦牛肉（免治）",
+        "amount": "70g",
+        "note": "可轉和牛碎增加適口性"
+      },
+      {
+        "item": "雞肝",
+        "amount": "10g",
+        "note": "維他命A豐富，但唔好太多"
+      },
+      {
+        "item": "南瓜蓉",
+        "amount": "15g",
+        "note": "纖維"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/4茶匙",
+        "note": "Omega-3"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需"
+      }
+    ],
+    "instructions": "1. 牛肉免治慢煎至熟（唔落油），保留肉汁\n2. 雞肝蒸熟切碎（少量！）\n3. 南瓜蒸熟壓蓉\n4. 全部拌勻，加入魚油和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "15g",
+      "fat": "5g",
+      "carbs": "2g",
+      "calories": "120kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "100g",
+      "for_5kg": "130g",
+      "for_6kg": "160g"
+    },
+    "health_tags": [
+      "貓貓",
+      "高鐵",
+      "維他命B"
+    ],
+    "protein_source": "牛肉",
+    "difficulty": "簡單",
+    "prep_time": "15分鐘",
+    "suitable_for": [
+      "活潑貓",
+      "需要補鐵",
+      "日常餵食"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 27,
+    "name": "火雞心臟保健貓餐",
+    "name_en": "Turkey Heart Care for Cats",
+    "author": "Nexi 推薦",
+    "description": "火雞心含豐富牛磺酸，對貓貓心臟同視力尤其重要",
+    "ingredients": [
+      {
+        "item": "火雞心",
+        "amount": "40g",
+        "note": "牛磺酸最豐富的來源"
+      },
+      {
+        "item": "火雞肉",
+        "amount": "40g",
+        "note": "瘦肉"
+      },
+      {
+        "item": "西蘭花",
+        "amount": "10g",
+        "note": "切碎蒸軟"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/4茶匙",
+        "note": "抗炎"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需（已有火雞心可減量）"
+      }
+    ],
+    "instructions": "1. 火雞心洗淨切半，火雞肉切粒\n2. 一齊蒸熟，保留汁液\n3. 西蘭花切碎蒸軟\n4. 全部拌勻，加入魚油和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "15g",
+      "fat": "3g",
+      "carbs": "1g",
+      "calories": "95kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "100g",
+      "for_5kg": "130g",
+      "for_6kg": "160g"
+    },
+    "health_tags": [
+      "貓貓",
+      "心臟護理",
+      "牛磺酸",
+      "視力保健"
+    ],
+    "protein_source": "火雞+火雞心",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "心臟保健",
+      "視力保健",
+      "日常餵食"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 28,
+    "name": "鯇魚豆腐貓軟餐",
+    "name_en": "Fish & Tofu for Cats",
+    "author": "Nexi 推薦",
+    "description": "極軟易消化，適合病癒或腸胃敏感嘅貓貓",
+    "ingredients": [
+      {
+        "item": "鯇魚肉",
+        "amount": "60g",
+        "note": "去骨拆肉蒸熟"
+      },
+      {
+        "item": "軟豆腐",
+        "amount": "20g",
+        "note": "壓碎"
+      },
+      {
+        "item": "蛋黃",
+        "amount": "半個",
+        "note": "卵磷脂豐富"
+      },
+      {
+        "item": "魚湯",
+        "amount": "2湯匙",
+        "note": "增加水份"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需"
+      }
+    ],
+    "instructions": "1. 鯇魚肉蒸熟拆肉（檢查細骨！）\n2. 蛋黃蒸熟壓碎\n3. 軟豆腐瀝乾壓碎\n4. 全部拌勻成軟糊狀，加入魚湯和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "12g",
+      "fat": "4g",
+      "carbs": "1g",
+      "calories": "90kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "120g",
+      "for_5kg": "150g",
+      "for_6kg": "180g"
+    },
+    "health_tags": [
+      "貓貓",
+      "軟餐",
+      "易消化",
+      "病癒恢復"
+    ],
+    "protein_source": "魚肉",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "手術後",
+      "病癒",
+      "腸胃炎",
+      "老年貓"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 29,
+    "name": "豬肉暖胃貓餐",
+    "name_en": "Pork Warm Bowl for Cats",
+    "author": "Nexi 推薦",
+    "description": "豬肉提供維他命B1，冬天暖胃開胃",
+    "ingredients": [
+      {
+        "item": "豬瘦肉",
+        "amount": "60g",
+        "note": "選里肌肉去肥"
+      },
+      {
+        "item": "豬心",
+        "amount": "10g",
+        "note": "牛磺酸"
+      },
+      {
+        "item": "紅蘿蔔",
+        "amount": "10g",
+        "note": "刨絲"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/4茶匙",
+        "note": "Omega-3"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需"
+      }
+    ],
+    "instructions": "1. 豬瘦肉切粒蒸熟（確保全熟）\n2. 豬心蒸熟切碎\n3. 紅蘿蔔刨絲蒸軟\n4. 全部拌勻，加入魚油和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "14g",
+      "fat": "4g",
+      "carbs": "1g",
+      "calories": "100kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "110g",
+      "for_5kg": "140g",
+      "for_6kg": "170g"
+    },
+    "health_tags": [
+      "貓貓",
+      "暖胃",
+      "維他命B1"
+    ],
+    "protein_source": "豬肉",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "冬天",
+      "胃口差",
+      "日常餵食"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 30,
+    "name": "吞拿魚蛋黃貓零食",
+    "name_en": "Tuna & Egg Yolk Cat Treat",
+    "author": "Nexi 推薦",
+    "description": "簡單易整嘅貓貓小食，注意吞拿魚唔可以作為主食",
+    "ingredients": [
+      {
+        "item": "吞拿魚（水浸）",
+        "amount": "30g",
+        "note": "瀝乾，選擇水浸非油浸"
+      },
+      {
+        "item": "蛋黃",
+        "amount": "半個",
+        "note": "蒸熟壓碎"
+      },
+      {
+        "item": "貓草",
+        "amount": "少量",
+        "note": "可選，幫助吐毛球"
+      }
+    ],
+    "instructions": "1. 吞拿魚瀝乾水份，用叉壓碎\n2. 蛋黃蒸熟壓碎\n3. 混合拌勻即可\n4. 注意：吞拿魚每週最多1-2次，不能做主食",
+    "nutrition_per_100g": {
+      "protein": "16g",
+      "fat": "6g",
+      "carbs": "0g",
+      "calories": "130kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "30g",
+      "for_5kg": "40g",
+      "for_6kg": "50g"
+    },
+    "health_tags": [
+      "貓貓",
+      "零食",
+      "簡易"
+    ],
+    "protein_source": "吞拿魚",
+    "difficulty": "簡單",
+    "prep_time": "5分鐘",
+    "suitable_for": [
+      "零食",
+      "獎勵",
+      "貓草輔助"
+    ],
+    "meal_type": "零食",
+    "species": "cat"
+  },
+  {
+    "id": 31,
+    "name": "雞肉南瓜老貓餐",
+    "name_en": "Senior Cat Chicken & Pumpkin",
+    "author": "Nexi 推薦",
+    "description": "軟身易消化，適合老年貓貓牙齒唔好",
+    "ingredients": [
+      {
+        "item": "雞腿肉",
+        "amount": "60g",
+        "note": "蒸熟拆絲"
+      },
+      {
+        "item": "南瓜蓉",
+        "amount": "20g",
+        "note": "蒸熟壓蓉"
+      },
+      {
+        "item": "雞湯（無鹽）",
+        "amount": "30ml",
+        "note": "增加水份，腎貓更重要"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/4茶匙",
+        "note": "關節+腎臟保健"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需"
+      }
+    ],
+    "instructions": "1. 雞腿肉蒸熟拆成細絲\n2. 南瓜蒸熟壓成蓉\n3. 將雞肉絲、南瓜蓉、雞湯拌勻\n4. 放涼後加入魚油和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "12g",
+      "fat": "4g",
+      "carbs": "3g",
+      "calories": "95kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "130g",
+      "for_5kg": "160g",
+      "for_6kg": "190g"
+    },
+    "health_tags": [
+      "貓貓",
+      "老年貓",
+      "軟餐",
+      "易消化"
+    ],
+    "protein_source": "雞肉",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "老年貓",
+      "腎臟關注",
+      "牙齒問題"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
+  },
+  {
+    "id": 32,
+    "name": "兔肉低敏貓餐",
+    "name_en": "Rabbit Hypoallergenic for Cats",
+    "author": "Nexi 推薦",
+    "description": "兔肉係新蛋白質，適合對常見肉類過敏嘅貓貓",
+    "ingredients": [
+      {
+        "item": "兔肉",
+        "amount": "70g",
+        "note": "急凍兔髀拆肉"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "10g",
+        "note": "切粒"
+      },
+      {
+        "item": "椰子油",
+        "amount": "1/4茶匙",
+        "note": "MCT健康脂肪"
+      },
+      {
+        "item": "牛磺酸補充粉",
+        "amount": "按包裝",
+        "note": "貓必需"
+      }
+    ],
+    "instructions": "1. 兔肉蒸熟拆肉切絲\n2. 翠玉瓜切粒蒸軟\n3. 全部拌勻，加入椰子油和牛磺酸",
+    "nutrition_per_100g": {
+      "protein": "15g",
+      "fat": "2.5g",
+      "carbs": "1g",
+      "calories": "90kcal"
+    },
+    "daily_amount": {
+      "for_4kg": "110g",
+      "for_5kg": "140g",
+      "for_6kg": "170g"
+    },
+    "health_tags": [
+      "貓貓",
+      "低過敏",
+      "新蛋白質",
+      "腸胃敏感"
+    ],
+    "protein_source": "兔肉",
+    "difficulty": "中等",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "食物過敏",
+      "需要轉蛋白",
+      "腸胃敏感"
+    ],
+    "meal_type": "主餐",
+    "species": "cat"
   }
 ]
