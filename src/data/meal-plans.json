@@ -6,20 +6,57 @@
     "author": "Nexi 推薦",
     "description": "單一蛋白質來源，低過敏，適合腸胃敏感嘅狗狗",
     "ingredients": [
-      {"item": "火雞肉（免治）", "amount": "150g", "note": "去皮去骨"},
-      {"item": "南瓜", "amount": "80g", "note": "蒸熟壓蓉"},
-      {"item": "西蘭花", "amount": "30g", "note": "切碎蒸軟"},
-      {"item": "紅蘿蔔", "amount": "30g", "note": "刨絲蒸熟"},
-      {"item": "椰子油", "amount": "1茶匙", "note": "冷壓初榨"}
+      {
+        "item": "火雞肉（免治）",
+        "amount": "150g",
+        "note": "去皮去骨"
+      },
+      {
+        "item": "南瓜",
+        "amount": "80g",
+        "note": "蒸熟壓蓉"
+      },
+      {
+        "item": "西蘭花",
+        "amount": "30g",
+        "note": "切碎蒸軟"
+      },
+      {
+        "item": "紅蘿蔔",
+        "amount": "30g",
+        "note": "刨絲蒸熟"
+      },
+      {
+        "item": "椰子油",
+        "amount": "1茶匙",
+        "note": "冷壓初榨"
+      }
     ],
     "instructions": "1. 火雞肉蒸熟或慢煎（唔落油）\n2. 南瓜、西蘭花、紅蘿蔔蒸熟\n3. 全部拌勻，最後加入椰子油\n4. 放涼至室溫俾狗狗食",
-    "nutrition_per_100g": {"protein": "12g", "fat": "4g", "carbs": "6g", "calories": "110kcal"},
-    "daily_amount": {"for_10kg": "250g", "for_20kg": "400g", "for_30kg": "550g"},
-    "health_tags": ["低過敏", "腸胃敏感", "單一蛋白"],
+    "nutrition_per_100g": {
+      "protein": "12g",
+      "fat": "4g",
+      "carbs": "6g",
+      "calories": "110kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "250g",
+      "for_20kg": "400g",
+      "for_30kg": "550g"
+    },
+    "health_tags": [
+      "低過敏",
+      "腸胃敏感",
+      "單一蛋白"
+    ],
     "protein_source": "火雞",
     "difficulty": "簡單",
     "prep_time": "20分鐘",
-    "suitable_for": ["腸胃敏感", "皮膚敏感", "食物過敏"],
+    "suitable_for": [
+      "腸胃敏感",
+      "皮膚敏感",
+      "食物過敏"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -29,20 +66,57 @@
     "author": "Nexi 推薦",
     "description": "低磷低蛋白，適合腎臟關注嘅狗狗（如點心BUN偏高情況）",
     "ingredients": [
-      {"item": "鴨肉（去皮）", "amount": "100g", "note": "低脂白肉"},
-      {"item": "薯仔", "amount": "100g", "note": "低磷澱粉來源"},
-      {"item": "翠玉瓜", "amount": "40g", "note": "低鉀蔬菜"},
-      {"item": "白飯魚", "amount": "20g", "note": "可選，補充鈣質"},
-      {"item": "魚油（藻油替代）", "amount": "1/2茶匙", "note": "Omega-3"}
+      {
+        "item": "鴨肉（去皮）",
+        "amount": "100g",
+        "note": "低脂白肉"
+      },
+      {
+        "item": "薯仔",
+        "amount": "100g",
+        "note": "低磷澱粉來源"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "40g",
+        "note": "低鉀蔬菜"
+      },
+      {
+        "item": "白飯魚",
+        "amount": "20g",
+        "note": "可選，補充鈣質"
+      },
+      {
+        "item": "魚油（藻油替代）",
+        "amount": "1/2茶匙",
+        "note": "Omega-3"
+      }
     ],
     "instructions": "1. 鴨肉蒸熟切粒\n2. 薯仔蒸熟壓蓉\n3. 翠玉瓜蒸軟切粒\n4. 全部拌勻，最後加魚油/藻油\n5. 放涼至室溫",
-    "nutrition_per_100g": {"protein": "8g", "fat": "3g", "carbs": "10g", "calories": "95kcal"},
-    "daily_amount": {"for_10kg": "280g", "for_20kg": "450g", "for_30kg": "600g"},
-    "health_tags": ["腎臟護理", "低磷", "低蛋白"],
+    "nutrition_per_100g": {
+      "protein": "8g",
+      "fat": "3g",
+      "carbs": "10g",
+      "calories": "95kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "280g",
+      "for_20kg": "450g",
+      "for_30kg": "600g"
+    },
+    "health_tags": [
+      "腎臟護理",
+      "低磷",
+      "低蛋白"
+    ],
     "protein_source": "鴨肉",
     "difficulty": "簡單",
     "prep_time": "25分鐘",
-    "suitable_for": ["腎臟關注", "BUN偏高", "需要低磷飲食"],
+    "suitable_for": [
+      "腎臟關注",
+      "BUN偏高",
+      "需要低磷飲食"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -52,21 +126,62 @@
     "author": "Nexi 推薦",
     "description": "Omega-3豐富，幫助平衡油脂分泌，減少體味",
     "ingredients": [
-      {"item": "袋鼠肉", "amount": "120g", "note": "低脂高蛋白，可轉羊肉"},
-      {"item": "南瓜籽粉", "amount": "1湯匙", "note": "天然杜蟲+鋅"},
-      {"item": "羽衣甘藍", "amount": "30g", "note": "豐富葉綠素，天然除臭"},
-      {"item": "藜麥", "amount": "40g", "note": "低升糖碳水"},
-      {"item": "藻油", "amount": "1/2茶匙", "note": "非海鮮Omega-3"},
-      {"item": "益生菌", "amount": "1份", "note": "跟包裝指示"}
+      {
+        "item": "袋鼠肉",
+        "amount": "120g",
+        "note": "低脂高蛋白，可轉羊肉"
+      },
+      {
+        "item": "南瓜籽粉",
+        "amount": "1湯匙",
+        "note": "天然杜蟲+鋅"
+      },
+      {
+        "item": "羽衣甘藍",
+        "amount": "30g",
+        "note": "豐富葉綠素，天然除臭"
+      },
+      {
+        "item": "藜麥",
+        "amount": "40g",
+        "note": "低升糖碳水"
+      },
+      {
+        "item": "藻油",
+        "amount": "1/2茶匙",
+        "note": "非海鮮Omega-3"
+      },
+      {
+        "item": "益生菌",
+        "amount": "1份",
+        "note": "跟包裝指示"
+      }
     ],
     "instructions": "1. 袋鼠肉煎熟切粒（唔好全熟，保留少汁）\n2. 藜麥煮熟瀝乾\n3. 羽衣甘藍蒸軟切碎\n4. 全部拌勻，加入南瓜籽粉、藻油\n5. 食用前先混合益生菌",
-    "nutrition_per_100g": {"protein": "11g", "fat": "5g", "carbs": "7g", "calories": "115kcal"},
-    "daily_amount": {"for_10kg": "240g", "for_20kg": "380g", "for_30kg": "520g"},
-    "health_tags": ["體味控制", "Omega-3", "杜蟲輔助"],
+    "nutrition_per_100g": {
+      "protein": "11g",
+      "fat": "5g",
+      "carbs": "7g",
+      "calories": "115kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "240g",
+      "for_20kg": "380g",
+      "for_30kg": "520g"
+    },
+    "health_tags": [
+      "體味控制",
+      "Omega-3",
+      "杜蟲輔助"
+    ],
     "protein_source": "袋鼠肉/羊肉",
     "difficulty": "中等",
     "prep_time": "30分鐘",
-    "suitable_for": ["體味問題", "油脂分泌旺盛", "需要天然杜蟲"],
+    "suitable_for": [
+      "體味問題",
+      "油脂分泌旺盛",
+      "需要天然杜蟲"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -76,20 +191,58 @@
     "author": "Nexi 推薦",
     "description": "軟身易消化，適合腸胃不適或胃口差時食用",
     "ingredients": [
-      {"item": "無糖燕麥片", "amount": "50g", "note": "低敏碳水"},
-      {"item": "羊奶粉", "amount": "2湯匙", "note": "益生菌+鈣質"},
-      {"item": "蒸雞胸", "amount": "80g", "note": "手撕成絲"},
-      {"item": "南瓜蓉", "amount": "60g", "note": "膳食纖維"},
-      {"item": "益生菌粉", "amount": "1份", "note": "跟包裝指示"}
+      {
+        "item": "無糖燕麥片",
+        "amount": "50g",
+        "note": "低敏碳水"
+      },
+      {
+        "item": "羊奶粉",
+        "amount": "2湯匙",
+        "note": "益生菌+鈣質"
+      },
+      {
+        "item": "蒸雞胸",
+        "amount": "80g",
+        "note": "手撕成絲"
+      },
+      {
+        "item": "南瓜蓉",
+        "amount": "60g",
+        "note": "膳食纖維"
+      },
+      {
+        "item": "益生菌粉",
+        "amount": "1份",
+        "note": "跟包裝指示"
+      }
     ],
     "instructions": "1. 燕麥片用熱水沖開成粥狀（或用少許水煮）\n2. 雞胸蒸熟手撕成絲\n3. 南瓜蒸熟壓蓉\n4. 將燕麥粥、雞絲、南瓜蓉拌勻\n5. 放涼後加入羊奶粉和益生菌",
-    "nutrition_per_100g": {"protein": "9g", "fat": "2g", "carbs": "12g", "calories": "100kcal"},
-    "daily_amount": {"for_10kg": "300g", "for_20kg": "480g", "for_30kg": "650g"},
-    "health_tags": ["腸道護理", "軟餐", "易消化"],
+    "nutrition_per_100g": {
+      "protein": "9g",
+      "fat": "2g",
+      "carbs": "12g",
+      "calories": "100kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "300g",
+      "for_20kg": "480g",
+      "for_30kg": "650g"
+    },
+    "health_tags": [
+      "腸道護理",
+      "軟餐",
+      "易消化"
+    ],
     "protein_source": "雞肉",
     "difficulty": "簡單",
     "prep_time": "15分鐘",
-    "suitable_for": ["腸胃不適", "胃口差", "老年犬", "手術後恢復"],
+    "suitable_for": [
+      "腸胃不適",
+      "胃口差",
+      "老年犬",
+      "手術後恢復"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -99,21 +252,62 @@
     "author": "Nexi 推薦",
     "description": "豐富Omega-3加上天然關節營養，適合關節問題狗狗",
     "ingredients": [
-      {"item": "三文魚", "amount": "120g", "note": "新鮮/急凍，去骨"},
-      {"item": "紫薯", "amount": "80g", "note": "抗氧化物豐富"},
-      {"item": "菠菜", "amount": "30g", "note": "切碎蒸軟"},
-      {"item": "青口素粉", "amount": "1/2茶匙", "note": "天然葡萄糖胺"},
-      {"item": "薑黃粉", "amount": "1/4茶匙", "note": "抗炎，加少少黑椒"},
-      {"item": "椰子油", "amount": "1茶匙", "note": "幫助吸收薑黃"}
+      {
+        "item": "三文魚",
+        "amount": "120g",
+        "note": "新鮮/急凍，去骨"
+      },
+      {
+        "item": "紫薯",
+        "amount": "80g",
+        "note": "抗氧化物豐富"
+      },
+      {
+        "item": "菠菜",
+        "amount": "30g",
+        "note": "切碎蒸軟"
+      },
+      {
+        "item": "青口素粉",
+        "amount": "1/2茶匙",
+        "note": "天然葡萄糖胺"
+      },
+      {
+        "item": "薑黃粉",
+        "amount": "1/4茶匙",
+        "note": "抗炎，加少少黑椒"
+      },
+      {
+        "item": "椰子油",
+        "amount": "1茶匙",
+        "note": "幫助吸收薑黃"
+      }
     ],
     "instructions": "1. 三文魚蒸熟拆肉（檢查細骨）\n2. 紫薯蒸熟切粒\n3. 菠菜蒸軟切碎\n4. 全部拌勻，加入青口素粉、薑黃粉、椰子油",
-    "nutrition_per_100g": {"protein": "10g", "fat": "6g", "carbs": "8g", "calories": "125kcal"},
-    "daily_amount": {"for_10kg": "220g", "for_20kg": "350g", "for_30kg": "480g"},
-    "health_tags": ["關節護理", "抗炎", "Omega-3"],
+    "nutrition_per_100g": {
+      "protein": "10g",
+      "fat": "6g",
+      "carbs": "8g",
+      "calories": "125kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "220g",
+      "for_20kg": "350g",
+      "for_30kg": "480g"
+    },
+    "health_tags": [
+      "關節護理",
+      "抗炎",
+      "Omega-3"
+    ],
     "protein_source": "三文魚",
     "difficulty": "簡單",
     "prep_time": "20分鐘",
-    "suitable_for": ["關節問題", "老年犬", "抗炎需要"],
+    "suitable_for": [
+      "關節問題",
+      "老年犬",
+      "抗炎需要"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -123,20 +317,59 @@
     "author": "Nexi 推薦",
     "description": "清熱去濕，夏天消暑必備，適合口臭體熱狗狗",
     "ingredients": [
-      {"item": "鴨胸肉", "amount": "100g", "note": "去皮"},
-      {"item": "冬瓜", "amount": "100g", "note": "去皮去籽切粒"},
-      {"item": "薏仁", "amount": "20g", "note": "先浸泡2小時"},
-      {"item": "新鮮巴西利", "amount": "少量", "note": "天然除口臭"},
-      {"item": "水", "amount": "500ml", "note": "煲湯用"}
+      {
+        "item": "鴨胸肉",
+        "amount": "100g",
+        "note": "去皮"
+      },
+      {
+        "item": "冬瓜",
+        "amount": "100g",
+        "note": "去皮去籽切粒"
+      },
+      {
+        "item": "薏仁",
+        "amount": "20g",
+        "note": "先浸泡2小時"
+      },
+      {
+        "item": "新鮮巴西利",
+        "amount": "少量",
+        "note": "天然除口臭"
+      },
+      {
+        "item": "水",
+        "amount": "500ml",
+        "note": "煲湯用"
+      }
     ],
     "instructions": "1. 薏仁浸泡2小時後瀝乾\n2. 鴨胸切粒，冬瓜去皮去籽切粒\n3. 所有材料加水大火滾起轉小火煲30分鐘\n4. 隔渣取湯和肉，放涼後俾狗狗\n5. 巴西利食用前先切碎混入",
-    "nutrition_per_100g": {"protein": "7g", "fat": "2g", "carbs": "3g", "calories": "60kcal"},
-    "daily_amount": {"for_10kg": "200g湯+料", "for_20kg": "350g湯+料", "for_30kg": "500g湯+料"},
-    "health_tags": ["消暑", "清熱", "去濕", "口臭"],
+    "nutrition_per_100g": {
+      "protein": "7g",
+      "fat": "2g",
+      "carbs": "3g",
+      "calories": "60kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "200g湯+料",
+      "for_20kg": "350g湯+料",
+      "for_30kg": "500g湯+料"
+    },
+    "health_tags": [
+      "消暑",
+      "清熱",
+      "去濕",
+      "口臭"
+    ],
     "protein_source": "鴨肉",
     "difficulty": "中等",
     "prep_time": "40分鐘",
-    "suitable_for": ["口臭", "體熱", "夏天", "濕熱體質"],
+    "suitable_for": [
+      "口臭",
+      "體熱",
+      "夏天",
+      "濕熱體質"
+    ],
     "meal_type": "湯品"
   },
   {
@@ -146,22 +379,65 @@
     "author": "Sunny & Nexi",
     "description": "為點心（18kg, BUN偏高）設計，低磷低蛋白但保留羊肉口味",
     "ingredients": [
-      {"item": "羊肉（瘦肉）", "amount": "80g", "note": "點心鍾意嘅蛋白質"},
-      {"item": "鴨肉", "amount": "60g", "note": "混合白肉減輕腎負擔"},
-      {"item": "薯仔", "amount": "100g", "note": "低磷澱粉"},
-      {"item": "翠玉瓜", "amount": "40g", "note": "低鉀蔬菜"},
-      {"item": "薏仁粉", "amount": "1湯匙", "note": "去濕"},
-      {"item": "藻油", "amount": "1/2茶匙", "note": "非海鮮Omega-3"},
-      {"item": "益生菌", "amount": "1份", "note": "跟包裝指示"}
+      {
+        "item": "羊肉（瘦肉）",
+        "amount": "80g",
+        "note": "點心鍾意嘅蛋白質"
+      },
+      {
+        "item": "鴨肉",
+        "amount": "60g",
+        "note": "混合白肉減輕腎負擔"
+      },
+      {
+        "item": "薯仔",
+        "amount": "100g",
+        "note": "低磷澱粉"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "40g",
+        "note": "低鉀蔬菜"
+      },
+      {
+        "item": "薏仁粉",
+        "amount": "1湯匙",
+        "note": "去濕"
+      },
+      {
+        "item": "藻油",
+        "amount": "1/2茶匙",
+        "note": "非海鮮Omega-3"
+      },
+      {
+        "item": "益生菌",
+        "amount": "1份",
+        "note": "跟包裝指示"
+      }
     ],
     "instructions": "1. 羊肉切粒慢煎（保留肉汁）\n2. 鴨肉蒸熟切絲\n3. 薯仔蒸熟壓蓉，翠玉瓜蒸軟切粒\n4. 全部拌勻（羊肉+鴨肉+薯蓉+翠玉瓜）\n5. 加入薏仁粉、藻油，食用前加益生菌",
-    "nutrition_per_100g": {"protein": "8g", "fat": "4g", "carbs": "9g", "calories": "100kcal"},
-    "daily_amount": {"for_18kg": "420g"},
-    "health_tags": ["腎臟護理", "低磷", "點心專屬"],
+    "nutrition_per_100g": {
+      "protein": "8g",
+      "fat": "4g",
+      "carbs": "9g",
+      "calories": "100kcal"
+    },
+    "daily_amount": {
+      "for_18kg": "420g"
+    },
+    "health_tags": [
+      "腎臟護理",
+      "低磷",
+      "點心專屬"
+    ],
     "protein_source": "羊肉+鴨肉",
     "difficulty": "中等",
     "prep_time": "30分鐘",
-    "suitable_for": ["BUN偏高", "腎臟關注", "需要保留紅肉口味"],
+    "suitable_for": [
+      "BUN偏高",
+      "腎臟關注",
+      "需要保留紅肉口味"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -171,22 +447,67 @@
     "author": "Sunny & Nexi",
     "description": "為牛奶妹（13kg, 心臟偏大+seizure史+南瓜子體味問題）設計，Omega-3平衡油脂",
     "ingredients": [
-      {"item": "袋鼠肉", "amount": "80g", "note": "低脂低致敏"},
-      {"item": "火雞心", "amount": "30g", "note": "牛磺酸，心臟健康"},
-      {"item": "南瓜蓉", "amount": "60g", "note": "纖維幫助排油"},
-      {"item": "藜麥", "amount": "30g", "note": "低升糖碳水"},
-      {"item": "南瓜籽粉", "amount": "1湯匙", "note": "輕烘烤+磨粉"},
-      {"item": "藻油", "amount": "1/2茶匙", "note": "非海鮮Omega-3"},
-      {"item": "紅參益生菌", "amount": "1份", "note": "跟包裝指示"}
+      {
+        "item": "袋鼠肉",
+        "amount": "80g",
+        "note": "低脂低致敏"
+      },
+      {
+        "item": "火雞心",
+        "amount": "30g",
+        "note": "牛磺酸，心臟健康"
+      },
+      {
+        "item": "南瓜蓉",
+        "amount": "60g",
+        "note": "纖維幫助排油"
+      },
+      {
+        "item": "藜麥",
+        "amount": "30g",
+        "note": "低升糖碳水"
+      },
+      {
+        "item": "南瓜籽粉",
+        "amount": "1湯匙",
+        "note": "輕烘烤+磨粉"
+      },
+      {
+        "item": "藻油",
+        "amount": "1/2茶匙",
+        "note": "非海鮮Omega-3"
+      },
+      {
+        "item": "紅參益生菌",
+        "amount": "1份",
+        "note": "跟包裝指示"
+      }
     ],
     "instructions": "1. 袋鼠肉煎熟切粒\n2. 火雞心蒸熟切碎\n3. 藜麥煮熟瀝乾，南瓜蒸熟壓蓉\n4. 全部拌勻，加入南瓜籽粉、藻油\n5. 食用前加紅參益生菌",
-    "nutrition_per_100g": {"protein": "10g", "fat": "4g", "carbs": "6g", "calories": "105kcal"},
-    "daily_amount": {"for_13kg": "320g"},
-    "health_tags": ["體味管理", "心臟護理", "Omega-3", "牛奶妹專屬"],
+    "nutrition_per_100g": {
+      "protein": "10g",
+      "fat": "4g",
+      "carbs": "6g",
+      "calories": "105kcal"
+    },
+    "daily_amount": {
+      "for_13kg": "320g"
+    },
+    "health_tags": [
+      "體味管理",
+      "心臟護理",
+      "Omega-3",
+      "牛奶妹專屬"
+    ],
     "protein_source": "袋鼠肉+火雞心",
     "difficulty": "中等",
     "prep_time": "30分鐘",
-    "suitable_for": ["體味", "心臟偏大", "seizure史", "Omega-3需要"],
+    "suitable_for": [
+      "體味",
+      "心臟偏大",
+      "seizure史",
+      "Omega-3需要"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -196,20 +517,57 @@
     "author": "Nexi 推薦",
     "description": "唔使開火嘅簡易餐，夏天消暑開胃",
     "ingredients": [
-      {"item": "熟雞胸肉", "amount": "100g", "note": "手撕成絲"},
-      {"item": "蘋果", "amount": "1/4個", "note": "去核切粒"},
-      {"item": "青瓜", "amount": "40g", "note": "切粒"},
-      {"item": "無糖乳酪（希臘式）", "amount": "2湯匙", "note": "益生菌"},
-      {"item": "亞麻籽粉", "amount": "1茶匙", "note": "纖維+Omega-3"}
+      {
+        "item": "熟雞胸肉",
+        "amount": "100g",
+        "note": "手撕成絲"
+      },
+      {
+        "item": "蘋果",
+        "amount": "1/4個",
+        "note": "去核切粒"
+      },
+      {
+        "item": "青瓜",
+        "amount": "40g",
+        "note": "切粒"
+      },
+      {
+        "item": "無糖乳酪（希臘式）",
+        "amount": "2湯匙",
+        "note": "益生菌"
+      },
+      {
+        "item": "亞麻籽粉",
+        "amount": "1茶匙",
+        "note": "纖維+Omega-3"
+      }
     ],
     "instructions": "1. 雞胸肉撕成絲\n2. 蘋果去核切粒，青瓜切粒\n3. 所有材料拌勻，混入乳酪\n4. 灑上亞麻籽粉即可",
-    "nutrition_per_100g": {"protein": "11g", "fat": "3g", "carbs": "5g", "calories": "95kcal"},
-    "daily_amount": {"for_10kg": "200g", "for_20kg": "350g", "for_30kg": "500g"},
-    "health_tags": ["簡易", "免煮", "消暑"],
+    "nutrition_per_100g": {
+      "protein": "11g",
+      "fat": "3g",
+      "carbs": "5g",
+      "calories": "95kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "200g",
+      "for_20kg": "350g",
+      "for_30kg": "500g"
+    },
+    "health_tags": [
+      "簡易",
+      "免煮",
+      "消暑"
+    ],
     "protein_source": "雞肉",
     "difficulty": "簡單",
     "prep_time": "5分鐘",
-    "suitable_for": ["夏天", "胃口差", "無火煮食"],
+    "suitable_for": [
+      "夏天",
+      "胃口差",
+      "無火煮食"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -219,21 +577,62 @@
     "author": "Nexi 推薦",
     "description": "牛磺酸豐富＋抗氧化物，適合心臟關注嘅狗狗（如牛奶妹）",
     "ingredients": [
-      {"item": "火雞心", "amount": "50g", "note": "天然牛磺酸來源"},
-      {"item": "火雞肉", "amount": "80g", "note": "瘦肉"},
-      {"item": "藍莓", "amount": "20g", "note": "新鮮/急凍，抗氧化物"},
-      {"item": "南瓜蓉", "amount": "60g", "note": "纖維+β-胡蘿蔔素"},
-      {"item": "藜麥", "amount": "30g", "note": "完全蛋白質"},
-      {"item": "藻油", "amount": "1/2茶匙", "note": "Omega-3"}
+      {
+        "item": "火雞心",
+        "amount": "50g",
+        "note": "天然牛磺酸來源"
+      },
+      {
+        "item": "火雞肉",
+        "amount": "80g",
+        "note": "瘦肉"
+      },
+      {
+        "item": "藍莓",
+        "amount": "20g",
+        "note": "新鮮/急凍，抗氧化物"
+      },
+      {
+        "item": "南瓜蓉",
+        "amount": "60g",
+        "note": "纖維+β-胡蘿蔔素"
+      },
+      {
+        "item": "藜麥",
+        "amount": "30g",
+        "note": "完全蛋白質"
+      },
+      {
+        "item": "藻油",
+        "amount": "1/2茶匙",
+        "note": "Omega-3"
+      }
     ],
     "instructions": "1. 火雞心+火雞肉蒸熟切粒\n2. 藜麥煮熟瀝乾\n3. 南瓜蒸熟壓蓉\n4. 藍莓洗淨原粒（唔使切）\n5. 全部拌勻，最後加藻油",
-    "nutrition_per_100g": {"protein": "11g", "fat": "3g", "carbs": "7g", "calories": "105kcal"},
-    "daily_amount": {"for_10kg": "230g", "for_20kg": "370g", "for_30kg": "500g"},
-    "health_tags": ["心臟護理", "牛磺酸", "抗氧化物"],
+    "nutrition_per_100g": {
+      "protein": "11g",
+      "fat": "3g",
+      "carbs": "7g",
+      "calories": "105kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "230g",
+      "for_20kg": "370g",
+      "for_30kg": "500g"
+    },
+    "health_tags": [
+      "心臟護理",
+      "牛磺酸",
+      "抗氧化物"
+    ],
     "protein_source": "火雞+火雞心",
     "difficulty": "簡單",
     "prep_time": "25分鐘",
-    "suitable_for": ["心臟偏大", "需要牛磺酸補充", "心血管健康"],
+    "suitable_for": [
+      "心臟偏大",
+      "需要牛磺酸補充",
+      "心血管健康"
+    ],
     "meal_type": "主餐"
   },
   {
@@ -243,20 +642,58 @@
     "author": "Nexi 推薦",
     "description": "中醫角度去濕清熱，適合口水黏笠、體味重、皮膚易出油嘅狗狗",
     "ingredients": [
-      {"item": "紅豆", "amount": "20g", "note": "浸泡4小時"},
-      {"item": "薏仁", "amount": "20g", "note": "浸泡4小時"},
-      {"item": "鴨肉粒", "amount": "50g", "note": "涼性蛋白質"},
-      {"item": "冬瓜皮", "amount": "30g", "note": "連皮，去濕重點"},
-      {"item": "水", "amount": "600ml", "note": ""}
+      {
+        "item": "紅豆",
+        "amount": "20g",
+        "note": "浸泡4小時"
+      },
+      {
+        "item": "薏仁",
+        "amount": "20g",
+        "note": "浸泡4小時"
+      },
+      {
+        "item": "鴨肉粒",
+        "amount": "50g",
+        "note": "涼性蛋白質"
+      },
+      {
+        "item": "冬瓜皮",
+        "amount": "30g",
+        "note": "連皮，去濕重點"
+      },
+      {
+        "item": "水",
+        "amount": "600ml",
+        "note": ""
+      }
     ],
     "instructions": "1. 紅豆薏仁浸泡4小時後瀝乾\n2. 鴨肉切粒，冬瓜連皮切塊\n3. 所有材料加水大火滾起轉小火煲45分鐘\n4. 隔渣取湯，鴨肉+少量薏仁紅豆俾狗狗\n5. 每週2-3次作為補充",
-    "nutrition_per_100g": {"protein": "5g", "fat": "1g", "carbs": "8g", "calories": "55kcal"},
-    "daily_amount": {"for_10kg": "150ml湯+料", "for_20kg": "250ml湯+料", "for_30kg": "350ml湯+料"},
-    "health_tags": ["去濕", "清熱", "中醫食療"],
+    "nutrition_per_100g": {
+      "protein": "5g",
+      "fat": "1g",
+      "carbs": "8g",
+      "calories": "55kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "150ml湯+料",
+      "for_20kg": "250ml湯+料",
+      "for_30kg": "350ml湯+料"
+    },
+    "health_tags": [
+      "去濕",
+      "清熱",
+      "中醫食療"
+    ],
     "protein_source": "鴨肉",
     "difficulty": "中等",
     "prep_time": "60分鐘",
-    "suitable_for": ["濕熱體質", "口水黏笠", "皮膚出油", "體味重"],
+    "suitable_for": [
+      "濕熱體質",
+      "口水黏笠",
+      "皮膚出油",
+      "體味重"
+    ],
     "meal_type": "湯品"
   },
   {
@@ -266,20 +703,686 @@
     "author": "Nexi 推薦",
     "description": "低卡高纖，適合需要控制體重嘅狗狗",
     "ingredients": [
-      {"item": "雞胸肉", "amount": "80g", "note": "最低脂蛋白質"},
-      {"item": "翠玉瓜", "amount": "60g", "note": "低卡蔬菜"},
-      {"item": "西芹", "amount": "30g", "note": "切碎，纖維豐富"},
-      {"item": "南瓜", "amount": "50g", "note": "代替碳水"},
-      {"item": "無糖乳酪", "amount": "1湯匙", "note": "益生菌"}
+      {
+        "item": "雞胸肉",
+        "amount": "80g",
+        "note": "最低脂蛋白質"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "60g",
+        "note": "低卡蔬菜"
+      },
+      {
+        "item": "西芹",
+        "amount": "30g",
+        "note": "切碎，纖維豐富"
+      },
+      {
+        "item": "南瓜",
+        "amount": "50g",
+        "note": "代替碳水"
+      },
+      {
+        "item": "無糖乳酪",
+        "amount": "1湯匙",
+        "note": "益生菌"
+      }
     ],
     "instructions": "1. 雞胸肉蒸熟切粒\n2. 翠玉瓜、西芹蒸軟切粒\n3. 南瓜蒸熟壓蓉\n4. 全部拌勻，最後混入乳酪",
-    "nutrition_per_100g": {"protein": "10g", "fat": "1.5g", "carbs": "4g", "calories": "70kcal"},
-    "daily_amount": {"for_10kg": "250g", "for_20kg": "400g", "for_30kg": "550g"},
-    "health_tags": ["減重", "低脂", "高纖"],
+    "nutrition_per_100g": {
+      "protein": "10g",
+      "fat": "1.5g",
+      "carbs": "4g",
+      "calories": "70kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "250g",
+      "for_20kg": "400g",
+      "for_30kg": "550g"
+    },
+    "health_tags": [
+      "減重",
+      "低脂",
+      "高纖"
+    ],
     "protein_source": "雞肉",
     "difficulty": "簡單",
     "prep_time": "15分鐘",
-    "suitable_for": ["體重控制", "肥胖", "減肥中"],
+    "suitable_for": [
+      "體重控制",
+      "肥胖",
+      "減肥中"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 13,
+    "name": "均衡牛肉蔬菜飯",
+    "name_en": "Balanced Beef & Veggie Rice",
+    "author": "Nexi 推薦",
+    "description": "經典均衡鮮食餐，適合大多數健康成犬，簡單易整",
+    "ingredients": [
+      {
+        "item": "瘦牛肉（免治）",
+        "amount": "120g",
+        "note": "可轉和牛碎"
+      },
+      {
+        "item": "糙米",
+        "amount": "60g",
+        "note": "煮熟"
+      },
+      {
+        "item": "紅蘿蔔",
+        "amount": "40g",
+        "note": "刨絲蒸熟"
+      },
+      {
+        "item": "西蘭花",
+        "amount": "30g",
+        "note": "切碎蒸軟"
+      },
+      {
+        "item": "雞蛋",
+        "amount": "半隻",
+        "note": "連殼焗乾磨粉補鈣"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/2茶匙",
+        "note": "Omega-3"
+      }
+    ],
+    "instructions": "1. 牛肉免治慢煎至熟（唔落油）\n2. 糙米煮熟瀝乾\n3. 紅蘿蔔刨絲、西蘭花切碎，一齊蒸熟\n4. 蛋連殼放入焗爐150°C焗20分鐘，磨粉\n5. 全部拌勻，最後加魚油",
+    "nutrition_per_100g": {
+      "protein": "10g",
+      "fat": "5g",
+      "carbs": "8g",
+      "calories": "115kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "230g",
+      "for_20kg": "380g",
+      "for_30kg": "520g"
+    },
+    "health_tags": [
+      "均衡營養",
+      "日常主食"
+    ],
+    "protein_source": "牛肉",
+    "difficulty": "簡單",
+    "prep_time": "25分鐘",
+    "suitable_for": [
+      "健康成犬",
+      "日常餵食"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 14,
+    "name": "三文魚薯仔亮毛餐",
+    "name_en": "Salmon & Sweet Potato Coat Care",
+    "author": "Nexi 推薦",
+    "description": "三文魚豐富嘅Omega-3令毛髮更光澤，薯仔提供穩定能量",
+    "ingredients": [
+      {
+        "item": "三文魚",
+        "amount": "100g",
+        "note": "新鮮/急凍，去骨拆肉"
+      },
+      {
+        "item": "紫薯",
+        "amount": "80g",
+        "note": "抗氧化物豐富"
+      },
+      {
+        "item": "菠菜",
+        "amount": "30g",
+        "note": "切碎蒸軟"
+      },
+      {
+        "item": "椰子油",
+        "amount": "1茶匙",
+        "note": "中鏈脂肪酸，皮毛健康"
+      },
+      {
+        "item": "亞麻籽粉",
+        "amount": "1茶匙",
+        "note": "再加纖維+Omega-3"
+      }
+    ],
+    "instructions": "1. 三文魚蒸熟拆肉，檢查細骨\n2. 紫薯蒸熟切粒\n3. 菠菜蒸軟切碎\n4. 全部拌勻，加入椰子油和亞麻籽粉",
+    "nutrition_per_100g": {
+      "protein": "9g",
+      "fat": "6g",
+      "carbs": "7g",
+      "calories": "120kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "210g",
+      "for_20kg": "340g",
+      "for_30kg": "470g"
+    },
+    "health_tags": [
+      "毛髮護理",
+      "Omega-3",
+      "皮膚健康"
+    ],
+    "protein_source": "三文魚",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "毛髮乾燥",
+      "皮膚敏感",
+      "甩毛"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 15,
+    "name": "羊肉薯蓉老年餐",
+    "name_en": "Lamb & Mash Senior Meal",
+    "author": "Nexi 推薦",
+    "description": "軟身易咬，適合老年犬或牙齒唔好嘅狗狗",
+    "ingredients": [
+      {
+        "item": "羊肉（瘦肉）",
+        "amount": "100g",
+        "note": "切粒蒸軟"
+      },
+      {
+        "item": "薯仔",
+        "amount": "80g",
+        "note": "蒸熟壓成蓉"
+      },
+      {
+        "item": "南瓜",
+        "amount": "50g",
+        "note": "蒸熟壓蓉"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "30g",
+        "note": "刨絲蒸軟"
+      },
+      {
+        "item": "羊奶粉",
+        "amount": "1湯匙",
+        "note": "補鈣+益生菌"
+      },
+      {
+        "item": "藻油",
+        "amount": "1/2茶匙",
+        "note": "非海鮮Omega-3"
+      }
+    ],
+    "instructions": "1. 羊肉蒸至軟身，用叉壓成絲\n2. 薯仔和南瓜蒸熟，分別壓蓉\n3. 翠玉瓜刨絲蒸軟\n4. 將羊肉絲、薯蓉、南瓜蓉、翠玉瓜拌勻\n5. 放涼後加入羊奶粉和藻油",
+    "nutrition_per_100g": {
+      "protein": "8g",
+      "fat": "4g",
+      "carbs": "9g",
+      "calories": "100kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "250g",
+      "for_20kg": "400g",
+      "for_30kg": "550g"
+    },
+    "health_tags": [
+      "老年犬",
+      "軟餐",
+      "易消化",
+      "關節護理"
+    ],
+    "protein_source": "羊肉",
+    "difficulty": "簡單",
+    "prep_time": "25分鐘",
+    "suitable_for": [
+      "老年犬",
+      "牙齒問題",
+      "胃口差"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 16,
+    "name": "抗敏鹿肉薯仔餐",
+    "name_en": "Hypoallergenic Venison & Potato",
+    "author": "Nexi 推薦",
+    "description": "鹿肉係最低致敏蛋白質之一，適合嚴重過敏嘅狗狗",
+    "ingredients": [
+      {
+        "item": "鹿肉",
+        "amount": "100g",
+        "note": "可轉羊肉/袋鼠肉"
+      },
+      {
+        "item": "薯仔",
+        "amount": "80g",
+        "note": "低敏澱粉"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "50g",
+        "note": "低敏蔬菜"
+      },
+      {
+        "item": "紅蘿蔔",
+        "amount": "30g",
+        "note": "刨絲"
+      },
+      {
+        "item": "椰子油",
+        "amount": "1茶匙",
+        "note": "抗菌"
+      },
+      {
+        "item": "益生菌",
+        "amount": "1份",
+        "note": "跟包裝指示"
+      }
+    ],
+    "instructions": "1. 鹿肉切粒慢煎至熟（保留肉汁）\n2. 薯仔蒸熟壓蓉\n3. 翠玉瓜切粒、紅蘿蔔刨絲，蒸軟\n4. 全部拌勻，加入椰子油\n5. 食用前先加益生菌",
+    "nutrition_per_100g": {
+      "protein": "9g",
+      "fat": "3g",
+      "carbs": "8g",
+      "calories": "95kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "230g",
+      "for_20kg": "380g",
+      "for_30kg": "520g"
+    },
+    "health_tags": [
+      "低過敏",
+      "單一蛋白",
+      "腸胃敏感",
+      "皮膚敏感"
+    ],
+    "protein_source": "鹿肉",
+    "difficulty": "簡單",
+    "prep_time": "25分鐘",
+    "suitable_for": [
+      "嚴重過敏",
+      "食物不耐受",
+      "皮膚敏感"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 17,
+    "name": "雞肉椰菜花減脂餐",
+    "name_en": "Chicken & Cauliflower Diet Meal",
+    "author": "Nexi 推薦",
+    "description": "低卡低碳，用椰菜花代替部份碳水，適合減重狗狗",
+    "ingredients": [
+      {
+        "item": "雞胸肉",
+        "amount": "120g",
+        "note": "最低脂蛋白質"
+      },
+      {
+        "item": "椰菜花",
+        "amount": "60g",
+        "note": "切碎代替飯"
+      },
+      {
+        "item": "青瓜",
+        "amount": "40g",
+        "note": "切粒，幾乎零卡"
+      },
+      {
+        "item": "紅蘿蔔",
+        "amount": "20g",
+        "note": "少量刨絲"
+      },
+      {
+        "item": "無糖乳酪",
+        "amount": "1湯匙",
+        "note": "益生菌+蛋白質"
+      }
+    ],
+    "instructions": "1. 雞胸肉蒸熟切粒\n2. 椰菜花切碎蒸軟（代替澱粉）\n3. 青瓜切粒，紅蘿蔔刨絲\n4. 全部拌勻，最後混入乳酪",
+    "nutrition_per_100g": {
+      "protein": "12g",
+      "fat": "1.5g",
+      "carbs": "3g",
+      "calories": "75kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "220g",
+      "for_20kg": "350g",
+      "for_30kg": "480g"
+    },
+    "health_tags": [
+      "減重",
+      "低脂",
+      "低碳",
+      "高蛋白"
+    ],
+    "protein_source": "雞肉",
+    "difficulty": "簡單",
+    "prep_time": "15分鐘",
+    "suitable_for": [
+      "減重",
+      "糖尿病",
+      "低碳水需要"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 18,
+    "name": "豬肉蘋果暖胃餐",
+    "name_en": "Pork & Apple Warm Bowl",
+    "author": "Nexi 推薦",
+    "description": "豬肉提供維他命B群，蘋果嘅果膠有助腸道健康，冬天暖胃之選",
+    "ingredients": [
+      {
+        "item": "豬瘦肉",
+        "amount": "100g",
+        "note": "選里肌肉，去肥"
+      },
+      {
+        "item": "蘋果",
+        "amount": "半個",
+        "note": "去核切粒"
+      },
+      {
+        "item": "番薯",
+        "amount": "60g",
+        "note": "纖維豐富"
+      },
+      {
+        "item": "羽衣甘藍",
+        "amount": "20g",
+        "note": "切碎蒸軟"
+      },
+      {
+        "item": "薑粉",
+        "amount": "1/4茶匙",
+        "note": "暖胃，少量即可"
+      }
+    ],
+    "instructions": "1. 豬瘦肉切粒，蒸熟或慢煮（確保全熟）\n2. 番薯蒸熟切粒\n3. 蘋果去核切粒，羽衣甘藍切碎蒸軟\n4. 全部拌勻，灑上薑粉",
+    "nutrition_per_100g": {
+      "protein": "9g",
+      "fat": "3g",
+      "carbs": "8g",
+      "calories": "100kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "240g",
+      "for_20kg": "390g",
+      "for_30kg": "540g"
+    },
+    "health_tags": [
+      "暖胃",
+      "腸道健康",
+      "維他命B"
+    ],
+    "protein_source": "豬肉",
+    "difficulty": "簡單",
+    "prep_time": "25分鐘",
+    "suitable_for": [
+      "冬天",
+      "腸胃虛弱",
+      "需要B群"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 19,
+    "name": "火雞心臟保健餐",
+    "name_en": "Turkey Heart Health Meal",
+    "author": "Nexi 推薦",
+    "description": "火雞心含豐富牛磺酸，配合Q10食物，適合心臟保健",
+    "ingredients": [
+      {
+        "item": "火雞心",
+        "amount": "60g",
+        "note": "牛磺酸最豐富"
+      },
+      {
+        "item": "火雞肉",
+        "amount": "80g",
+        "note": "瘦肉"
+      },
+      {
+        "item": "南瓜",
+        "amount": "60g",
+        "note": "CoQ10來源"
+      },
+      {
+        "item": "西蘭花",
+        "amount": "30g",
+        "note": "切碎"
+      },
+      {
+        "item": "藜麥",
+        "amount": "30g",
+        "note": "完全蛋白質"
+      },
+      {
+        "item": "魚油",
+        "amount": "1/2茶匙",
+        "note": "Omega-3抗炎"
+      }
+    ],
+    "instructions": "1. 火雞心洗淨切半，火雞肉切粒\n2. 一齊蒸熟（保留汁液）\n3. 藜麥煮熟瀝乾，南瓜蒸熟壓蓉\n4. 西蘭花切碎蒸軟\n5. 全部拌勻，加入魚油",
+    "nutrition_per_100g": {
+      "protein": "11g",
+      "fat": "3g",
+      "carbs": "6g",
+      "calories": "100kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "220g",
+      "for_20kg": "360g",
+      "for_30kg": "500g"
+    },
+    "health_tags": [
+      "心臟護理",
+      "牛磺酸",
+      "抗炎"
+    ],
+    "protein_source": "火雞+火雞心",
+    "difficulty": "中等",
+    "prep_time": "25分鐘",
+    "suitable_for": [
+      "心臟偏大",
+      "心肌問題",
+      "牛磺酸補充"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 20,
+    "name": "魚肉豆腐軟餐",
+    "name_en": "Fish & Tofu Soft Meal",
+    "author": "Nexi 推薦",
+    "description": "極軟易消化，適合手術後、病癒或腸胃極敏感嘅狗狗",
+    "ingredients": [
+      {
+        "item": "鯇魚肉",
+        "amount": "80g",
+        "note": "去骨拆肉，蒸熟"
+      },
+      {
+        "item": "軟豆腐",
+        "amount": "60g",
+        "note": "壓碎"
+      },
+      {
+        "item": "南瓜蓉",
+        "amount": "50g",
+        "note": "蒸熟壓蓉"
+      },
+      {
+        "item": "小米粥",
+        "amount": "40g",
+        "note": "比白米更易消化"
+      },
+      {
+        "item": "雞蛋黃",
+        "amount": "1個",
+        "note": "丰富卵磷脂"
+      }
+    ],
+    "instructions": "1. 鯇魚肉蒸熟拆肉（檢查細骨）\n2. 軟豆腐瀝乾壓碎\n3. 南瓜蒸熟壓蓉\n4. 小米煮成稀粥\n5. 蛋黃蒸熟壓碎\n6. 全部拌勻成軟糊狀，放涼食用",
+    "nutrition_per_100g": {
+      "protein": "8g",
+      "fat": "3g",
+      "carbs": "5g",
+      "calories": "80kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "280g",
+      "for_20kg": "450g",
+      "for_30kg": "620g"
+    },
+    "health_tags": [
+      "軟餐",
+      "易消化",
+      "病癒恢復",
+      "腸胃敏感"
+    ],
+    "protein_source": "魚肉",
+    "difficulty": "簡單",
+    "prep_time": "20分鐘",
+    "suitable_for": [
+      "手術後",
+      "病癒",
+      "腸胃炎",
+      "老年犬吞嚥困難"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 21,
+    "name": "火鴨絲杞子明目餐",
+    "name_en": "Duck & Goji Berry Eye Care",
+    "author": "Nexi 推薦",
+    "description": "杞子含豐富玉米黃素，配合鴨肉清熱，適合眼睛保健",
+    "ingredients": [
+      {
+        "item": "鴨胸肉",
+        "amount": "100g",
+        "note": "去皮"
+      },
+      {
+        "item": "杞子（枸杞）",
+        "amount": "10粒",
+        "note": "浸泡後切碎"
+      },
+      {
+        "item": "紅蘿蔔",
+        "amount": "40g",
+        "note": "刨絲，維他命A"
+      },
+      {
+        "item": "南瓜",
+        "amount": "50g",
+        "note": "β-胡蘿蔔素"
+      },
+      {
+        "item": "小米",
+        "amount": "30g",
+        "note": "煮熟"
+      },
+      {
+        "item": "藍莓",
+        "amount": "10粒",
+        "note": "抗氧化物"
+      }
+    ],
+    "instructions": "1. 鴨胸肉蒸熟切絲\n2. 杞子用暖水浸泡10分鐘，瀝乾切碎\n3. 紅蘿蔔刨絲，南瓜切粒，一齊蒸熟\n4. 小米煮熟瀝乾\n5. 藍莓洗淨原粒\n6. 全部拌勻（藍莓最後先加）",
+    "nutrition_per_100g": {
+      "protein": "9g",
+      "fat": "2g",
+      "carbs": "8g",
+      "calories": "90kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "230g",
+      "for_20kg": "370g",
+      "for_30kg": "510g"
+    },
+    "health_tags": [
+      "明目",
+      "眼睛護理",
+      "抗氧化"
+    ],
+    "protein_source": "鴨肉",
+    "difficulty": "簡單",
+    "prep_time": "30分鐘",
+    "suitable_for": [
+      "眼睛護理",
+      "老年犬",
+      "白內障預防"
+    ],
+    "meal_type": "主餐"
+  },
+  {
+    "id": 22,
+    "name": "兔肉西芹低敏餐",
+    "name_en": "Rabbit & Celery Hypoallergenic Meal",
+    "author": "Nexi 推薦",
+    "description": "兔肉係最低脂蛋白質之一，新蛋白質來源適合轉換飲食",
+    "ingredients": [
+      {
+        "item": "兔肉",
+        "amount": "100g",
+        "note": "可買急凍兔髀拆肉"
+      },
+      {
+        "item": "西芹",
+        "amount": "30g",
+        "note": "切碎，豐富纖維"
+      },
+      {
+        "item": "番薯",
+        "amount": "60g",
+        "note": "低升糖碳水化合物"
+      },
+      {
+        "item": "翠玉瓜",
+        "amount": "40g",
+        "note": "切粒"
+      },
+      {
+        "item": "椰子油",
+        "amount": "1茶匙",
+        "note": "MCT健康脂肪"
+      }
+    ],
+    "instructions": "1. 兔肉蒸熟拆肉切絲\n2. 番薯蒸熟切粒\n3. 西芹切碎，翠玉瓜切粒，蒸軟\n4. 全部拌勻，加入椰子油",
+    "nutrition_per_100g": {
+      "protein": "10g",
+      "fat": "2.5g",
+      "carbs": "7g",
+      "calories": "90kcal"
+    },
+    "daily_amount": {
+      "for_10kg": "230g",
+      "for_20kg": "370g",
+      "for_30kg": "510g"
+    },
+    "health_tags": [
+      "低過敏",
+      "低脂",
+      "新蛋白質",
+      "腸胃敏感"
+    ],
+    "protein_source": "兔肉",
+    "difficulty": "中等",
+    "prep_time": "25分鐘",
+    "suitable_for": [
+      "食物過敏",
+      "需要轉蛋白質",
+      "腸胃敏感"
+    ],
     "meal_type": "主餐"
   }
 ]

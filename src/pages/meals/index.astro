@@ -4,43 +4,53 @@ import mealPlans from '../../data/meal-plans.json';
 
 const allTags = [...new Set(mealPlans.flatMap(m => m.health_tags))].sort();
 const allProtein = [...new Set(mealPlans.map(m => m.protein_source))].sort();
-const tagFilter = Astro.url.searchParams.get('tag') || '';
-const proteinFilter = Astro.url.searchParams.get('protein') || '';
-
-let filtered = mealPlans;
-if (tagFilter) filtered = filtered.filter(m => m.health_tags.includes(tagFilter));
-if (proteinFilter) filtered = filtered.filter(m => m.protein_source.includes(proteinFilter));
+const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
 ---
 
 <BaseLayout title="🥘 鮮食餐單庫" lang="zh">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">🥘 鮮食餐單庫</h1>
-    <p class="text-sm text-gray-400 mb-3">為狗狗健康設計嘅鮮食餐單 — 分享你嘅 recipe，或者搵適合嘅餐單</p>
+    <p class="text-sm text-gray-400 mb-3">為狗狗健康設計嘅鮮食餐單 — 共 {mealPlans.length} 款，輸入基本資料即時推薦</p>
 
     <div class="flex gap-2 mb-5 flex-wrap">
       <a href="/meals/recommend/" class="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium no-underline hover:bg-brand/90 transition">
         ✨ 即時餐單推薦
       </a>
-      <a href="/meals/" class="bg-gray-50 text-gray-500 px-4 py-2 rounded-xl text-sm font-medium no-underline hover:bg-gray-100 transition">
-        📋 全部餐單 ({mealPlans.length})
-      </a>
+      <button id="clearFilter" class="bg-gray-50 text-gray-500 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition">
+        📋 顯示全部 ({mealPlans.length})
+      </button>
     </div>
 
     <!-- Filters -->
-    <div class="flex gap-2 mb-4 flex-wrap overflow-x-auto scrollbar-hide">
-      <a href="/meals/" class={`shrink-0 px-3 py-1 rounded-full text-xs font-medium no-underline transition ${!tagFilter && !proteinFilter ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>全部</a>
+    <div class="flex gap-1.5 mb-3 flex-wrap overflow-x-auto scrollbar-hide" id="tagFilters">
+      <button data-tag="" class="filter-chip active px-3 py-1.5 rounded-full text-xs font-medium border transition bg-brand text-white border-brand">全部</button>
       {allTags.map(t => (
-        <a href={`/meals/?tag=${encodeURIComponent(t)}`}
-          class={`shrink-0 px-3 py-1 rounded-full text-xs font-medium no-underline transition ${tagFilter === t ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}
-        >{t}</a>
+        <button data-tag={t}
+          class="filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30"
+        >{t}</button>
       ))}
     </div>
 
+    <!-- Type filter -->
+    <div class="flex gap-1.5 mb-4 flex-wrap" id="typeFilters">
+      {allTypes.map(t => (
+        <button data-type={t}
+          class="type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30"
+        >{t}</button>
+      ))}
+    </div>
+
+    <!-- Results count -->
+    <p id="resultCount" class="text-xs text-gray-400 mb-3">顯示 {mealPlans.length} 款餐單</p>
+
     <!-- Meal grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {filtered.map(m => (
+    <div id="mealGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {mealPlans.map(m => (
         <a href={`/meals/${m.id}`}
-          class="group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+          data-tags={m.health_tags.join(',')}
+          data-type={m.meal_type}
+          data-protein={m.protein_source}
+          class="meal-card group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
         >
           <div class="flex items-start gap-3">
             <div class="min-w-0 flex-1">
@@ -53,6 +63,7 @@ if (proteinFilter) filtered = filtered.filter(m => m.protein_source.includes(pro
                 <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{m.protein_source}</span>
                 <span class="text-[10px] text-gray-300">{m.prep_time}</span>
                 <span class="text-[10px] text-gray-300">👤 {m.author}</span>
+                <span class="text-[10px] text-gray-300">{m.meal_type}</span>
               </div>
               <div class="flex gap-1 mt-1.5 flex-wrap">
                 {m.health_tags.slice(0, 3).map(t => (
@@ -65,12 +76,80 @@ if (proteinFilter) filtered = filtered.filter(m => m.protein_source.includes(pro
       ))}
     </div>
 
-    {filtered.length === 0 && (
-      <p class="text-center text-gray-400 py-10">搵唔到符合條件嘅餐單</p>
-    )}
+    <p id="noResults" class="text-center text-gray-400 py-10 hidden">搵唔到符合條件嘅餐單，試下放寬條件</p>
 
     <div class="mt-8 pt-4 border-t border-gray-100">
       <p class="text-xs text-gray-300 text-center">想分享你嘅餐單？聯絡 Sunny 話俾我知 😎</p>
     </div>
   </div>
+
+  <script>
+    const cards = document.querySelectorAll('.meal-card');
+    const chips = document.querySelectorAll('.filter-chip');
+    const typeChips = document.querySelectorAll('.type-chip');
+    const resultCount = document.getElementById('resultCount');
+    const noResults = document.getElementById('noResults');
+    const grid = document.getElementById('mealGrid');
+    const clearBtn = document.getElementById('clearFilter');
+
+    let activeTag = '';
+    let activeType = '';
+
+    function filterMeals() {
+      let visible = 0;
+      cards.forEach(card => {
+        const tags = (card.dataset.tags || '').split(',');
+        const type = card.dataset.type || '';
+        const matchesTag = !activeTag || tags.includes(activeTag);
+        const matchesType = !activeType || type === activeType;
+        const show = matchesTag && matchesType;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      resultCount.textContent = `顯示 ${visible} 款餐單`;
+      noResults.classList.toggle('hidden', visible > 0);
+    }
+
+    // Tag filter chips
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeTag = chip.dataset.tag;
+        chips.forEach(c => {
+          const isActive = c.dataset.tag === activeTag;
+          c.className = `filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
+        });
+        typeChips.forEach(c => {
+          c.className = `type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30`;
+        });
+        activeType = '';
+        filterMeals();
+      });
+    });
+
+    // Type filter chips
+    typeChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeType = chip.dataset.type === activeType ? '' : chip.dataset.type;
+        typeChips.forEach(c => {
+          const isActive = c.dataset.type === activeType;
+          c.className = `type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30'}`;
+        });
+        filterMeals();
+      });
+    });
+
+    // Clear all filters
+    clearBtn.addEventListener('click', () => {
+      activeTag = '';
+      activeType = '';
+      chips.forEach(c => {
+        const isActive = c.dataset.tag === '';
+        c.className = `filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
+      });
+      typeChips.forEach(c => {
+        c.className = `type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30`;
+      });
+      filterMeals();
+    });
+  </script>
 </BaseLayout>
