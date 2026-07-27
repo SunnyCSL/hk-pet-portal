@@ -58,6 +58,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
           data-type={m.meal_type}
           data-protein={m.protein_source}
           data-species={m.species || 'dog'}
+          data-allergy={m.allergy_tag || ''}
           class="meal-card group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
         >
           <div class="flex items-start gap-3">
@@ -69,6 +70,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
               <p class="text-xs text-gray-400 mb-2 leading-relaxed">{m.description}</p>
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{m.protein_source}</span>
+                {m.allergy_tag && <span class="text-[9px] px-1.5 py-0.5 rounded-full {m.allergy_tag.includes('高') ? 'bg-red-50 text-red-500' : m.allergy_tag.includes('超低') ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}">{m.allergy_tag}</span>}
                 <span class="text-[10px] text-gray-300">{m.prep_time}</span>
                 <span class="text-[10px] text-gray-300">👤 {m.author}</span>
                 <span class="text-[10px] text-gray-300">{m.meal_type}</span>

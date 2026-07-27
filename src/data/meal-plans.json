@@ -58,7 +58,8 @@
       "食物過敏"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 2,
@@ -119,7 +120,8 @@
       "需要低磷飲食"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 3,
@@ -185,7 +187,8 @@
       "需要天然杜蟲"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "中致敏"
   },
   {
     "id": 4,
@@ -247,7 +250,8 @@
       "手術後恢復"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "高致敏⚠️"
   },
   {
     "id": 5,
@@ -313,7 +317,8 @@
       "抗炎需要"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 6,
@@ -445,7 +450,8 @@
       "需要保留紅肉口味"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "中致敏"
   },
   {
     "id": 8,
@@ -516,7 +522,8 @@
       "Omega-3需要"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "超低致敏🌟"
   },
   {
     "id": 9,
@@ -577,7 +584,8 @@
       "無火煮食"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "高致敏⚠️"
   },
   {
     "id": 10,
@@ -643,7 +651,8 @@
       "心血管健康"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 11,
@@ -766,7 +775,8 @@
       "減肥中"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "高致敏⚠️"
   },
   {
     "id": 13,
@@ -830,7 +840,8 @@
       "日常餵食"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "高致敏⚠️"
   },
   {
     "id": 14,
@@ -891,7 +902,8 @@
       "甩毛"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 15,
@@ -958,7 +970,8 @@
       "胃口差"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "中致敏"
   },
   {
     "id": 16,
@@ -1025,7 +1038,8 @@
       "皮膚敏感"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "超低致敏🌟"
   },
   {
     "id": 17,
@@ -1087,7 +1101,8 @@
       "低碳水需要"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "高致敏⚠️"
   },
   {
     "id": 18,
@@ -1148,7 +1163,8 @@
       "需要B群"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 19,
@@ -1214,7 +1230,8 @@
       "牛磺酸補充"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 20,
@@ -1277,7 +1294,8 @@
       "老年犬吞嚥困難"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 21,
@@ -1343,7 +1361,8 @@
       "白內障預防"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "低致敏"
   },
   {
     "id": 22,
@@ -1405,7 +1424,8 @@
       "腸胃敏感"
     ],
     "meal_type": "主餐",
-    "species": "dog"
+    "species": "dog",
+    "allergy_tag": "超低致敏🌟"
   },
   {
     "id": 23,
