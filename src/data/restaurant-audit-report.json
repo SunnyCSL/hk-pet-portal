@@ -1,13 +1,46 @@
 {
-  "audit_date": "2026-07-26",
+  "audit_date": "2026-08-09",
   "total_restaurants": 916,
   "total_districts": 19,
   "fehd_check": {
     "status": "ok",
-    "size": 708105,
-    "chars": 67717,
-    "downloaded_at": "2026-07-26T18:09:48.198432"
+    "size": 708370,
+    "chars": 68476,
+    "list_version": "2026-08-07更新",
+    "unique_licenses": 984,
+    "downloaded_at": "2026-08-09T20:33:25"
+  },
+  "license_diff": {
+    "method": "license_no ground truth (PDF \b\\d{10}\b)",
+    "restored_to_active": 35,
+    "newly_flagged": 3,
+    "flagged_details": [
+      {
+        "name": "鐵牛台灣牛肉麵",
+        "district": "九龍城區",
+        "license": "2252810145",
+        "reason": "2026-08-04 除名（狗隻入食肆牌照關注組/Threads記錄）+ 8/7名單無此license"
+      },
+      {
+        "name": "NOC NOC",
+        "district": "大埔區",
+        "license": "3195000611",
+        "reason": "license不在FEHD 8/7名單，可能已退出/除名"
+      },
+      {
+        "name": "泰國煮意",
+        "district": "屯門區",
+        "license": "2293000488",
+        "reason": "license不在FEHD 8/7名單（Threads 8/5曾列新增，待確認；同license泰苑已removed）"
+      }
+    ]
   },
   "complaint_findings": [],
+  "complaint_search_note": "DDG 搜尋結果只有政策指引文章（狗隻入食肆指引/新聞），無實際投訴或除牌新聞。鐵牛台灣牛肉麵除名由 Threads 8/4 名單更新記錄確認。",
+  "db_status_after": {
+    "active": 868,
+    "flagged": 25,
+    "removed": 23
+  },
   "needs_update": false
 }
