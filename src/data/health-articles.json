@@ -5,7 +5,14 @@
     "emoji": "🥩",
     "cat": "nutrition",
     "catName": "營養",
-    "tags": "營養, 營養缺乏, 維生素, 礦物質, 鮮食, 補充品",
+    "tags": [
+      "營養",
+      "營養缺乏",
+      "維生素",
+      "礦物質",
+      "鮮食",
+      "補充品"
+    ],
     "source": "改編自韓國伴侶動物教育協會 (KCAEA HK) 寵物課程筆記",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;# 狗狗營養缺乏症完整指南 — 症狀識別與補充方法&lt;/p&gt;&lt;h2 class=&quot;text-lg font-bold text-near-black mt-6 mb-2&quot;&gt;前言：為何自煮鮮食容易出現營養失衡？&lt;/h2&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;很多狗主人都會為毛孩親手準備鮮食，覺得這樣既健康又安心。但你知道嗎？自製鮮食其實暗藏營養陷阱！根據研究，&lt;strong&gt;高達九成自製狗糧都存在營養不均的問題&lt;/strong&gt;，尤其是一些關鍵維生素和礦物質的缺乏。&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;這不是要嚇唬你，而是想提醒你：了解營養缺乏的症狀和正確的補充方法，才能讓你的愛犬真正食得健康。&lt;/p&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">Shastak Y, Pelletier W. Pet Wellness and Vitamin A: A Narrative Overview. Animals. 2024;14(7):1000.</li><li class=\"text-sm text-gray-600 mb-1\">Barroso C, et al. Vitamins, Minerals and Phytonutrients as Modulators of Canine Health. Vet Sci. 2024;11(12):655.</li></ol>",
@@ -17,7 +24,12 @@
     "emoji": "💆",
     "cat": "care",
     "catName": "護理",
-    "tags": "按摩, 家居護理, 放鬆, 血液循環",
+    "tags": [
+      "按摩",
+      "家居護理",
+      "放鬆",
+      "血液循環"
+    ],
     "source": "改編自KCAEA HK寵物課程筆記",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;# 狗狗家居按摩治療基礎 — 放鬆肌肉與促進血液循環&lt;/p&gt;&lt;h2 class=&quot;text-lg font-bold text-near-black mt-6 mb-2&quot;&gt;為什麼你的狗狗需要按摩？&lt;/h2&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;你有冇試過放工返到屋企，成身攰到想攤喺梳化唔郁？其實你嘅狗狗都一樣會有身體疲勞同肌肉繃緊嘅時候。不過佢哋唔識得用說話話俾我哋知，只係會用行為表達——例如唔願郁、行路姿勢奇怪、或者成日舔某個部位。&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;近年獸醫學發展得好快，狗狗嘅壽命比20年前長咗足足兩倍。但壽命長咗，伴隨而嚟嘅就係各種老年病——心衰竭、腎衰竭、關節炎、糖尿病……呢啲慢性病好多時西醫都只能控制，而唔係根治。加上手術同藥物嘅副作用，令愈來愈多主人開始為毛孩尋找更溫和嘅輔助療法。&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;寵物按摩就係其中一種。佢唔係要取代正規獸醫治療，而係作為一種&lt;strong&gt;補充療法&lt;/strong&gt;，幫助狗狗放鬆肌肉、促進血液循環、增強免疫力，同時仲可以增進你同狗狗之間嘅感情。&lt;/p&gt;&lt;h2 class=&quot;text-lg font-bold text-near-black mt-6 mb-2&quot;&gt;按摩對狗狗嘅12大好處&lt;/h2&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;我哋先講啲實際嘅好處，等你明白點解要學呢門手藝：&lt;/p&gt;&lt;div class=&quot;overflow-x-auto my-3&quot;&gt;&lt;table class=&quot;w-full text-xs border-collapse&quot;&gt;&lt;tr&gt;&lt;th class=&quot;border border-gray-100 px-3 py-2 bg-gray-50 text-gray-700 text-left font-medium&quot;&gt;好處&lt;/th&gt;&lt;th class=&quot;border border-gray-100 px-3 py-2 bg-gray-50 text-gray-700 text-left font-medium&quot;&gt;具體效果&lt;/th&gt;&lt;th class=&quot;border border-gray-100 px-3 py-2 bg-gray-50 text-gray-700 text-left font-medium&quot;&gt;點樣幫到狗狗&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">Formenton MR, et al. Small Animal Massage Therapy: A Brief Review and Relevant Observations. Top Companion Anim Med. 2017;32(4):139-145.</li><li class=\"text-sm text-gray-600 mb-1\">Riley LM. Effect of massage therapy on pain and quality of life in dogs: A cross sectional study. Vet Rec. 2021;189(11):e586.</li></ol>",
@@ -29,7 +41,12 @@
     "emoji": "🥘",
     "cat": "nutrition",
     "catName": "營養",
-    "tags": "鮮食, 營養比例, 食材選擇, 自煮",
+    "tags": [
+      "鮮食",
+      "營養比例",
+      "食材選擇",
+      "自煮"
+    ],
     "source": "改編自KCAEA HK寵物營養課程筆記",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;# 狗狗鮮食營養指南 — 自煮鮮食的營養比例與食材選擇&lt;/p&gt;&lt;h2 class=&quot;text-lg font-bold text-near-black mt-6 mb-2&quot;&gt;前言：為什麼要為狗狗自煮鮮食？&lt;/h2&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;香港的寵物主人愈來愈重視毛孩的飲食健康，自煮鮮食已成為不少狗主的新選擇。然而，很多主人在開始自煮鮮食時，最常遇到的問題是：「究竟要落幾多肉？」、「點樣先算均衡？」、「狗狗食鮮食會唔會唔夠營養？」&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;其實，為狗狗準備鮮食，不單是將肉類和蔬菜隨便煮熟那麼簡單。一餐均衡的鮮食，需要考慮蛋白質、脂肪、碳水化合物、維生素和礦物質的適當比例。更重要的是，每隻狗狗的體質都不同，有些狗狗怕冷，有些容易皮膚敏感，有些腸胃較弱——這些都需要透過飲食來調整。&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;這篇文章會從現代營養學和中醫食療兩個角度，教你如何為狗狗設計均衡的鮮食餐單，讓毛孩食得健康又開心。&lt;/p&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">Stockman J, et al. Evaluation of recipes of home-prepared maintenance diets for dogs. J Am Vet Med Assoc. 2013;242(11):1500-1505. — 95%自製食譜營養不足</li><li class=\"text-sm text-gray-600 mb-1\">Homemade Diet as a Paramount for Dogs' Health: A Descriptive Analysis. NIH. PMC11435771. 2024.</li><li class=\"text-sm text-gray-600 mb-1\">AAFCO Dog and Cat Food Nutrient Profiles. aafco.org.</li></ol>",
@@ -41,7 +58,12 @@
     "emoji": "🌿",
     "cat": "tcm",
     "catName": "中醫",
-    "tags": "中醫, 五行, 體質辨識, 食療",
+    "tags": [
+      "中醫",
+      "五行",
+      "體質辨識",
+      "食療"
+    ],
     "source": "改編自KCAEA HK寵物課程筆記",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;# 狗隻中醫五元素養生法 — 體質辨識與食療調理&lt;/p&gt;&lt;h2 class=&quot;text-lg font-bold text-near-black mt-6 mb-2&quot;&gt;前言：為什麼要從中醫角度照顧狗狗？&lt;/h2&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;你有冇試過，狗狗明明食足三餐、營養均衡，但依然皮毛乾燥、精神不振、成日病？或者，你已經好努力跟足網上食譜整鮮食，但狗狗嘅身體狀況始終冇乜改善？&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;其實，問題可能唔係「食得唔夠」，而係「食得唔啱體質」。&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;中醫養生嘅核心，係講求「整體平衡」。人同狗一樣，身體狀況會隨季節、年齡、情緒同飲食而變化。今日，我哋就用一個全新角度——&lt;strong&gt;中醫五元素（五行）養生法&lt;/strong&gt;，幫你了解狗狗嘅體質，再透過日常飲食，由內到外調理好佢哋嘅身體。&lt;/p&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">Harrison TM, Churgin SM. Acupuncture and Traditional Chinese Veterinary Medicine in Zoological and Exotic Animal Medicine: A Review. Vet Sci. 2022;9(2):74.</li><li class=\"text-sm text-gray-600 mb-1\">Merck Veterinary Manual — Routine Health Care of Dogs. merckvetmanual.com.</li></ol>",
@@ -53,7 +75,11 @@
     "emoji": "🌸",
     "cat": "tcm",
     "catName": "中醫",
-    "tags": "四季養生, 中醫, 飲食調整",
+    "tags": [
+      "四季養生",
+      "中醫",
+      "飲食調整"
+    ],
     "source": "改編自KCAEA HK寵物課程筆記",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;好的，沒問題。作為一位專業的寵物健康內容作家，我已經仔細閱讀了您提供的課程筆記。現在，我將以香港寵物主人為目標讀者，用全新的章節結構、原創的表達方式，並融入實際的建議和比較表格，為您重組一篇關於狗狗季節性中醫養生的原創文章。&lt;/p&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">Harrison TM, Churgin SM. Acupuncture and Traditional Chinese Veterinary Medicine in Zoological and Exotic Animal Medicine: A Review. Vet Sci. 2022;9(2):74.</li><li class=\"text-sm text-gray-600 mb-1\">Merck Veterinary Manual — Routine Health Care of Dogs. merckvetmanual.com.</li></ol>",
@@ -65,7 +91,12 @@
     "emoji": "📊",
     "cat": "nutrition",
     "catName": "營養",
-    "tags": "AAFCO, NRC, 營養標準, 鮮食營養學",
+    "tags": [
+      "AAFCO",
+      "NRC",
+      "營養標準",
+      "鮮食營養學"
+    ],
     "source": "改編自KCAEA HK寵物營養課程筆記 + AAFCO 2026更新",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;好的，作為一位專業的寵物健康內容作家，我已經仔細閱讀了您提供的課程筆記。現在，我將以香港寵物主人為目標讀者，重新組織這些內容，創作一篇全新的原創文章。文章將以全新的結構、語言和比喻，為您解構狗狗營養的三大標準，並提供實用的建議。&lt;/p&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">AAFCO Official Nutrient Profiles for Dog and Cat Food. aafco.org.</li><li class=\"text-sm text-gray-600 mb-1\">NRC. Nutrient Requirements of Dogs and Cats. National Academies Press. 2006.</li></ol>",
@@ -77,7 +108,11 @@
     "emoji": "🐕",
     "cat": "behavior",
     "catName": "行為",
-    "tags": "行為, 肢體語言, 狗隻心理",
+    "tags": [
+      "行為",
+      "肢體語言",
+      "狗隻心理"
+    ],
     "source": "改編自KCAEA HK寵物課程筆記",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;好的，作為一位專業寵物健康內容作家，我現在就為您將這份詳盡的課程筆記，重組並創作成一篇適合香港寵物主人閱讀的原創文章。&lt;/p&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">Overall KL. Canine Behavior: A Guide for Veterinarians. Vet Clin North Am Small Anim Pract. 1997.</li><li class=\"text-sm text-gray-600 mb-1\">Merck Veterinary Manual — Canine Behavior: Canine Communication. merckvetmanual.com.</li></ol>",
@@ -89,7 +124,11 @@
     "emoji": "🆘",
     "cat": "care",
     "catName": "護理",
-    "tags": "急救, 家居意外, 緊急護理",
+    "tags": [
+      "急救",
+      "家居意外",
+      "緊急護理"
+    ],
     "source": "改編自KCAEA HK寵物課程筆記 + 香港獸醫指引2026",
     "disclaimer": "本文內容改編自寵物課程筆記，經重新編寫、重組及加入原創內容。如有任何健康問題，請諮詢註冊獸醫。",
     "content_html": "&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;好的，這是一篇根據您提供的課程筆記內容，為香港寵物主人（特別是養狗人士）重組的原創文章。&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;# 狗狗急救應對手冊 — 家居常見意外處理與緊急護理&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;作為一個愛狗之人，最怕的就是家中的毛孩突然發生意外。無論是好奇誤食、玩得太興奮導致受傷，還是天氣太熱中暑，這些突發狀況都足以讓主人心驚膽跳。與其事後慌張，不如預先做好準備，掌握一套清晰的應急流程。&lt;/p&gt;&lt;p class=&quot;text-sm text-gray-600 leading-relaxed mb-2&quot;&gt;這份手冊會將複雜的急救知識，結合成一個簡單、實用、易記的流程，幫助你在黃金救援時間內，冷靜地為你的狗狗提供最關鍵的幫助。我們會從最常見的意外開始，逐步拆解處理步驟，讓你不再手足無措。&lt;/p&gt;<h2 class=\"text-lg font-bold text-near-black mt-6 mb-2\">參考文獻</h2><ol class=\"list-decimal ml-5 mb-3\"><li class=\"text-sm text-gray-600 mb-1\">AVMA. First Aid Tips for Pet Owners. avma.org.</li><li class=\"text-sm text-gray-600 mb-1\">Merck Veterinary Manual — Emergency Medicine and Critical Care. merckvetmanual.com.</li></ol>",
@@ -101,7 +140,13 @@
     "emoji": "⚠️",
     "cat": "nutrition",
     "catName": "營養",
-    "tags": "食物過敏, 致敏排行榜, 排除飲食, 單一蛋白, 皮膚敏感",
+    "tags": [
+      "食物過敏",
+      "致敏排行榜",
+      "排除飲食",
+      "單一蛋白",
+      "皮膚敏感"
+    ],
     "source": "改編自 Mueller RS 等 (2016) BMC Vet Res 研究 + Dogalicious 實證整理",
     "date": "Jul 27",
     "disclaimer": "本文內容整理自學術文獻與公開資料，經重新編寫加入原創分析。如有健康問題請諮詢註冊獸醫。排除飲食應在獸醫指導下進行。",
@@ -113,7 +158,14 @@
     "emoji": "🦷",
     "cat": "care",
     "catName": "護理",
-    "tags": "口臭, 牙周病, BUN, 腎臟, 飲食調整, 口腔護理",
+    "tags": [
+      "口臭",
+      "牙周病",
+      "BUN",
+      "腎臟",
+      "飲食調整",
+      "口腔護理"
+    ],
     "source": "參考：NIH PMC9074277, PMC10981081, PMC7472411, BluePearl Vet",
     "date": "Jul 28",
     "disclaimer": "本文僅供參考，如狗狗口臭持續或嚴重，請務必諮詢獸醫。排除飲食應在獸醫指導下進行。",

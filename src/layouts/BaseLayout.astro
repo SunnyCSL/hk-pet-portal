@@ -1,13 +1,82 @@
 ---
 // Base Layout — supports bilingual (zh/en)
+// Phase 0 Batch 2: SEO meta + JSON-LD Organization/WebSite added.
+// Phase 0 Batch 3: Vercel Analytics added.
+import Analytics from '@vercel/analytics/astro';
+
 export interface Props {
   title: string;
   description?: string;
+  /** When 'article', og:type=article. For health article detail pages. */
+  ogType?: 'website' | 'article';
+  /** Absolute or site-relative path to og:image. Defaults to /og-image.png. */
+  ogImage?: string;
+  /** JSON-LD document blocks to inject alongside the default Organization + WebSite. */
+  jsonLd?: object | object[];
+  /** Optional override for og:locale when lang is not enough. */
+  ogLocale?: string;
+  /** ISO date string for Article schema. */
+  publishedTime?: string;
+  /** ISO date string for Article schema. */
+  modifiedTime?: string;
   lang?: 'zh' | 'en';
 }
 
-const { title, description, lang = 'zh' } = Astro.props;
+const {
+  title,
+  description,
+  ogType = 'website',
+  ogImage,
+  jsonLd,
+  ogLocale,
+  publishedTime,
+  modifiedTime,
+  lang = 'zh',
+} = Astro.props;
 const isZh = lang === 'zh';
+
+// Site constants — single source of truth, drives canonical + OG URLs.
+const SITE = Astro.site?.toString().replace(/\/$/, '') || 'https://hk-pet-portal.vercel.app';
+const pathName = Astro.url.pathname;
+// Strip query + trailing slash to normalize: /restaurants/ -> /restaurants; leave '/' alone.
+const normalizedPath = pathName === '/' ? '/' : pathName.replace(/\/$/, '');
+const fullUrl = `${SITE}${normalizedPath}`;
+
+// OG image: explicit override wins; otherwise default to site asset.
+const ogImageUrl = ogImage
+  ? (ogImage.startsWith('http') ? ogImage : `${SITE}${ogImage}`)
+  : `${SITE}/og-image.png`;
+
+// Locale default per language; allow override.
+const resolvedLocale = ogLocale || (isZh ? 'zh_HK' : 'en_HK');
+
+const fallbackZh = '香港寵物友善資訊平台 — 狗餐廳搜尋、健康知識、寵物資訊';
+const fallbackEn = 'HK Pet Information Portal — Dog-friendly restaurants, health library, pet news';
+const resolvedDescription = description || (isZh ? fallbackZh : fallbackEn);
+
+// JSON-LD builders ------------------------------------------------------------
+const orgLd: object = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'HK Pet Portal',
+  url: SITE,
+  logo: `${SITE}/favicon.svg`,
+  sameAs: [],
+};
+const websiteLd: object = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'HK Pet Portal',
+  url: SITE,
+  inLanguage: isZh ? 'zh-HK' : 'en-HK',
+};
+const baseLdBlocks: object[] = [orgLd, websiteLd];
+const extraLd: object[] = Array.isArray(jsonLd)
+  ? jsonLd
+  : jsonLd
+  ? [jsonLd]
+  : [];
+const allLd = [...baseLdBlocks, ...extraLd];
 ---
 
 <!DOCTYPE html>
@@ -16,10 +85,38 @@ const isZh = lang === 'zh';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} | HK Pet Portal</title>
-    <meta name="description" content={description || (isZh ? '香港寵物友善資訊平台 — 狗餐廳搜尋、健康知識、寵物資訊' : 'HK Pet Information Portal — Dog-friendly restaurants, health library, pet news')} />
+    <meta name="description" content={resolvedDescription} />
+    <link rel="canonical" href={fullUrl} />
+
+    <!-- Open Graph (Phase 0 Batch 2) -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="HK Pet Portal" />
+    <meta property="og:title" content={`${title} | HK Pet Portal`} />
+    <meta property="og:description" content={resolvedDescription} />
+    <meta property="og:url" content={fullUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${title} | HK Pet Portal`} />
+    <meta property="og:locale" content={resolvedLocale} />
+    {ogType === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {ogType === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+    <!-- Twitter card (Phase 0 Batch 2) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | HK Pet Portal`} />
+    <meta name="twitter:description" content={resolvedDescription} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+    />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#2D9B4E" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
       @import "tailwindcss";
@@ -42,6 +139,11 @@ const isZh = lang === 'zh';
       }
       body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; color: var(--color-near-black); background: white; margin: 0; }
     </style>
+
+    <!-- JSON-LD: Organization + WebSite (always) + page-specific blocks (Phase 0 Batch 2) -->
+    {allLd.map((ld) => (
+      <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    ))}
   </head>
   <body class="min-h-screen flex flex-col">
     <!-- Navigation -->
@@ -77,6 +179,9 @@ const isZh = lang === 'zh';
     <main class="flex-1">
       <slot />
     </main>
+
+    <!-- Vercel Analytics (Phase 0 Batch 3) -->
+    <Analytics />
 
     <!-- Footer -->
     <footer class="bg-warm-white border-t border-gray-100 mt-16">

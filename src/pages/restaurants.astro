@@ -4,6 +4,20 @@ import restaurants from '../data/restaurants.json';
 import stats from '../data/restaurant-stats.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
+
+// Phase 0 Batch 2: client-side pagination 50/page. First 50 rendered as static
+// cards (SSR'd for SEO), remaining 856 embedded as a compact JSON data island
+// (`id + name_zh + name_en + district`) and rendered client-side. Address is
+// only used for sub-area detection; we accept losing full text search on
+// address in exchange for keeping the rendered HTML <150KB.
+const PAGE_SIZE = 50;
+type Mini = { id: number; name_zh: string; district: string };
+const firstPage = (restaurants as any[]).slice(0, PAGE_SIZE) as any[];
+const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => ({
+  id: r.id,
+  name_zh: r.name_zh || r.name_en || '',
+  district: r.district,
+}));
 ---
 
 <BaseLayout title="🍽️ 餐廳搜尋" lang="zh">
@@ -27,7 +41,7 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
       </div>
     </div>
 
-    <!-- District pills — clickable, triggers JS filter -->
+    <!-- District pills -->
     <div class="overflow-x-auto -mx-4 px-4 mb-5 scrollbar-hide">
       <div class="flex gap-1.5 w-max md:w-auto md:flex-wrap">
         <a href="/restaurants" onclick="setDistrict(''); return false;"
@@ -42,16 +56,16 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
       </div>
     </div>
 
-    <!-- Results list -->
+    <!-- Results list — first 50 are server-rendered for SEO; rest are JS-rendered into this same wrapper -->
     <div id="restaurant-list" class="flex flex-col gap-2">
-      {restaurants.map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => (
+      {firstPage.map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => (
         <a href={`/restaurants/${r.id}`}
           class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
           data-name={(r.name_zh || r.name_en || '').toLowerCase()}
           data-district={r.district}
           data-addr={(r.address || '').toLowerCase()}
         >
-           <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3">
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
             <div class="min-w-0 flex-1">
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
@@ -73,6 +87,13 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
       ))}
     </div>
 
+    <!-- Pagination UI -->
+    <nav id="pager" class="flex items-center justify-center gap-1 mt-6 text-sm select-none" aria-label="餐廳分頁">
+      <button id="pg-prev" type="button" class="px-3 py-1.5 rounded-lg border border-gray-100 text-gray-500 hover:border-brand/40 disabled:opacity-30 disabled:cursor-not-allowed" disabled>← 上一頁</button>
+      <span id="pg-info" class="px-2 text-gray-500"><span id="pg-current">1</span> / <span id="pg-total">19</span></span>
+      <button id="pg-next" type="button" class="px-3 py-1.5 rounded-lg border border-gray-100 text-gray-500 hover:border-brand/40 disabled:opacity-30 disabled:cursor-not-allowed">下一頁 →</button>
+    </nav>
+
     <!-- Empty state -->
     <div id="empty-state" class="text-center py-16 text-gray-400 hidden">
       <div class="text-4xl mb-3">🔍</div>
@@ -81,8 +102,11 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
     </div>
   </div>
 
+  <!-- Phase 0 Batch 2: data island for JS pagination. Address intentionally omitted to keep island size manageable. -->
+  <script type="application/json" id="rest-data" set:html={JSON.stringify({ restaurants: restData })} />
+
   <script is:inline>
-  // Sub-area detection from address
+  // Sub-area detection from address (kept unchanged — only acts on visible cards).
   var SUB_AREAS = [
     ['馬鞍山',0],['科學園',0],['白石角',0],
     ['香港仔',0],['黃竹坑',0],['海洋公園',0],['淺水灣',0],['赤柱',0],['薄扶林',0],['數碼港',0],['鴨脷洲',0],
@@ -108,61 +132,191 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
   function detectSubArea(addr, name) {
     var combined = (addr || '') + ' ' + (name || '');
     for (var i = 0; i < SUB_AREAS.length; i++) {
-      if (combined.indexOf(SUB_AREAS[i][0]) !== -1) {
-        return SUB_AREAS[i][0];
-      }
+      if (combined.indexOf(SUB_AREAS[i][0]) !== -1) return SUB_AREAS[i][0];
     }
     return null;
   }
 
-  // Apply sub-area labels
-  document.querySelectorAll('.sub-area-label').forEach(function(el) {
-    var addr = el.getAttribute('data-addr') || '';
-    var name = el.getAttribute('data-name') || '';
-    var sub = detectSubArea(addr, name);
-    if (sub) el.textContent = sub;
-  });
-  function filterList() {
-    var q = (document.getElementById('search-input').value || '').toLowerCase();
-    var items = document.querySelectorAll('.restaurant-item');
-    var count = 0;
-    var activeDistrict = document.querySelector('[data-active-district]');
-    var district = activeDistrict ? activeDistrict.getAttribute('data-active-district') : '';
+  // ---- Pagination + filter state ----
+  var PAGE_SIZE = 50;
+  var island = [];
+  try { island = JSON.parse(document.getElementById('rest-data').textContent || '{}').restaurants || []; } catch (e) { island = []; }
+  var state = { page: 1, itemsPerPage: PAGE_SIZE, filteredSlice: null };
 
-    items.forEach(function(el) {
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function makeCard(r) {
+    var nameZh = r.name_zh || r.name_en || (r.district || '') + '狗友善餐廳';
+    var sub = detectSubArea(r.address || '', r.name_zh || '');
+    var subLabel = sub || r.district || '';
+    // island cards lack address — show only the district+sub-area, no full address line.
+    var addrHtml = r.address
+      ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300">' + escapeHtml(r.address) + '</span>'
+      : '';
+    return '<a href="/restaurants/' + r.id + '"'
+      + ' class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"'
+      + ' data-name="' + escapeHtml((r.name_zh || r.name_en || '').toLowerCase()) + '"'
+      + ' data-district="' + escapeHtml(r.district || '') + '"'
+      + ' data-addr="' + escapeHtml((r.address || '').toLowerCase()) + '">'
+      + '<div class="flex items-center gap-3">'
+      + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
+      + '<div class="min-w-0 flex-1">'
+      + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(nameZh) + '</h3>'
+      + '<p class="text-xs text-gray-400 mt-0.5 truncate">'
+      + '<span class="inline-flex items-center gap-1">'
+      + '<span class="text-gray-300">📍</span> '
+      + '<span class="sub-area-label">' + escapeHtml(subLabel) + '</span>'
+      + '</span>' + addrHtml + '</p>'
+      + '</div>'
+      + '<div class="text-gray-300 group-hover:text-brand transition-colors shrink-0"><span class="text-xs">→</span></div>'
+      + '</div></a>';
+  }
+
+  function getAllItems() {
+    var list = document.getElementById('restaurant-list');
+    return list ? Array.prototype.slice.call(list.querySelectorAll('.restaurant-item')) : [];
+  }
+
+  function getCurrentFilteredIds() {
+    // Run on demand: filters `.restaurant-item` elements directly, so collect
+    // matches against the merged dataset (static + island) by id.
+    var q = (document.getElementById('search-input').value || '').toLowerCase();
+    var districtActive = document.body.getAttribute('data-active-district') || '';
+    var matches = [];
+    getAllItems().forEach(function (el) {
+      var match = true;
       var name = el.getAttribute('data-name') || '';
       var itemDistrict = el.getAttribute('data-district') || '';
       var itemAddr = el.getAttribute('data-addr') || '';
-      var match = true;
-
-      if (district && itemDistrict !== district) match = false;
+      if (districtActive && itemDistrict !== districtActive) match = false;
       if (q && !name.includes(q) && !itemDistrict.includes(q) && !itemAddr.includes(q)) match = false;
+      if (match) {
+        var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
+        if (idMatch) matches.push(parseInt(idMatch[1], 10));
+      }
+    });
+    return matches;
+  }
 
-      el.style.display = match ? '' : 'none';
-      if (match) count++;
+  function rebuildPage() {
+    var list = document.getElementById('restaurant-list');
+    if (!list) return;
+    var ids = state.filteredSlice || getCurrentFilteredIds();
+    var total = ids.length;
+    var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.page > totalPages) state.page = totalPages;
+    if (state.page < 1) state.page = 1;
+    var start = (state.page - 1) * PAGE_SIZE;
+    var end = start + PAGE_SIZE;
+    var visibleIds = ids.slice(start, end);
+    var visibleSet = {};
+    visibleIds.forEach(function (id) { visibleSet[id] = true; });
+
+    // Hide non-matching static cards, show matching static cards.
+    Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item'), function (el) {
+      var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
+      var id = idMatch ? parseInt(idMatch[1], 10) : null;
+      if (id == null) { el.style.display = 'none'; return; }
+      el.style.display = visibleSet[id] ? '' : 'none';
     });
 
-    document.getElementById('result-count').textContent = count + ' 間';
-    document.getElementById('empty-state').classList.toggle('hidden', count > 0);
-    document.getElementById('clear-filter').classList.toggle('hidden', !district && !q);
+    // Render island cards for the current page beyond the static first PAGE_SIZE.
+    var byId = {};
+    island.forEach(function (r) { byId[r.id] = r; });
+    // Remove any previously injected extras.
+    var extras = list.querySelectorAll('[data-island-card="1"]');
+    extras.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
+    visibleIds.forEach(function (id) {
+      if (id && byId[id]) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = makeCard(byId[id]);
+        var node = tmp.firstChild;
+        if (node) {
+          node.setAttribute('data-island-card', '1');
+          list.appendChild(node);
+        }
+      }
+    });
+
+    // Update result count + pager UI.
+    var countEl = document.getElementById('result-count');
+    if (countEl) countEl.textContent = total + ' 間';
+    var cur = document.getElementById('pg-current');
+    var tot = document.getElementById('pg-total');
+    if (cur) cur.textContent = String(state.page);
+    if (tot) tot.textContent = String(totalPages);
+    var prev = document.getElementById('pg-prev');
+    var next = document.getElementById('pg-next');
+    if (prev) prev.disabled = state.page <= 1;
+    if (next) next.disabled = state.page >= totalPages;
+
+    var empty = document.getElementById('empty-state');
+    if (empty) empty.classList.toggle('hidden', total > 0);
+    var clear = document.getElementById('clear-filter');
+    var qNow = (document.getElementById('search-input').value || '').trim();
+    var dNow = document.body.getAttribute('data-active-district') || '';
+    if (clear) clear.classList.toggle('hidden', !qNow && !dNow);
+
+    var pager = document.getElementById('pager');
+    if (pager) pager.style.display = total > PAGE_SIZE ? '' : 'none';
+  }
+
+  function filterList() {
+    // Recompute the ordered match list across the entire dataset so pagination
+    // shows ALL matching cards (not just the first 50 of them).
+    var q = (document.getElementById('search-input').value || '').toLowerCase();
+    var districtActive = document.body.getAttribute('data-active-district') || '';
+
+    // Static first 50:
+    var staticMatches = [];
+    Array.prototype.forEach.call(document.querySelectorAll('#restaurant-list .restaurant-item:not([data-island-card="1"])'), function (el) {
+      var match = true;
+      var name = el.getAttribute('data-name') || '';
+      var itemDistrict = el.getAttribute('data-district') || '';
+      var itemAddr = el.getAttribute('data-addr') || '';
+      if (districtActive && itemDistrict !== districtActive) match = false;
+      if (q && !name.includes(q) && !itemDistrict.includes(q) && !itemAddr.includes(q)) match = false;
+      if (match) {
+        var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
+        if (idMatch) staticMatches.push(parseInt(idMatch[1], 10));
+      }
+    });
+
+    // Island (no address available, search by name+district only):
+    var islandMatches = [];
+    if (!q || true) {
+      for (var i = 0; i < island.length; i++) {
+        var r = island[i];
+        if (districtActive && r.district !== districtActive) continue;
+        var nameLow = (r.name_zh || r.name_en || '').toLowerCase();
+        var distLow = (r.district || '').toLowerCase();
+        if (q && !nameLow.includes(q) && !distLow.includes(q)) continue;
+        islandMatches.push(r.id);
+      }
+    }
+
+    state.filteredSlice = staticMatches.concat(islandMatches);
+    state.page = 1;
+    rebuildPage();
   }
 
   function setDistrict(d) {
-    // Update pill styles
-    document.querySelectorAll('[id^="pill-"]').forEach(function(el) {
+    document.querySelectorAll('[id^="pill-"]').forEach(function (el) {
       el.className = el.className.replace(/bg-brand text-white/g, 'bg-gray-50 text-gray-500');
     });
     if (d) {
       var pill = document.getElementById('pill-' + d.replace(/\s/g, ''));
       if (pill) pill.className = pill.className.replace(/bg-gray-50 text-gray-500/g, 'bg-brand text-white');
     } else {
-      document.getElementById('pill-all').className = document.getElementById('pill-all').className.replace(/bg-gray-50 text-gray-500/g, 'bg-brand text-white');
+      var pAll = document.getElementById('pill-all');
+      if (pAll) pAll.className = pAll.className.replace(/bg-gray-50 text-gray-500/g, 'bg-brand text-white');
     }
-
-    // Store active district
-    document.querySelectorAll('[data-active-district]').forEach(function(el) { el.removeAttribute('data-active-district'); });
+    document.querySelectorAll('[data-active-district]').forEach(function (el) { el.removeAttribute('data-active-district'); });
     if (d) document.body.setAttribute('data-active-district', d);
-
     filterList();
   }
 
@@ -171,15 +325,36 @@ const districts = [...new Set(restaurants.map((r: { district: string }) => r.dis
     setDistrict('');
   }
 
-  // On page load, apply filter from URL
-  window.addEventListener('DOMContentLoaded', function() {
+  // ---- Pager wiring ----
+  document.getElementById('pg-prev').addEventListener('click', function () {
+    if (state.page > 1) { state.page--; rebuildPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+  document.getElementById('pg-next').addEventListener('click', function () {
+    state.page++; rebuildPage(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ---- Sub-area labels on initial static cards ----
+  document.querySelectorAll('.sub-area-label').forEach(function (el) {
+    var addr = el.getAttribute('data-addr') || '';
+    var name = el.getAttribute('data-name') || '';
+    var sub = detectSubArea(addr, name);
+    if (sub) el.textContent = sub;
+  });
+
+  // ---- On load: apply URL params + initial render ----
+  window.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
     var q = params.get('q');
     var d = params.get('district');
-
     if (q) document.getElementById('search-input').value = q;
     if (d) setDistrict(d);
-    if (q || d) filterList();
+    if (q || d) {
+      filterList();
+    } else {
+      // No filter: still render the visible page (page 1 = first 50).
+      state.filteredSlice = null;
+      rebuildPage();
+    }
   });
   </script>
 </BaseLayout>

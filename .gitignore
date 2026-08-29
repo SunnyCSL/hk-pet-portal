@@ -6,3 +6,6 @@ dist/
 .env.*
 .vercel
 .env*
+
+# Stray working-tree folder accidentally added (home-dir path that became a literal dir)
+~/
