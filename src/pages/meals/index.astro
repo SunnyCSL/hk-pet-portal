@@ -182,5 +182,21 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
       });
       filterMeals();
     });
+
+    // Phase 0 Batch 3: support /meals/?tag=X deep-link from /meals/[id].astro.
+    // If URL has ?tag=<name>, find the matching chip and click it so the active
+    // state + filter both apply on first paint.
+    function applyTagFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const tag = params.get('tag');
+      if (!tag) return;
+      const target = Array.from(chips).find(c => c.dataset.tag === tag);
+      if (target) target.click();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', applyTagFromUrl);
+    } else {
+      applyTagFromUrl();
+    }
   </script>
 </BaseLayout>
