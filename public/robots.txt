@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hk-pet-portal.vercel.app/sitemap-index.xml
