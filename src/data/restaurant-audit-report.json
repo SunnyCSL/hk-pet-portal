@@ -1,17 +1,50 @@
 {
-  "audit_date": "2026-08-16",
+  "audit_date": "2026-08-23",
   "total_restaurants": 916,
   "total_districts": 19,
   "fehd_check": {
     "status": "ok",
-    "size": 709814,
-    "chars": 68869,
-    "downloaded_at": "2026-08-16T18:01:03.951401"
+    "size": 709174,
+    "chars": 69083,
+    "downloaded_at": "2026-08-23T18:00:26.526551",
+    "list_updated": "2026-08-21",
+    "fehd_list_size": 989
   },
   "complaint_findings": [
-    "寵物友善餐廳｜7.9正式生效!1000間狗隻可進入餐廳名單＋9大須知5種狗禁入 - PetPetHK",
-    "【26/5 最新更新】全港獲准許狗隻進入食肆名單｜食環署官方資料整合｜PetWell HK",
-    "【2026香港寵物友善新政策】狗隻入食肆正式落地!毛爸媽必讀「文明堂食禮儀」 - 毛孩物語 Pets Thing"
+    {
+      "title": "讓狗隻處於食物業處所的准許",
+      "url": "https://www.fehd.gov.hk/tc_chi/licensing/dog_restaurants/index.html",
+      "type": "general_info",
+      "note": "FEHD 官方頁面 — 一般政策資訊，唔係個別餐廳投訴"
+    },
+    {
+      "title": "讓狗隻處於食物業處所的准許 - fehd.gov.hk",
+      "url": "https://www.fehd.gov.hk/tc_chi/licensing/dog_restaurants/index.html",
+      "type": "general_info",
+      "note": "同一 FEHD 頁面重複出現 — 搜尋假陽性"
+    },
+    {
+      "title": "香港寵物友善餐廳完整指南 2026 | A-Pets 寵物食品專門店",
+      "url": "https://a-pets.com/pages/香港寵物友善餐廳完整指南-2026.html",
+      "type": "blog_guide",
+      "note": "A-Pets 寵物食品店 blog 指南 — 內容文章，唔係投訴"
+    }
   ],
-  "needs_update": true
+  "db_comparison": {
+    "db_with_license": 911,
+    "in_latest_fehd_list": 825,
+    "not_in_latest_fehd_list": 50,
+    "active_not_in_list": 4,
+    "flagged_this_audit": [
+      {"name_en": "Queen Victoria 8", "name_zh": "八公館", "license_no": "2213157285", "district": "中西區"},
+      {"name_en": "古今", "name_zh": "古今", "license_no": "2262814168", "district": "旺角區"},
+      {"name_en": "Champak restaurant", "name_zh": "青花", "license_no": "2262813165", "district": "旺角區"},
+      {"name_en": "Chuan Palace", "name_zh": "念川居", "license_no": "2262814636", "district": "旺角區"}
+    ]
+  },
+  "needs_update": true,
+  "actions_taken": [
+    "4 間 active 餐廳唔喺 FEHD 8/21 最新名單 → status 改為 flagged + notes 加註",
+    "搜尋發現 3 條全部係一般資訊/指南，無個別餐廳投訴或除牌新聞"
+  ]
 }
