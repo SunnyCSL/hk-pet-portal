@@ -21,7 +21,7 @@ const { article } = Astro.props;
     <div class="mb-6">
       <div class="flex items-center gap-2 mb-2">
         <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{article.catName}</span>
-        <span class="text-[10px] text-gray-300">{article.tags}</span>
+        <span class="text-[10px] text-gray-300">{Array.isArray(article.tags) ? article.tags.join(', ') : article.tags}</span>
       </div>
       <h1 class="text-xl md:text-2xl font-bold text-near-black leading-tight">{article.emoji} {article.title}</h1>
       {article.source && <p class="text-xs text-gray-400 mt-2">{article.source}</p>}
