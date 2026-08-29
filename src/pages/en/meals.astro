@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import mealPlans from '../../data/meal-plans.json';
+
+// Phase 1 i18n mirror of /meals. The labels are translated but each meal
+// card keeps its Chinese name + description (the underlying content is
+// Chinese-first; an English rewrite is scheduled for a later phase alongside
+// the health-article translations).
+const allTags = [...new Set(mealPlans.flatMap(m => m.health_tags))].sort();
+const allProtein = [...new Set(mealPlans.map(m => m.protein_source))].sort();
+const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
+---
+
+<BaseLayout title="🥘 Fresh Meal Plans" lang="en">
+  <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
+    <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">🥘 Fresh Meal Plan Library</h1>
+    <p class="text-sm text-gray-400 mb-3">Hand-prepared fresh meal plans for dogs and cats — {mealPlans.length} recipes (🐶{mealPlans.filter(m=>m.species==='dog').length} dog · 🐱{mealPlans.filter(m=>m.species==='cat').length} cat)</p>
+    <p class="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-4">
+      🈶 Meal content is currently Chinese-only. English descriptions are scheduled for a later phase.
+    </p>
+
+    <div class="flex gap-2 mb-5 flex-wrap">
+      <button id="clearFilter" class="bg-gray-50 text-gray-500 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition">
+        📋 Show all ({mealPlans.length})
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex gap-1.5 mb-3 flex-wrap overflow-x-auto scrollbar-hide" id="tagFilters">
+      <button data-tag="" class="filter-chip active px-3 py-1.5 rounded-full text-xs font-medium border transition bg-brand text-white border-brand">All</button>
+      {allTags.map(t => (
+        <button data-tag={t}
+          class="filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30"
+        >{t}</button>
+      ))}
+    </div>
+
+    <!-- Species filter -->
+    <div class="flex gap-1.5 mb-4" id="speciesFilters">
+      <button data-species="" class="species-chip active px-4 py-1.5 rounded-full text-xs font-medium border transition bg-brand text-white border-brand">🐶🐱 All</button>
+      <button data-species="dog" class="species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30">🐶 Dog ({mealPlans.filter(m=>m.species==='dog').length})</button>
+      <button data-species="cat" class="species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30">🐱 Cat ({mealPlans.filter(m=>m.species==='cat').length})</button>
+    </div>
+
+    <!-- Type filter -->
+    <div class="flex gap-1.5 mb-4 flex-wrap" id="typeFilters">
+      {allTypes.map(t => (
+        <button data-type={t}
+          class="type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30"
+        >{t}</button>
+      ))}
+    </div>
+
+    <!-- Results count -->
+    <p id="resultCount" class="text-xs text-gray-400 mb-3">Showing {mealPlans.length} meal plans</p>
+
+    <!-- Meal grid -->
+    <div id="mealGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {mealPlans.map(m => (
+        <a href={`/meals/${m.id}`}
+          data-tags={m.health_tags.join(',')}
+          data-type={m.meal_type}
+          data-protein={m.protein_source}
+          data-species={m.species || 'dog'}
+          data-allergy={m.allergy_tag || ''}
+          class="meal-card group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+        >
+          <div class="flex items-start gap-3">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors">{m.name}</h2>
+                <span class="text-[10px] bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded">{m.difficulty}</span>
+              </div>
+              <p class="text-xs text-gray-400 mb-2 leading-relaxed">{m.description}</p>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{m.protein_source}</span>
+                {m.allergy_tag && <span class="text-[9px] px-1.5 py-0.5 rounded-full {m.allergy_tag.includes('高') ? 'bg-red-50 text-red-500' : m.allergy_tag.includes('超低') ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}">{m.allergy_tag}</span>}
+                <span class="text-[10px] text-gray-300">{m.prep_time}</span>
+                <span class="text-[10px] text-gray-300">👤 {m.author}</span>
+                <span class="text-[10px] text-gray-300">{m.meal_type}</span>
+              </div>
+              <div class="flex gap-1 mt-1.5 flex-wrap">
+                {m.health_tags.slice(0, 3).map(t => (
+                  <span class="text-[9px] bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded-full">{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <p id="noResults" class="text-center text-gray-400 py-10 hidden">No matching meal plans — try loosening your filters</p>
+
+    <div class="mt-8 pt-4 border-t border-gray-100">
+      <p class="text-xs text-gray-300 text-center">Want to share your own recipe? Reach out to Sunny 😎</p>
+    </div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.meal-card');
+    const chips = document.querySelectorAll('.filter-chip');
+    const typeChips = document.querySelectorAll('.type-chip');
+    const speciesChips = document.querySelectorAll('.species-chip');
+    const resultCount = document.getElementById('resultCount');
+    const noResults = document.getElementById('noResults');
+    const grid = document.getElementById('mealGrid');
+    const clearBtn = document.getElementById('clearFilter');
+
+    let activeTag = '';
+    let activeType = '';
+    let activeSpecies = '';
+
+    function filterMeals() {
+      let visible = 0;
+      cards.forEach(card => {
+        const tags = (card.dataset.tags || '').split(',');
+        const type = card.dataset.type || '';
+        const species = card.dataset.species || 'dog';
+        const matchesTag = !activeTag || tags.includes(activeTag);
+        const matchesType = !activeType || type === activeType;
+        const matchesSpecies = !activeSpecies || species === activeSpecies;
+        const show = matchesTag && matchesType && matchesSpecies;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      resultCount.textContent = `Showing ${visible} meal plans`;
+      noResults.classList.toggle('hidden', visible > 0);
+    }
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeTag = chip.dataset.tag;
+        chips.forEach(c => {
+          const isActive = c.dataset.tag === activeTag;
+          c.className = `filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
+        });
+        typeChips.forEach(c => {
+          c.className = `type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30`;
+        });
+        activeType = '';
+        filterMeals();
+      });
+    });
+
+    typeChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeType = chip.dataset.type === activeType ? '' : chip.dataset.type;
+        typeChips.forEach(c => {
+          const isActive = c.dataset.type === activeType;
+          c.className = `type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30'}`;
+        });
+        filterMeals();
+      });
+    });
+
+    speciesChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeSpecies = chip.dataset.species;
+        speciesChips.forEach(c => {
+          const isActive = c.dataset.species === activeSpecies;
+          c.className = `species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
+        });
+        filterMeals();
+      });
+    });
+
+    clearBtn.addEventListener('click', () => {
+      activeTag = '';
+      activeType = '';
+      activeSpecies = '';
+      chips.forEach(c => {
+        const isActive = c.dataset.tag === '';
+        c.className = `filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
+      });
+      typeChips.forEach(c => {
+        c.className = `type-chip px-3 py-1 rounded-full text-[10px] font-medium border transition bg-gray-50 text-gray-400 border-gray-200 hover:border-brand/30`;
+      });
+      speciesChips.forEach(c => {
+        const isActive = c.dataset.species === '';
+        c.className = `species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-brand text-white border-brand' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30'}`;
+      });
+      filterMeals();
+    });
+  </script>
+</BaseLayout>
