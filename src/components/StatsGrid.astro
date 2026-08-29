@@ -1,5 +1,7 @@
 ---
 // StatsGrid — stats cards = direct links
+import healthArticles from '../data/health-articles.json';
+
 interface Stat {
   emoji: string;
   value: number;
@@ -15,11 +17,12 @@ interface Props {
 
 const { lang = 'zh' } = Astro.props;
 const isZh = lang === 'zh';
+const healthCount = (healthArticles as any[]).length;
 
 const cards: Stat[] = [
   { emoji: '🍽️', value: Astro.props.stats?.total || 0, label_zh: '狗友善餐廳', label_en: 'Dog-friendly', href: isZh ? '/restaurants' : '/en/restaurants' },
   { emoji: '📍', value: Astro.props.stats?.districts || 0, label_zh: '覆蓋地區', label_en: 'Districts', href: isZh ? '/restaurants' : '/en/restaurants' },
-  { emoji: '📚', value: 8, label_zh: '健康文章', label_en: 'Health Articles', href: isZh ? '/health' : '/en/health' },
+  { emoji: '📚', value: healthCount, label_zh: '健康文章', label_en: 'Health Articles', href: isZh ? '/health' : '/en/health' },
   { emoji: '🗺️', value: Astro.props.stats?.districts || 0, label_zh: '分區指南', label_en: 'District Guides', href: isZh ? '/restaurants' : '/en/restaurants' },
 ];
 ---
