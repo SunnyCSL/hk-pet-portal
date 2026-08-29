@@ -10,9 +10,89 @@ export function getStaticPaths() {
 }
 
 const { article } = Astro.props;
+
+// Derive a description for og:description / meta description from the first
+// non-heading paragraph of content_html. content_html is double-encoded
+// (literal HTML entities) inside health-articles.json, so we must
+// decode first, then strip tags.
+function decodeEntities(html: string): string {
+  return html
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ');
+}
+function stripTags(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function deriveDescription(html: string, maxLen = 150): string {
+  const decoded = decodeEntities(html);
+  // Collect all <p> blocks. Prefer the first one whose stripped text looks
+  // like real body content (more than 40 chars, doesn't look like the title).
+  const paragraphs: string[] = [];
+  const re = /<p[^>]*>([\s\S]*?)<\/p>/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(decoded)) !== null) {
+    paragraphs.push(stripTags(m[1]));
+  }
+  let text = paragraphs.find((t) => t.length >= 30) || paragraphs[0] || stripTags(decoded);
+  // Some articles put the H1 (# Title) inside the first paragraph; trim leading #.
+  text = text.replace(/^#\s*/, '').trim();
+  return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
+}
+const derivedDesc = deriveDescription(article.content_html || '');
+const metaDescription = (article.meta_description && String(article.meta_description).trim()) || derivedDesc;
+
+// Map the article `date` ("Jul 7") to an ISO timestamp for Article JSON-LD.
+// We don't have a full year stored per article; rely on the article JSON's
+// implicit 2026 publication year (latest commit cycle 2026 H2).
+const MONTH_MAP: Record<string, string> = {
+  Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+  Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
+};
+function deriveDateIso(dateStr: string): string {
+  const m = (dateStr || '').trim().match(/^([A-Za-z]+)\s*(\d{1,2})$/);
+  if (!m) return '2026-01-01';
+  const month = MONTH_MAP[m[1]] || '01';
+  const day = m[2].padStart(2, '0');
+  return `2026-${month}-${day}`;
+}
+const articleDateIso = (article as any).date_iso || deriveDateIso(article.date || '');
+const articleKeywords = Array.isArray(article.tags) ? article.tags.join(', ') : '';
+
+const articleLd: object = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.title,
+  description: metaDescription,
+  ...(articleKeywords ? { keywords: articleKeywords } : {}),
+  inLanguage: 'zh-HK',
+  datePublished: articleDateIso,
+  dateModified: articleDateIso,
+  author: { '@type': 'Organization', name: 'HK Pet Portal' },
+  publisher: { '@type': 'Organization', name: 'HK Pet Portal' },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': new URL(`/health/${article.slug}`, Astro.site || 'https://hk-pet-portal.vercel.app').toString(),
+  },
+  articleSection: article.catName || 'Pet Health',
+};
 ---
 
-<BaseLayout title={article.title} lang="zh">
+<BaseLayout
+  title={article.title}
+  description={metaDescription}
+  ogType="article"
+  publishedTime={articleDateIso}
+  modifiedTime={articleDateIso}
+  jsonLd={articleLd}
+  lang="zh"
+>
   <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
     <a href="/health" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-brand no-underline mb-4">
       ← 健康圖書館

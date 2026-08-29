@@ -3,16 +3,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import articles from '../data/health-articles.json';
 
 // Derive short `desc` from the first paragraph of content_html when not stored.
+// content_html in health-articles.json is double-encoded (literal HTML
+// entities), so decode first then strip tags.
 function deriveDesc(html: string, maxLen = 50): string {
-  const m = html.match(/<p[^>]*>([\s\S]*?)<\/p>/);
-  if (!m) return '';
-  // strip remaining tags + decode common entities
-  const text = m[1]
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
+  const decoded = html
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ');
+  const m = decoded.match(/<p[^>]*>([\s\S]*?)<\/p>/);
+  if (!m) return '';
+  const text = m[1]
+    .replace(/<[^>]+>/g, '')
     .replace(/\s+/g, ' ')
     .trim();
   return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
