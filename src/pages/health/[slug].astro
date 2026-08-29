@@ -107,6 +107,7 @@ const videoEntry = videoMap.find((v) => v.slug === article.slug);
   modifiedTime={articleDateIso}
   jsonLd={articleLd}
   lang="zh"
+  noEnAlternate={!article.content_html_en}
 >
   <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
     <a href="/health" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-brand no-underline mb-4">
@@ -124,7 +125,7 @@ const videoEntry = videoMap.find((v) => v.slug === article.slug);
 
     <div class="bg-white rounded-xl border border-gray-100 p-4 md:p-6">
       <div class="prose-custom">
-        {article.content_html}
+        <div set:html={article.content_html} />
       </div>
     </div>
 
