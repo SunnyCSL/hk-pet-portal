@@ -1,28 +1,37 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import articles from '../data/health-articles.json';
 
-const articles = [
-  { emoji: '🥩', title: '狗狗營養缺乏症完整指南', desc: '症狀識別與補充方法', cat: 'nutrition', catName: '營養', date: 'Jul 7', slug: 'pet-nutrition-deficiency-guide' },
-  { emoji: '💆', title: '狗狗家居按摩治療基礎', desc: '放鬆肌肉與促進血液循環', cat: 'care', catName: '護理', date: 'Jul 7', slug: 'dog-massage-therapy-basics' },
-  { emoji: '🥘', title: '狗狗鮮食營養指南', desc: '自煮鮮食的營養比例與食材選擇', cat: 'nutrition', catName: '營養', date: 'Jul 7', slug: 'dog-fresh-food-nutrition-guide' },
-  { emoji: '🌿', title: '狗隻中醫五元素養生法', desc: '體質辨識與食療調理', cat: 'tcm', catName: '中醫', date: 'Jul 7', slug: 'dog-tcm-five-elements-guide' },
-  { emoji: '🌸', title: '狗狗季節性中醫養生', desc: '春夏秋冬飲食調整要點', cat: 'tcm', catName: '中醫', date: 'Jul 7', slug: 'dog-seasonal-health-tcm' },
-  { emoji: '📊', title: '狗隻營養標準對比', desc: 'AAFCO vs NRC vs 鮮食營養學', cat: 'nutrition', catName: '營養', date: 'Jul 7', slug: 'dog-nutrition-standards-comparison' },
-  { emoji: '🐕', title: '狗狗行為解讀手冊', desc: '從肢體語言了解毛孩心聲', cat: 'behavior', catName: '行為', date: 'Jul 7', slug: 'dog-behavior-understanding-guide' },
-  { emoji: '🆘', title: '狗狗急救應對手冊', desc: '家居常見意外處理與緊急護理', cat: 'care', catName: '護理', date: 'Jul 7', slug: 'dog-firstaid-emergency-guide' },
-  { emoji: '⚠️', title: '狗食物過敏致敏排行榜與排除飲食指南', desc: '致敏排行榜+8週排除飲食法', cat: 'nutrition', catName: '營養', date: 'Jul 27', slug: 'dog-food-allergy-ranking-guide' },
-  { emoji: '🦷', title: '狗狗口臭點算？真正原因同解決方法', desc: '口臭成因+飲食調整實戰', cat: 'care', catName: '護理', date: 'Jul 28', slug: 'dog-bad-breath-guide' },
-];
+// Derive short `desc` from the first paragraph of content_html when not stored.
+function deriveDesc(html: string, maxLen = 50): string {
+  const m = html.match(/<p[^>]*>([\s\S]*?)<\/p>/);
+  if (!m) return '';
+  // strip remaining tags + decode common entities
+  const text = m[1]
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
+}
+
+const enriched = (articles as any[]).map((a) => ({
+  ...a,
+  desc: a.desc ?? deriveDesc(a.content_html || ''),
+}));
 
 const catFilter = Astro.url.searchParams.get('cat') || '';
-const filtered = catFilter ? articles.filter(a => a.cat === catFilter) : articles;
+const filtered = catFilter ? enriched.filter(a => a.cat === catFilter) : enriched;
 
 const categories = [
-  { id: '', name: '全部', count: articles.length },
-  { id: 'nutrition', name: '營養', count: articles.filter(a => a.cat === 'nutrition').length },
-  { id: 'tcm', name: '中醫', count: articles.filter(a => a.cat === 'tcm').length },
-  { id: 'care', name: '護理', count: articles.filter(a => a.cat === 'care').length },
-  { id: 'behavior', name: '行為', count: articles.filter(a => a.cat === 'behavior').length },
+  { id: '', name: '全部', count: enriched.length },
+  { id: 'nutrition', name: '營養', count: enriched.filter(a => a.cat === 'nutrition').length },
+  { id: 'tcm', name: '中醫', count: enriched.filter(a => a.cat === 'tcm').length },
+  { id: 'care', name: '護理', count: enriched.filter(a => a.cat === 'care').length },
+  { id: 'behavior', name: '行為', count: enriched.filter(a => a.cat === 'behavior').length },
 ];
 ---
 
