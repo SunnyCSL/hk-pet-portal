@@ -125,7 +125,7 @@ const videoEntry = videoMap.find((v) => v.slug === article.slug);
 
     <div class="bg-white rounded-xl border border-gray-100 p-4 md:p-6">
       <div class="prose-custom">
-        {article.content_html}
+        <div set:html={article.content_html} />
       </div>
     </div>
 
