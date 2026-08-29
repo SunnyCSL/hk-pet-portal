@@ -20,16 +20,25 @@ function deriveDesc(html: string, maxLen = 50): string {
   return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
 }
 
-const enriched = (articles as any[]).map((a) => ({
-  ...a,
-  desc: a.desc ?? deriveDesc(a.content_html || ''),
-}));
+// Phase 2: pick EN title/desc where content_html_en is non-empty, otherwise
+// fall back to zh. Article with EN content has `has_en: true` and link → /en/health/{slug}.
+// Article without EN has `has_en: false` and link → /health/{slug} (zh fallback).
+const enriched = (articles as any[]).map((a) => {
+  const has_en = typeof a.content_html_en === 'string' && a.content_html_en.trim().length > 0;
+  return {
+    ...a,
+    has_en,
+    display_title: has_en ? a.title_en : a.title,
+    display_desc: has_en
+      ? (a.desc_en ?? deriveDesc(a.content_html_en, 60))
+      : deriveDesc(a.content_html || '', 60),
+    link: has_en ? `/en/health/${a.slug}` : `/health/${a.slug}`,
+  };
+});
 
 const catFilter = Astro.url.searchParams.get('cat') || '';
 const filtered = catFilter ? enriched.filter(a => a.cat === catFilter) : enriched;
 
-// Phase 1 i18n: show original Chinese titles plus a "Translation coming soon" hint.
-// Per task brief, full EN translation of article bodies lands in Phase 2.
 const categories = [
   { id: '', name: 'All', count: enriched.length },
   { id: 'nutrition', name: 'Nutrition', count: enriched.filter(a => a.cat === 'nutrition').length },
@@ -41,13 +50,13 @@ const categories = [
 
 <BaseLayout title="📚 Health Guides" lang="en">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
-    <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">📚 Health Guides (中文)</h1>
+    <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">📚 Health Guides</h1>
     <p class="text-sm text-gray-400 mb-3">Adapted from professional pet-care courses, rewritten with original content and the latest research.</p>
 
-    <!-- Phase 1 notice -->
+    <!-- Phase 2 notice -->
     <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-5">
       <p class="text-xs text-amber-700 leading-relaxed">
-        🈶 <strong>English article translations are coming soon</strong>. For now, the list below shows the original Chinese titles — each card opens the Chinese article page. Full English content arrives in Phase 2.
+        🈶 <strong>English translations</strong> are rolling out. Articles marked <span class="font-semibold">EN</span> have a full English version. Others link to the Chinese original — translation coming soon.
       </p>
     </div>
 
@@ -64,21 +73,32 @@ const categories = [
       </div>
     </div>
 
-    <!-- Article grid — cards link to the Chinese article pages during Phase 1 -->
+    <!-- Article grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {filtered.map((a: { emoji: string; title: string; desc: string; cat: string; catName: string; date: string; slug: string }) => (
-        <a href={`/health/${a.slug}`}
+      {filtered.map((a: { emoji: string; display_title: string; display_desc: string; cat: string; catName: string; date: string; slug: string; has_en: boolean; link: string }) => (
+        <a href={a.link}
           class="group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
         >
           <div class="flex items-start gap-3">
             <div class="text-2xl shrink-0 mt-0.5">{a.emoji}</div>
             <div class="min-w-0 flex-1">
-              <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors leading-tight">
-                {a.title}
-              </h2>
-              <p class="text-xs text-gray-400 mt-1">{a.desc}</p>
+              <div class="flex items-start gap-1.5 mb-0.5">
+                <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors leading-tight">
+                  {a.display_title}
+                </h2>
+                {!a.has_en && (
+                  <span class="shrink-0 mt-0.5 text-[9px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium">🇨🇳 中文版 →</span>
+                )}
+                {a.has_en && (
+                  <span class="shrink-0 mt-0.5 text-[9px] bg-brand-light text-brand/80 px-1.5 py-0.5 rounded font-medium">EN</span>
+                )}
+              </div>
+              <p class="text-xs text-gray-400 mt-1 line-clamp-2">{a.display_desc}</p>
+              {!a.has_en && (
+                <p class="text-[10px] text-amber-600 mt-1.5">Translation coming soon</p>
+              )}
               <div class="flex items-center gap-2 mt-2">
-                <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{a.catName}</span>
+                <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{a.catName_en || a.catName}</span>
                 <span class="text-[10px] text-gray-300">{a.date}</span>
               </div>
             </div>

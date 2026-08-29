@@ -23,6 +23,14 @@ export interface Props {
   /** ISO date string for Article schema. */
   modifiedTime?: string;
   lang?: 'zh' | 'en';
+  /**
+   * Set true when this page has no English equivalent (e.g. an untranslated
+   * zh-only health article). Suppresses the en hreflang alternate so search
+   * engines don't index a 404. Defaults to false (emit both zh + en).
+   * Phase 2: src/pages/health/[slug].astro sets this when content_html_en
+   * is empty.
+   */
+  noEnAlternate?: boolean;
 }
 
 const {
@@ -35,6 +43,7 @@ const {
   publishedTime,
   modifiedTime,
   lang = 'zh',
+  noEnAlternate = false,
 } = Astro.props;
 const isZh = lang === 'zh';
 
@@ -110,7 +119,7 @@ const allLd = [...baseLdBlocks, ...extraLd];
          default locale per astro.config.mjs). The en equivalent uses the
          /en/{rest-of-path} convention so /restaurants → /en/restaurants. -->
     <link rel="alternate" hreflang="zh-HK" href={`${SITE}${zhPath}`} />
-    <link rel="alternate" hreflang="en" href={`${SITE}${enPath}`} />
+    {!noEnAlternate && <link rel="alternate" hreflang="en" href={`${SITE}${enPath}`} />}
     <link rel="alternate" hreflang="x-default" href={`${SITE}${zhPath}`} />
 
     <!-- Open Graph (Phase 0 Batch 2) -->
