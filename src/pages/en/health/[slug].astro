@@ -18,7 +18,7 @@ export function getStaticPaths() {
 
 const { article } = Astro.props;
 
-// --- description / meta ---
+// Decode + strip helpers (for description + read-time)
 function decodeEntities(html: string): string {
   return html
     .replace(/&lt;/g, '<')
@@ -29,23 +29,32 @@ function decodeEntities(html: string): string {
     .replace(/&nbsp;/g, ' ');
 }
 function stripTags(html: string): string {
-  return html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  return html
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
-// content_html_en in JSON is plain HTML (not double-encoded), so deriveDesc
-// here is simpler than the zh page version. Falls back to article's first
-// <p> if desc_en is missing.
 function deriveDesc(html: string, maxLen = 150): string {
+  const decoded = decodeEntities(html);
   const paragraphs: string[] = [];
   const re = /<p[^>]*>([\s\S]*?)<\/p>/g;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) !== null) paragraphs.push(stripTags(m[1]));
-  let text = paragraphs.find((t) => t.length >= 30) || paragraphs[0] || stripTags(html);
+  while ((m = re.exec(decoded)) !== null) {
+    paragraphs.push(stripTags(m[1]));
+  }
+  let text = paragraphs.find((t) => t.length >= 30) || paragraphs[0] || stripTags(decoded);
   text = text.replace(/^#\s*/, '').trim();
   return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
 }
-const metaDescription = (article.desc_en && String(article.desc_en).trim()) || deriveDesc(article.content_html_en || '');
+const derivedDesc = deriveDesc(article.content_html_en || '');
+const metaDescription = (article.desc_en && String(article.desc_en).trim()) || derivedDesc;
 
-// --- date / keywords ---
+// --- read-time (EN heuristic: words / 220, min 1) ---
+const plainText = stripTags(decodeEntities(article.content_html_en || ''));
+const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+const readMinutes = Math.max(1, Math.round(wordCount / 220));
+
+// --- date / keywords (Article JSON-LD) ---
 const MONTH_MAP: Record<string, string> = {
   Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
   Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
@@ -91,6 +100,30 @@ interface VideoMapping {
 }
 const videoMap: VideoMapping[] = videoArticles as VideoMapping[];
 const videoEntry = videoMap.find((v) => v.slug === article.slug);
+
+// --- related articles: same cat first, then latest 3 (excluding self) ---
+// EN-only filter so the related grid is never empty on the EN page.
+const relatedArticles = (() => {
+  const sameCat = (articles as any[]).filter(
+    (a) =>
+      a.slug !== article.slug &&
+      a.cat === article.cat &&
+      typeof a.content_html_en === 'string' &&
+      a.content_html_en.trim().length > 0,
+  );
+  const others = (articles as any[]).filter(
+    (a) =>
+      a.slug !== article.slug &&
+      a.cat !== article.cat &&
+      typeof a.content_html_en === 'string' &&
+      a.content_html_en.trim().length > 0,
+  );
+  return [...sameCat, ...others].slice(0, 3);
+})();
+
+const articleSource = article.source_en || article.source;
+const articleDisclaimer = article.disclaimer_en || article.disclaimer;
+const articleCatName = article.catName_en || article.catName;
 ---
 
 <BaseLayout
@@ -102,25 +135,55 @@ const videoEntry = videoMap.find((v) => v.slug === article.slug);
   jsonLd={articleLd}
   lang="en"
 >
-  <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
-    <a href="/en/health" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-brand no-underline mb-4">
-      ← Health Library
-    </a>
+  <!-- Hero: gradient backdrop, big emoji tile, larger title, meta pills -->
+  <section class="hero-gradient">
+    <div class="max-w-3xl mx-auto px-4 pt-6 md:pt-10 pb-2 md:pb-4">
+      <a href="/en/health" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-brand no-underline mb-4 md:mb-6 transition-colors">
+        ← Health Library
+      </a>
 
-    <div class="mb-6">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{article.catName_en || article.catName}</span>
-        <span class="text-[10px] text-gray-300">{Array.isArray(article.tags_en) && article.tags_en.length ? article.tags_en.join(', ') : (Array.isArray(article.tags) ? article.tags.join(', ') : '')}</span>
+      <div class="flex items-start gap-4 md:gap-5">
+        {article.emoji && (
+          <div class="emoji-tile shrink-0" aria-hidden="true">
+            <span class="block leading-none">{article.emoji}</span>
+          </div>
+        )}
+        <div class="min-w-0 flex-1">
+          <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight tracking-tight">
+            {article.title_en}
+          </h1>
+        </div>
       </div>
-      <h1 class="text-xl md:text-2xl font-bold text-near-black leading-tight">{article.emoji} {article.title_en}</h1>
-      {(article.source_en || article.source) && <p class="text-xs text-gray-400 mt-2">{article.source_en || article.source}</p>}
-    </div>
 
-    <div class="bg-white rounded-xl border border-gray-100 p-4 md:p-6">
+      <div class="mt-4 md:mt-5 flex flex-wrap items-center gap-2 text-xs md:text-sm text-gray-600">
+        <span class="inline-flex items-center gap-1 bg-brand-light text-brand font-medium px-2.5 py-1 rounded-full">
+          📚 {articleCatName}
+        </span>
+        {article.date && (
+          <span class="inline-flex items-center gap-1 bg-white/80 backdrop-blur border border-gray-100 px-2.5 py-1 rounded-full text-gray-600">
+            📅 {article.date}, 2026
+          </span>
+        )}
+        <span class="inline-flex items-center gap-1 bg-white/80 backdrop-blur border border-gray-100 px-2.5 py-1 rounded-full text-gray-600">
+          ⏱ {readMinutes} min read
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Article body card -->
+  <div class="max-w-3xl mx-auto px-4 py-6 md:py-10">
+    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-8">
       <div class="prose-custom">
         <div set:html={article.content_html_en} />
       </div>
-    </div>
+
+      {articleSource && (
+        <p class="mt-8 pt-5 border-t border-gray-100 text-xs text-gray-400 leading-relaxed">
+          <span class="font-medium text-gray-500">Source:</span>{articleSource}
+        </p>
+      )}
+    </article>
 
     {videoEntry && (
       <VideoEmbed
@@ -131,10 +194,270 @@ const videoEntry = videoMap.find((v) => v.slug === article.slug);
       />
     )}
 
-    {article.disclaimer_en && (
-      <div class="mt-6 bg-amber-50 border border-amber-100 rounded-xl p-4">
-        <p class="text-xs text-amber-700 leading-relaxed">{article.disclaimer_en}</p>
+    {articleDisclaimer && (
+      <div class="mt-6 bg-amber-50 border border-amber-100 rounded-xl p-5 md:p-6 flex items-start gap-3">
+        <span class="text-2xl shrink-0 leading-none" aria-hidden="true">⚠️</span>
+        <p class="text-sm text-amber-800 leading-relaxed">{articleDisclaimer}</p>
       </div>
     )}
+
+    {relatedArticles.length > 0 && (
+      <section class="mt-10 md:mt-12">
+        <h2 class="text-lg md:text-xl font-bold text-near-black mb-4 flex items-center gap-2">
+          <span class="inline-block w-1.5 h-5 bg-brand rounded-full"></span>
+          Related articles
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {relatedArticles.map((rel) => (
+            <a
+              href={`/en/health/${rel.slug}`}
+              class="related-card group block bg-white rounded-xl border border-gray-100 p-4 no-underline transition-all hover:border-brand/40 hover:shadow-md"
+            >
+              <div class="text-2xl mb-2 leading-none" aria-hidden="true">{rel.emoji}</div>
+              <h3 class="text-sm md:text-base font-semibold text-near-black leading-snug mb-1.5 group-hover:text-brand transition-colors line-clamp-2">
+                {rel.title_en}
+              </h3>
+              <p class="text-xs text-gray-500">{rel.catName_en || rel.catName}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- CTA banner to /en/health -->
+    <a
+      href="/en/health"
+      class="cta-banner mt-8 md:mt-10 flex items-center justify-between gap-3 bg-gradient-to-r from-brand to-healthy-green text-white rounded-2xl px-5 md:px-6 py-5 no-underline shadow-md hover:shadow-lg transition-shadow"
+    >
+      <div>
+        <p class="text-base md:text-lg font-bold">📚 More free guides</p>
+        <p class="text-xs md:text-sm text-white/90 mt-0.5">Explore every article in the Health Library</p>
+      </div>
+      <span class="text-2xl md:text-3xl shrink-0" aria-hidden="true">→</span>
+    </a>
   </div>
+
+  <!-- Return-to-top floating button -->
+  <button
+    type="button"
+    id="return-top"
+    class="return-top-btn fixed bottom-5 right-5 z-40 w-11 h-11 rounded-full bg-brand text-white shadow-lg flex items-center justify-center text-lg hover:bg-brand/90 active:scale-95 transition-all"
+    aria-label="Back to top"
+  >
+    ↑
+  </button>
+
+  <style is:global>
+    /* ---------- Hero gradient backdrop (light brand-green wash) ---------- */
+    .hero-gradient {
+      background: linear-gradient(180deg, #E8F5E9 0%, #F1F9F2 60%, #ffffff 100%);
+    }
+
+    /* ---------- Emoji tile (64px on desktop, scales down on mobile) ---------- */
+    .emoji-tile {
+      width: 64px;
+      height: 64px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 1px solid #E0EFE3;
+      border-radius: 16px;
+      font-size: 36px;
+      line-height: 1;
+      box-shadow: 0 2px 8px rgba(45, 155, 78, 0.08);
+    }
+    @media (max-width: 640px) {
+      .emoji-tile {
+        width: 52px;
+        height: 52px;
+        font-size: 28px;
+        border-radius: 14px;
+      }
+    }
+
+    /* ---------- Prose typography overrides ---------- */
+    .prose-custom p {
+      font-size: 16px;
+      line-height: 2;
+      color: var(--color-gray-700);
+      margin-bottom: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .prose-custom p {
+        font-size: 17px;
+      }
+    }
+
+    /* ---------- h2: left brand-green bar + roomy rhythm ---------- */
+    .prose-custom h2 {
+      position: relative;
+      padding-left: 14px;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 1.25rem;
+      line-height: 1.4;
+      font-weight: 700;
+      color: var(--color-near-black);
+    }
+    .prose-custom h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.25rem;
+      bottom: 0.25rem;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--color-brand);
+    }
+    @media (min-width: 768px) {
+      .prose-custom h2 {
+        font-size: 1.4rem;
+        padding-left: 16px;
+      }
+    }
+
+    /* ---------- h3: subtle, slightly tighter ---------- */
+    .prose-custom h3 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-near-black);
+    }
+
+    /* ---------- Lists: deeper rhythm ---------- */
+    .prose-custom ol,
+    .prose-custom ul {
+      margin-bottom: 1.5rem;
+      padding-left: 1.25rem;
+    }
+    .prose-custom ol > li,
+    .prose-custom ul > li {
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--color-gray-700);
+      margin-bottom: 0.4rem;
+    }
+    @media (min-width: 768px) {
+      .prose-custom ol > li,
+      .prose-custom ul > li {
+        font-size: 17px;
+      }
+    }
+
+    /* ---------- Tables: zebra rows, brand-green header, rounded corners ---------- */
+    .prose-custom table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 1.25rem 0 1.5rem;
+      font-size: 0.95rem;
+      border: 1px solid #E8E8E8;
+      border-radius: 10px;
+      overflow: hidden;
+      table-layout: auto;
+    }
+    .prose-custom th,
+    .prose-custom td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #F0F0F0;
+      border-right: 1px solid #F0F0F0;
+      text-align: left;
+      color: var(--color-gray-700);
+      background: #ffffff;
+    }
+    .prose-custom th:last-child,
+    .prose-custom td:last-child {
+      border-right: none;
+    }
+    .prose-custom thead th {
+      background: #E8F5E9;
+      color: var(--color-brand);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #D6E8D8;
+    }
+    .prose-custom tbody tr:nth-child(even) td {
+      background: #FAFBF7;
+    }
+    .prose-custom tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ---------- Blockquote: brand-green left bar + soft tint ---------- */
+    .prose-custom blockquote {
+      margin: 1.5rem 0;
+      padding: 0.75rem 1rem;
+      border-left: 3px solid var(--color-brand);
+      background: #F4FAF5;
+      color: var(--color-gray-700);
+      border-radius: 0 8px 8px 0;
+    }
+    .prose-custom blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ---------- hr divider ---------- */
+    .prose-custom hr {
+      border: none;
+      border-top: 1px solid #ECECEC;
+      margin: 2rem 0;
+    }
+
+    /* ---------- Strong / links inside prose ---------- */
+    .prose-custom strong {
+      color: var(--color-near-black);
+      font-weight: 700;
+    }
+    .prose-custom a {
+      color: var(--color-brand);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ---------- Related-card line clamp support (Safari 16+) ---------- */
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ---------- Return-to-top button: hidden until scroll > 400px ---------- */
+    .return-top-btn {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+    .return-top-btn.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .return-top-btn { transition: none; }
+    }
+  </style>
+
+  <script is:inline>
+    (() => {
+      const btn = document.getElementById('return-top');
+      if (!btn) return;
+      const THRESHOLD = 400;
+      const onScroll = () => {
+        if (window.scrollY > THRESHOLD) {
+          btn.classList.add('is-visible');
+        } else {
+          btn.classList.remove('is-visible');
+        }
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+  </script>
 </BaseLayout>
