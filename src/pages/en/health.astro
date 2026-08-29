@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import articles from '../../data/health-articles.json';
+
+// Derive short `desc` from the first paragraph of content_html when not stored.
+function deriveDesc(html: string, maxLen = 50): string {
+  const decoded = html
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ');
+  const m = decoded.match(/<p[^>]*>([\s\S]*?)<\/p>/);
+  if (!m) return '';
+  const text = m[1]
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
+}
+
+const enriched = (articles as any[]).map((a) => ({
+  ...a,
+  desc: a.desc ?? deriveDesc(a.content_html || ''),
+}));
+
+const catFilter = Astro.url.searchParams.get('cat') || '';
+const filtered = catFilter ? enriched.filter(a => a.cat === catFilter) : enriched;
+
+// Phase 1 i18n: show original Chinese titles plus a "Translation coming soon" hint.
+// Per task brief, full EN translation of article bodies lands in Phase 2.
+const categories = [
+  { id: '', name: 'All', count: enriched.length },
+  { id: 'nutrition', name: 'Nutrition', count: enriched.filter(a => a.cat === 'nutrition').length },
+  { id: 'tcm', name: 'TCM', count: enriched.filter(a => a.cat === 'tcm').length },
+  { id: 'care', name: 'Care', count: enriched.filter(a => a.cat === 'care').length },
+  { id: 'behavior', name: 'Behavior', count: enriched.filter(a => a.cat === 'behavior').length },
+];
+---
+
+<BaseLayout title="📚 Health Guides" lang="en">
+  <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
+    <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">📚 Health Guides (中文)</h1>
+    <p class="text-sm text-gray-400 mb-3">Adapted from professional pet-care courses, rewritten with original content and the latest research.</p>
+
+    <!-- Phase 1 notice -->
+    <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-5">
+      <p class="text-xs text-amber-700 leading-relaxed">
+        🈶 <strong>English article translations are coming soon</strong>. For now, the list below shows the original Chinese titles — each card opens the Chinese article page. Full English content arrives in Phase 2.
+      </p>
+    </div>
+
+    <!-- Category pills -->
+    <div class="overflow-x-auto -mx-4 px-4 mb-5 scrollbar-hide">
+      <div class="flex gap-1.5 w-max md:w-auto">
+        {categories.map((c: { id: string; name: string; count: number }) => (
+          <a href={c.id ? `/en/health?cat=${c.id}` : '/en/health'}
+            class={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium no-underline whitespace-nowrap transition-all ${
+              catFilter === c.id ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+            }`}
+          >{c.name} ({c.count})</a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Article grid — cards link to the Chinese article pages during Phase 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {filtered.map((a: { emoji: string; title: string; desc: string; cat: string; catName: string; date: string; slug: string }) => (
+        <a href={`/health/${a.slug}`}
+          class="group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+        >
+          <div class="flex items-start gap-3">
+            <div class="text-2xl shrink-0 mt-0.5">{a.emoji}</div>
+            <div class="min-w-0 flex-1">
+              <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors leading-tight">
+                {a.title}
+              </h2>
+              <p class="text-xs text-gray-400 mt-1">{a.desc}</p>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{a.catName}</span>
+                <span class="text-[10px] text-gray-300">{a.date}</span>
+              </div>
+            </div>
+            <div class="text-gray-300 group-hover:text-brand transition-colors shrink-0 text-xs mt-1">→</div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {filtered.length === 0 && (
+      <div class="text-center py-16 text-gray-400">
+        <p class="text-sm">No articles in this category yet</p>
+        <a href="/en/health" class="text-brand text-sm hover:underline mt-2 inline-block">View all articles</a>
+      </div>
+    )}
+  </div>
+</BaseLayout>
