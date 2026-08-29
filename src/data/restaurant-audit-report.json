@@ -2,6 +2,7 @@
   "audit_date": "2026-08-23",
   "total_restaurants": 916,
   "total_districts": 19,
+  "note": "total_restaurants 916 includes removed entries; live DB = src/data/restaurants.json (906) is authoritative. Difference of 10 = entries flagged for removal (e.g. 馮記美食/咖啡逗COMMAA) that were excluded from live DB but still counted in audit scope. UI should always source count from restaurants.json, not this audit field.",
   "fehd_check": {
     "status": "ok",
     "size": 709174,
