@@ -1,0 +1,108 @@
+---
+// VideoEmbed.astro — lite-youtube lazy-load embed for HK Pet Portal health articles.
+// Renders a YouTube thumbnail with a play button; clicking it swaps the thumbnail
+// for the real iframe (autoplay). Keeps the page fast and only loads YouTube's
+// heavy iframe on user intent. Includes VideoObject JSON-LD for SEO.
+//
+// Usage:
+//   <VideoEmbed videoId="..." titleZh="..." titleEn="..." lang="zh" />
+
+export interface Props {
+  /** YouTube video ID (the part after ?v=) */
+  videoId: string;
+  /** Chinese caption / title shown above the player */
+  titleZh: string;
+  /** English caption / title shown above the player */
+  titleEn: string;
+  /** Bilingual selector. Defaults to zh. */
+  lang?: 'zh' | 'en';
+}
+
+const { videoId, titleZh, titleEn, lang = 'zh' } = Astro.props;
+const isZh = lang === 'zh';
+const caption = isZh ? titleZh : titleEn;
+
+const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+const embedSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
+const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+// VideoObject JSON-LD. We don't have an exact uploadDate per video, so we omit
+// uploadDate per the brief ("由 mapping 提供唔到就省略 uploadDate").
+const videoLd: object = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: isZh ? titleZh : titleEn,
+  description: isZh ? titleZh : titleEn,
+  thumbnailUrl: [thumbnail],
+  embedUrl: embedSrc,
+  contentUrl: watchUrl,
+  encodingFormat: 'video/mp4',
+  inLanguage: isZh ? 'zh-HK' : 'en-HK',
+};
+---
+
+<figure class="my-6 not-prose">
+  <figcaption class="text-sm md:text-base font-semibold text-near-black mb-3 leading-snug">
+    {caption}
+  </figcaption>
+
+  <div
+    class="video-embed lite-yt relative w-full max-w-2xl mx-auto overflow-hidden rounded-xl border border-gray-100 bg-gray-50 shadow-sm"
+    style="aspect-ratio: 16 / 9;"
+    data-video-id={videoId}
+    data-embed-src={embedSrc}
+    data-thumbnail={thumbnail}
+  >
+    <button
+      type="button"
+      class="lite-yt-play group absolute inset-0 w-full h-full flex items-center justify-center bg-black/0 hover:bg-black/10 transition-colors cursor-pointer border-0 p-0"
+      aria-label={isZh ? '播放影片' : 'Play video'}
+    >
+      <img
+        src={thumbnail}
+        alt={isZh ? '影片縮圖' : 'Video thumbnail'}
+        loading="lazy"
+        decoding="async"
+        class="absolute inset-0 w-full h-full object-cover"
+        width="480"
+        height="360"
+      />
+      <span
+        class="lite-yt-playbtn relative z-10 inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-brand text-white shadow-lg group-hover:scale-105 transition-transform"
+        aria-hidden="true"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7 md:w-9 md:h-9 fill-current ml-1">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />
+</figure>
+
+<script is:inline>
+  // lite-youtube click-to-play. One delegated handler per page.
+  document.addEventListener('click', (e) => {
+    const target = e.target instanceof Element ? e.target : null;
+    if (!target) return;
+    const playBtn = target.closest('.lite-yt-play');
+    if (!playBtn) return;
+    const wrap = playBtn.closest('.lite-yt');
+    if (!wrap) return;
+    const embedSrc = wrap.getAttribute('data-embed-src');
+    if (!embedSrc) return;
+    // Swap button for iframe. Stop propagation so outer links (if any) don't fire.
+    e.preventDefault();
+    const iframe = document.createElement('iframe');
+    iframe.src = embedSrc;
+    iframe.title = 'YouTube video player';
+    iframe.loading = 'lazy';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    iframe.frameBorder = '0';
+    iframe.className = 'absolute inset-0 w-full h-full';
+    wrap.innerHTML = '';
+    wrap.appendChild(iframe);
+  });
+</script>
