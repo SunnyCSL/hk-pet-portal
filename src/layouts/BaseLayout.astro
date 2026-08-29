@@ -1,6 +1,9 @@
 ---
 // Base Layout — supports bilingual (zh/en)
 // Phase 0 Batch 2: SEO meta + JSON-LD Organization/WebSite added.
+// Phase 0 Batch 3: Vercel Analytics added.
+import Analytics from '@vercel/analytics/astro';
+
 export interface Props {
   title: string;
   description?: string;
@@ -176,6 +179,9 @@ const allLd = [...baseLdBlocks, ...extraLd];
     <main class="flex-1">
       <slot />
     </main>
+
+    <!-- Vercel Analytics (Phase 0 Batch 3) -->
+    <Analytics />
 
     <!-- Footer -->
     <footer class="bg-warm-white border-t border-gray-100 mt-16">
