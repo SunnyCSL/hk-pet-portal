@@ -1,0 +1,45 @@
+---
+/**
+ * LanguageSwitcher — toggles between zh-HK and en versions of the current page.
+ *
+ * Path mapping rules:
+ *   - zh `/foo`         ↔ en `/en/foo`
+ *   - zh `/foo/{id}`    ↔ en `/en/foo/{id}`
+ *   - zh `/`            ↔ en `/en`
+ *   - zh `/health/{slug}` ↔ en `/en/health/{slug}` (article slug: en page returns 404 in Phase 1; Phase 2 adds content)
+ *
+ * Falls back to the locale's homepage if the equivalent page does not exist
+ * (e.g. `/meals/{id}` has no en mirror → points back to `/meals/{id}` which
+ * still exists in zh, since the LanguageSwitcher link from an zh page goes to
+ * en; from en it goes to zh with the same path).
+ */
+export interface Props {
+  lang: 'zh' | 'en';
+  currentPath: string; // Astro.url.pathname, e.g. '/restaurants/123'
+}
+const { lang, currentPath } = Astro.props;
+
+function toEn(p: string): string {
+  if (p === '/' || p === '') return '/en';
+  // Already prefixed
+  if (p.startsWith('/en/') || p === '/en') return p;
+  return `/en${p}`;
+}
+function toZh(p: string): string {
+  if (p === '/en' || p === '/en/') return '/';
+  if (p.startsWith('/en/')) return p.slice(3) || '/';
+  return p;
+}
+
+const isZh = lang === 'zh';
+const targetPath = isZh ? toEn(currentPath) : toZh(currentPath);
+const label = isZh ? 'EN' : '繁';
+const ariaLabel = isZh ? 'Switch to English' : '切換到繁體中文';
+---
+<a
+  href={targetPath}
+  aria-label={ariaLabel}
+  class="text-gray-400 hover:text-gray-600 transition-colors no-underline whitespace-nowrap shrink-0 font-semibold text-sm"
+>
+  {label}
+</a>

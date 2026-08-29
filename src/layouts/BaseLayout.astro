@@ -2,7 +2,10 @@
 // Base Layout — supports bilingual (zh/en)
 // Phase 0 Batch 2: SEO meta + JSON-LD Organization/WebSite added.
 // Phase 0 Batch 3: Vercel Analytics added.
+// Phase 1: html lang uses BCP-47 (zh-HK / en), hreflang alternate tags emit
+// per-page, LanguageSwitcher component in nav.
 import Analytics from '@vercel/analytics/astro';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 
 export interface Props {
   title: string;
@@ -80,13 +83,25 @@ const allLd = [...baseLdBlocks, ...extraLd];
 ---
 
 <!DOCTYPE html>
-<html lang={lang}>
+<html lang={isZh ? 'zh-HK' : 'en'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} | HK Pet Portal</title>
     <meta name="description" content={resolvedDescription} />
     <link rel="canonical" href={fullUrl} />
+
+    <!-- hreflang alternates (Phase 1 i18n). Every page declares its zh-HK and
+         en equivalents. x-default points at the zh canonical (this is the
+         default locale per astro.config.mjs). The en equivalent uses the
+         /en/{rest-of-path} convention so /restaurants → /en/restaurants. -->
+    <link rel="alternate" hreflang="zh-HK" href={`${SITE}${normalizedPath === '/' ? '/' : normalizedPath}`} />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href={`${SITE}${normalizedPath === '/' ? '/en' : `/en${normalizedPath}`}`}
+    />
+    <link rel="alternate" hreflang="x-default" href={`${SITE}${normalizedPath === '/' ? '/' : normalizedPath}`} />
 
     <!-- Open Graph (Phase 0 Batch 2) -->
     <meta property="og:type" content={ogType} />
@@ -167,9 +182,7 @@ const allLd = [...baseLdBlocks, ...extraLd];
             <a href={isZh ? '/news' : '/en/news'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0">
               📰 {isZh ? '資訊' : 'News'}
             </a>
-            <a href={isZh ? '/' : '/en'} class="text-gray-400 hover:text-gray-600 transition-colors no-underline whitespace-nowrap shrink-0 font-semibold">
-              {isZh ? 'EN' : '繁'}
-            </a>
+            <LanguageSwitcher lang={lang} currentPath={pathName} />
           </div>
         </div>
       </div>
