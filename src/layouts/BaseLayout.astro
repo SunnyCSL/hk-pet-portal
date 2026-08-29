@@ -19,7 +19,13 @@ const isZh = lang === 'zh';
     <meta name="description" content={description || (isZh ? '香港寵物友善資訊平台 — 狗餐廳搜尋、健康知識、寵物資訊' : 'HK Pet Information Portal — Dog-friendly restaurants, health library, pet news')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+    />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#2D9B4E" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
       @import "tailwindcss";
