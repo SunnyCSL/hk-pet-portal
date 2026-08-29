@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
 import articles from '../../data/health-articles.json';
+import videoArticles from '../../data/video-articles.json';
 
 export function getStaticPaths() {
   return articles.map((a: any) => ({
@@ -82,6 +84,19 @@ const articleLd: object = {
   },
   articleSection: article.catName || 'Pet Health',
 };
+
+// Phase 3 — look up a YouTube video for this article. Returns undefined when
+// the article has no corresponding video (e.g. dog-bad-breath-guide), so the
+// embed is skipped entirely.
+interface VideoMapping {
+  slug: string;
+  video_id: string;
+  topic: string;
+  caption_zh: string;
+  caption_en: string;
+}
+const videoMap: VideoMapping[] = videoArticles as VideoMapping[];
+const videoEntry = videoMap.find((v) => v.slug === article.slug);
 ---
 
 <BaseLayout
@@ -112,6 +127,15 @@ const articleLd: object = {
         {article.content_html}
       </div>
     </div>
+
+    {videoEntry && (
+      <VideoEmbed
+        videoId={videoEntry.video_id}
+        titleZh={videoEntry.caption_zh}
+        titleEn={videoEntry.caption_en}
+        lang="zh"
+      />
+    )}
 
     {article.disclaimer && (
       <div class="mt-6 bg-amber-50 border border-amber-100 rounded-xl p-4">
