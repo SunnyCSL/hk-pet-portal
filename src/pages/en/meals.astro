@@ -14,7 +14,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
 <BaseLayout title="🥘 Fresh Meal Plans" lang="en">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">🥘 Fresh Meal Plan Library</h1>
-    <p class="text-sm text-gray-400 mb-3">Hand-prepared fresh meal plans for dogs and cats — {mealPlans.length} recipes (🐶{mealPlans.filter(m=>m.species==='dog').length} dog · 🐱{mealPlans.filter(m=>m.species==='cat').length} cat)</p>
+    <p class="text-sm text-gray-500 mb-3">Hand-prepared fresh meal plans for dogs and cats — {mealPlans.length} recipes (🐶{mealPlans.filter(m=>m.species==='dog').length} dog · 🐱{mealPlans.filter(m=>m.species==='cat').length} cat)</p>
     <p class="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-4">
       🈶 Meal content is currently Chinese-only. English descriptions are scheduled for a later phase.
     </p>
@@ -52,7 +52,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
     </div>
 
     <!-- Results count -->
-    <p id="resultCount" class="text-xs text-gray-400 mb-3">Showing {mealPlans.length} meal plans</p>
+    <p id="resultCount" class="text-xs text-gray-500 mb-3">Showing {mealPlans.length} meal plans</p>
 
     <!-- Meal grid -->
     <div id="mealGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -71,7 +71,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
                 <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors">{m.name}</h2>
                 <span class="text-[10px] bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded">{m.difficulty}</span>
               </div>
-              <p class="text-xs text-gray-400 mb-2 leading-relaxed">{m.description}</p>
+              <p class="text-xs text-gray-500 mb-2 leading-relaxed">{m.description}</p>
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{m.protein_source}</span>
                 {m.allergy_tag && <span class="text-[9px] px-1.5 py-0.5 rounded-full {m.allergy_tag.includes('高') ? 'bg-red-50 text-red-500' : m.allergy_tag.includes('超低') ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}">{m.allergy_tag}</span>}
@@ -90,7 +90,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
       ))}
     </div>
 
-    <p id="noResults" class="text-center text-gray-400 py-10 hidden">No matching meal plans — try loosening your filters</p>
+    <p id="noResults" class="text-center text-gray-500 py-10 hidden">No matching meal plans — try loosening your filters</p>
 
     <div class="mt-8 pt-4 border-t border-gray-100">
       <p class="text-xs text-gray-300 text-center">Want to share your own recipe? Reach out to Sunny 😎</p>

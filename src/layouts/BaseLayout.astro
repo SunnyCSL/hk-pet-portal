@@ -176,6 +176,17 @@ const allLd = [...baseLdBlocks, ...extraLd];
         --color-closed-red: #EF4444;
       }
       body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; color: var(--color-near-black); background: white; margin: 0; }
+      /* ux: keyboard focus visibility — keyboard-only, not mouse */
+      :where(a, button, input, select, textarea, [tabindex]):focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; border-radius: 4px; }
+      /* ux: respect reduced motion globally */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
     </style>
 
     <!-- JSON-LD: Organization + WebSite (always) + page-specific blocks (Phase 0 Batch 2) -->
@@ -188,21 +199,21 @@ const allLd = [...baseLdBlocks, ...extraLd];
     <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
       <div class="max-w-6xl mx-auto px-3 md:px-4 h-12 md:h-16 flex items-center justify-between">
         <a href={isZh ? '/' : '/en'} class="flex items-center gap-1.5 font-bold text-near-black no-underline shrink-0">
-          <img src="/logo_nav.png" alt="HK Pet Portal" class="h-9 md:h-10 w-auto" />
+          <img src="/logo_nav.png" alt="HK Pet Portal" width="96" height="64" decoding="async" class="h-9 md:h-10 w-auto" />
           <span class="hidden sm:inline text-sm md:text-lg">HK Pet Portal</span>
         </a>
         <div class="overflow-x-auto scrollbar-hide -mr-3 md:mr-0">
           <div class="flex items-center gap-2 md:gap-6 text-sm font-medium px-3 md:px-0">
-            <a href={isZh ? '/restaurants' : '/en/restaurants'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0">
+            <a href={isZh ? '/restaurants' : '/en/restaurants'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0 py-3 md:py-4">
               🍽️ {isZh ? '餐廳' : 'Restaurants'}
             </a>
-            <a href={isZh ? '/map' : '/en/map'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0">
+            <a href={isZh ? '/map' : '/en/map'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0 py-3 md:py-4">
               🗺️ {isZh ? '地圖' : 'Map'}
             </a>
-            <a href={isZh ? '/health' : '/en/health'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0">
+            <a href={isZh ? '/health' : '/en/health'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0 py-3 md:py-4">
               📚 {isZh ? '健康' : 'Health'}
             </a>
-            <a href={isZh ? '/news' : '/en/news'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0">
+            <a href={isZh ? '/news' : '/en/news'} class="hover:text-brand transition-colors no-underline text-gray-700 whitespace-nowrap shrink-0 py-3 md:py-4">
               📰 {isZh ? '資訊' : 'News'}
             </a>
             <LanguageSwitcher lang={lang} currentPath={pathName} />
@@ -225,7 +236,7 @@ const allLd = [...baseLdBlocks, ...extraLd];
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h4 class="font-semibold text-sm text-gray-500 mb-3 flex items-center gap-2">
-              <img src="/logo_nav.png" alt="HK Pet Portal" class="h-9 md:h-10 w-auto" />
+              <img src="/logo_nav.png" alt="HK Pet Portal" width="96" height="64" decoding="async" class="h-9 md:h-10 w-auto" />
               <span>HK Pet Portal</span>
             </h4>
             <p class="text-sm text-gray-500 leading-relaxed">
@@ -252,12 +263,12 @@ const allLd = [...baseLdBlocks, ...extraLd];
             <h4 class="font-semibold text-sm text-gray-500 mb-3">
               {isZh ? '免責聲明' : 'Disclaimer'}
             </h4>
-            <p class="text-xs text-gray-400 leading-relaxed">
+            <p class="text-xs text-gray-500 leading-relaxed">
               {isZh ? '餐廳資料來自食環署公開名單。健康資訊僅供參考，如有健康問題請諮詢註冊獸醫。' : 'Restaurant data from FEHD public list. Health info for reference only. Consult your vet for medical advice.'}
             </p>
           </div>
         </div>
-        <div class="mt-8 pt-8 border-t border-gray-100 text-center text-xs text-gray-400">
+        <div class="mt-8 pt-8 border-t border-gray-100 text-center text-xs text-gray-500">
           © 2026 HK Pet Portal
         </div>
       </div>

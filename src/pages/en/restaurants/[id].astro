@@ -37,7 +37,7 @@ const restLng = restCoords?.lng || 114.1694;
 <BaseLayout title={displayName} lang="en">
   <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
     <!-- Back link -->
-    <a href="/en/restaurants" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-brand no-underline mb-4">
+    <a href="/en/restaurants" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-brand no-underline mb-4">
       ← Back to restaurant list
     </a>
 
@@ -45,7 +45,7 @@ const restLng = restCoords?.lng || 114.1694;
     <div class="mb-6">
       <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight">{displayName}</h1>
       {fallbackZhName && (
-        <p class="text-sm text-gray-400 mt-1">{fallbackZhName}</p>
+        <p class="text-sm text-gray-500 mt-1">{fallbackZhName}</p>
       )}
       <div class="flex flex-wrap items-center gap-2 mt-3">
         <span class="inline-flex items-center gap-1 text-xs bg-brand-light text-brand px-2.5 py-1 rounded-full font-medium">
@@ -63,12 +63,12 @@ const restLng = restCoords?.lng || 114.1694;
     <!-- Address + Interactive Map -->
     <div class="bg-white rounded-xl border border-gray-100 overflow-hidden mb-4">
       <div class="p-4 md:p-5">
-        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Address</h2>
+        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Address</h2>
         <p class="text-sm md:text-base text-near-black">{restaurant.address}</p>
       </div>
       <!-- Leaflet Map -->
       <div id="restaurant-map" class="h-48 md:h-64 bg-gray-50" data-lat={restLat} data-lng={restLng} data-name={displayName} data-address={restaurant.address}></div>
-      <div class="px-4 md:px-5 pb-4 pt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
+      <div class="px-4 md:px-5 pb-4 pt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
         <a href={`https://www.google.com/maps/search/${encodeURIComponent(restaurant.address + ' Hong Kong')}`}
           target="_blank"
           class="inline-flex items-center gap-1 text-brand hover:underline"

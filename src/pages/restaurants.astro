@@ -26,9 +26,9 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     <div class="flex items-center justify-between mb-5">
       <div class="flex items-center gap-3">
         <h1 class="text-xl md:text-2xl font-bold text-near-black">🍽️ 狗友善餐廳</h1>
-        <span class="text-sm text-gray-400 bg-gray-50 px-2.5 py-0.5 rounded-full" id="result-count">{restaurants.length} 間</span>
+        <span class="text-sm text-gray-500 bg-gray-50 px-2.5 py-0.5 rounded-full" id="result-count">{restaurants.length} 間</span>
       </div>
-      <a href="/restaurants" class="text-xs text-gray-400 hover:text-brand no-underline hidden" id="clear-filter">清除篩選</a>
+      <a href="/restaurants" class="text-xs text-gray-500 hover:text-brand no-underline hidden" id="clear-filter">清除篩選</a>
     </div>
 
     <!-- Search bar -->
@@ -71,7 +71,7 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
                 {r.name_zh || r.name_en || `${r.district}狗友善餐廳`}
               </h3>
-              <p class="text-xs text-gray-400 mt-0.5 truncate">
+              <p class="text-xs text-gray-500 mt-0.5 truncate">
                 <span class="inline-flex items-center gap-1">
                   <span class="text-gray-300">📍</span> <span class="sub-area-label" data-addr={r.address} data-name={r.name_zh||''}>{r.district}</span>
                 </span>
@@ -95,7 +95,7 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     </nav>
 
     <!-- Empty state -->
-    <div id="empty-state" class="text-center py-16 text-gray-400 hidden">
+    <div id="empty-state" class="text-center py-16 text-gray-500 hidden">
       <div class="text-4xl mb-3">🔍</div>
       <p class="text-sm">搵唔到相關餐廳</p>
       <a href="/restaurants" onclick="resetFilter(); return false;" class="text-brand text-sm hover:underline mt-2 inline-block">清除篩選重新搜尋</a>
@@ -166,7 +166,7 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
       + '<div class="min-w-0 flex-1">'
       + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(nameZh) + '</h3>'
-      + '<p class="text-xs text-gray-400 mt-0.5 truncate">'
+      + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
       + '<span class="inline-flex items-center gap-1">'
       + '<span class="text-gray-300">📍</span> '
       + '<span class="sub-area-label">' + escapeHtml(subLabel) + '</span>'

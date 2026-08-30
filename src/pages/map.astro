@@ -23,9 +23,9 @@ const markers = restaurants
     <div class="flex items-center justify-between mb-3">
       <div>
         <h1 class="text-lg md:text-xl font-bold text-near-black">🗺️ 餐廳地圖</h1>
-        <p class="text-xs text-gray-400 mt-0.5">{stats.total} 間狗友善餐廳</p>
+        <p class="text-xs text-gray-500 mt-0.5">{stats.total} 間狗友善餐廳</p>
       </div>
-      <div class="flex items-center gap-2 text-xs text-gray-400">
+      <div class="flex items-center gap-2 text-xs text-gray-500">
         <span class="w-2.5 h-2.5 rounded-full bg-brand shrink-0"></span>
         <span>一間</span>
         {Object.entries(coords).length > 0 && (
@@ -40,7 +40,7 @@ const markers = restaurants
     ></div>
 
     <!-- Legend -->
-    <div class="flex flex-wrap items-center gap-3 mt-3 text-xs text-gray-400">
+    <div class="flex flex-wrap items-center gap-3 mt-3 text-xs text-gray-500">
       <span>🖱️ 拖動地圖・滾輪放大縮細</span>
       <span>·</span>
       <span>📍 Click 標記查看餐廳</span>
@@ -58,12 +58,12 @@ const markers = restaurants
     try {
       markers = JSON.parse(el.getAttribute('data-markers') || '[]');
     } catch(e) {
-      el.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-400">地圖資料載入失敗</div>';
+      el.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-500">地圖資料載入失敗</div>';
       return;
     }
 
     if (!markers || markers.length === 0) {
-      el.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-400">暫無餐廳位置資料</div>';
+      el.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-500">暫無餐廳位置資料</div>';
       return;
     }
 

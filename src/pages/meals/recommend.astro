@@ -5,10 +5,10 @@ import mealPlans from '../../data/meal-plans.json';
 
 <BaseLayout title="✨ 即時餐單推薦" lang="zh">
   <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
-    <a href="/meals/" class="text-xs text-gray-400 hover:text-brand no-underline mb-3 inline-block">← 返回餐單庫</a>
+    <a href="/meals/" class="text-xs text-gray-500 hover:text-brand no-underline mb-3 inline-block">← 返回餐單庫</a>
 
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">✨ 即時餐單推薦</h1>
-    <p class="text-sm text-gray-400 mb-5">輸入狗狗嘅基本資料，即刻幫你配對最適合嘅餐單</p>
+    <p class="text-sm text-gray-500 mb-5">輸入狗狗嘅基本資料，即刻幫你配對最適合嘅餐單</p>
 
     <!-- Form -->
     <div class="bg-white rounded-2xl border border-gray-100 p-5 md:p-6 mb-5">
@@ -93,7 +93,7 @@ import mealPlans from '../../data/meal-plans.json';
 
     <!-- All meals backup -->
     <div class="text-center mt-4">
-      <a href="/meals/" class="text-xs text-gray-400 hover:text-brand no-underline">或者瀏覽全部 {mealPlans.length} 個餐單 📋</a>
+      <a href="/meals/" class="text-xs text-gray-500 hover:text-brand no-underline">或者瀏覽全部 {mealPlans.length} 個餐單 📋</a>
     </div>
   </div>
 
@@ -156,7 +156,7 @@ import mealPlans from '../../data/meal-plans.json';
       const resultsDiv = document.getElementById('results');
       
       if (scored.length === 0) {
-        resultsDiv.innerHTML = '<div class="bg-white rounded-2xl border border-gray-100 p-5 text-center"><p class="text-sm text-gray-400">搵唔到完全符合嘅餐單，試下放寬條件</p></div>';
+        resultsDiv.innerHTML = '<div class="bg-white rounded-2xl border border-gray-100 p-5 text-center"><p class="text-sm text-gray-500">搵唔到完全符合嘅餐單，試下放寬條件</p></div>';
         resultsDiv.classList.remove('hidden');
         return;
       }
@@ -180,8 +180,8 @@ import mealPlans from '../../data/meal-plans.json';
                   <span class="text-sm font-semibold text-near-black">${m.name}</span>
                   <span class="text-[10px] bg-brand-light text-brand/80 px-1.5 py-0.5 rounded-full">匹配度 ${m.score}</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">${m.description}</p>
-                <div class="flex items-center gap-2 mt-1 text-[10px] text-gray-400">
+                <p class="text-xs text-gray-500 mt-0.5">${m.description}</p>
+                <div class="flex items-center gap-2 mt-1 text-[10px] text-gray-500">
                   <span>🥩 ${m.protein_source}</span>
                   <span>⏱ ${m.prep_time}</span>
                   <span>${m.difficulty}</span>
