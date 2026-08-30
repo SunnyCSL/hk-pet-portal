@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import VideoEmbed from '../../components/VideoEmbed.astro';
+import PawDivider from '../../components/PawDivider.astro';
 import articles from '../../data/health-articles.json';
 import videoArticles from '../../data/video-articles.json';
 
@@ -180,6 +181,8 @@ const relatedArticles = (() => {
         <p class="text-sm text-amber-800 leading-relaxed">{article.disclaimer}</p>
       </div>
     )}
+
+    <PawDivider />
 
     {relatedArticles.length > 0 && (
       <section class="mt-10 md:mt-12">
