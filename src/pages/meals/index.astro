@@ -10,7 +10,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
 <BaseLayout title="🥘 鮮食餐單庫" lang="zh">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">🥘 鮮食餐單庫</h1>
-    <p class="text-sm text-gray-400 mb-3">為狗狗同貓貓設計嘅鮮食餐單 — 共 {mealPlans.length} 款（🐶{mealPlans.filter(m=>m.species==='dog').length}狗 · 🐱{mealPlans.filter(m=>m.species==='cat').length}貓）</p>
+    <p class="text-sm text-gray-500 mb-3">為狗狗同貓貓設計嘅鮮食餐單 — 共 {mealPlans.length} 款（🐶{mealPlans.filter(m=>m.species==='dog').length}狗 · 🐱{mealPlans.filter(m=>m.species==='cat').length}貓）</p>
 
     <div class="flex gap-2 mb-5 flex-wrap">
       <a href="/meals/recommend/" class="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium no-underline hover:bg-brand/90 transition">
@@ -48,7 +48,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
     </div>
 
     <!-- Results count -->
-    <p id="resultCount" class="text-xs text-gray-400 mb-3">顯示 {mealPlans.length} 款餐單</p>
+    <p id="resultCount" class="text-xs text-gray-500 mb-3">顯示 {mealPlans.length} 款餐單</p>
 
     <!-- Meal grid -->
     <div id="mealGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -67,7 +67,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
                 <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors">{m.name}</h2>
                 <span class="text-[10px] bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded">{m.difficulty}</span>
               </div>
-              <p class="text-xs text-gray-400 mb-2 leading-relaxed">{m.description}</p>
+              <p class="text-xs text-gray-500 mb-2 leading-relaxed">{m.description}</p>
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{m.protein_source}</span>
                 {m.allergy_tag && <span class="text-[9px] px-1.5 py-0.5 rounded-full {m.allergy_tag.includes('高') ? 'bg-red-50 text-red-500' : m.allergy_tag.includes('超低') ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'}">{m.allergy_tag}</span>}
@@ -86,7 +86,7 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
       ))}
     </div>
 
-    <p id="noResults" class="text-center text-gray-400 py-10 hidden">搵唔到符合條件嘅餐單，試下放寬條件</p>
+    <p id="noResults" class="text-center text-gray-500 py-10 hidden">搵唔到符合條件嘅餐單，試下放寬條件</p>
 
     <div class="mt-8 pt-4 border-t border-gray-100">
       <p class="text-xs text-gray-300 text-center">想分享你嘅餐單？聯絡 Sunny 話俾我知 😎</p>

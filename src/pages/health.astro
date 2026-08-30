@@ -42,7 +42,7 @@ const categories = [
 <BaseLayout title="📚 健康圖書館" lang="zh">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">📚 健康指南</h1>
-    <p class="text-sm text-gray-400 mb-5">由專業寵物課程改編，經重新編寫加入原創內容與最新研究</p>
+    <p class="text-sm text-gray-500 mb-5">由專業寵物課程改編，經重新編寫加入原創內容與最新研究</p>
 
     <div class="flex gap-2 mb-5 flex-wrap">
       <a href="/meals/" class="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium no-underline hover:bg-brand/90 transition">
@@ -78,7 +78,7 @@ const categories = [
               <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors leading-tight">
                 {a.title}
               </h2>
-              <p class="text-xs text-gray-400 mt-1">{a.desc}</p>
+              <p class="text-xs text-gray-500 mt-1">{a.desc}</p>
               <div class="flex items-center gap-2 mt-2">
                 <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{a.catName}</span>
                 <span class="text-[10px] text-gray-300">{a.date}</span>
@@ -91,7 +91,7 @@ const categories = [
     </div>
 
     {filtered.length === 0 && (
-      <div class="text-center py-16 text-gray-400">
+      <div class="text-center py-16 text-gray-500">
         <p class="text-sm">該分類暫時未有文章</p>
         <a href="/health" class="text-brand text-sm hover:underline mt-2 inline-block">睇全部文章</a>
       </div>

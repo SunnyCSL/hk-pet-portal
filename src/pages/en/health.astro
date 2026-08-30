@@ -51,7 +51,7 @@ const categories = [
 <BaseLayout title="📚 Health Guides" lang="en">
   <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">📚 Health Guides</h1>
-    <p class="text-sm text-gray-400 mb-3">Adapted from professional pet-care courses, rewritten with original content and the latest research.</p>
+    <p class="text-sm text-gray-500 mb-3">Adapted from professional pet-care courses, rewritten with original content and the latest research.</p>
 
     <!-- Phase 2 notice -->
     <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-5">
@@ -93,7 +93,7 @@ const categories = [
                   <span class="shrink-0 mt-0.5 text-[9px] bg-brand-light text-brand/80 px-1.5 py-0.5 rounded font-medium">EN</span>
                 )}
               </div>
-              <p class="text-xs text-gray-400 mt-1 line-clamp-2">{a.display_desc}</p>
+              <p class="text-xs text-gray-500 mt-1 line-clamp-2">{a.display_desc}</p>
               {!a.has_en && (
                 <p class="text-[10px] text-amber-600 mt-1.5">Translation coming soon</p>
               )}
@@ -109,7 +109,7 @@ const categories = [
     </div>
 
     {filtered.length === 0 && (
-      <div class="text-center py-16 text-gray-400">
+      <div class="text-center py-16 text-gray-500">
         <p class="text-sm">No articles in this category yet</p>
         <a href="/en/health" class="text-brand text-sm hover:underline mt-2 inline-block">View all articles</a>
       </div>
