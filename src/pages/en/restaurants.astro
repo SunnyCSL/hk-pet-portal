@@ -4,6 +4,7 @@ import restaurants from '../../data/restaurants.json';
 import stats from '../../data/restaurant-stats.json';
 import areaCentres from '../../data/area-centres.json';
 import areaSlugs from '../../data/area-slugs.json';
+import areaNames from '../../data/area-names.json';
 import restaurantCoords from '../../data/restaurant-coords.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
@@ -67,92 +68,38 @@ const ALIAS_GROUPS: Array<{ names: string[]; keys: string[] }> = [
 // Display-name mapping (English) for area-centre keys. Used only for the area
 // header label so e.g. "奧運" reads as "Olympic" in the EN UI. Fallback is the
 // raw CJK key when no mapping exists.
-const AREA_NAME_EN: Record<string, string> = {
-  '奧運': 'Olympic',
-  '旺角': 'Mong Kok',
-  '旺角東': 'Mong Kok East',
-  '太子': 'Prince Edward',
-  '大角咀': 'Tai Kok Tsui',
-  '西九龍': 'West Kowloon',
-  '圓方': 'Elements',
-  '尖沙咀': 'Tsim Sha Tsui',
-  '尖東': 'Tsim Sha Tsui East',
-  '佐敦': 'Jordan',
-  '油麻地': 'Yau Ma Tei',
-  '中環': 'Central',
-  '上環': 'Sheung Wan',
-  '西營盤': 'Sai Ying Pun',
-  '堅尼地城': 'Kennedy Town',
-  '石塘咀': 'Shek Tong Tsui',
-  '半山': 'Mid-Levels',
-  '山頂': 'The Peak',
-  '金鐘': 'Admiralty',
-  '銅鑼灣': 'Causeway Bay',
-  '跑馬地': 'Happy Valley',
-  '大坑': 'Tai Hang',
-  '天后': 'Tin Hau',
-  '北角': 'North Point',
-  '鰂魚涌': 'Quarry Bay',
-  '太古': 'Taikoo',
-  '西灣河': 'Sai Wan Ho',
-  '筲箕灣': 'Shau Kei Wan',
-  '柴灣': 'Chai Wan',
-  '香港仔': 'Aberdeen',
-  '黃竹坑': 'Wong Chuk Hang',
-  '海洋公園': 'Ocean Park',
-  '淺水灣': 'Repulse Bay',
-  '赤柱': 'Stanley',
-  '薄扶林': 'Pok Fu Lam',
-  '數碼港': 'Cyberport',
-  '鴨脷洲': 'Ap Lei Chau',
-  '長沙灣': 'Cheung Sha Wan',
-  '荔枝角': 'Lai Chi Kok',
-  '美孚': 'Mei Foo',
-  '土瓜灣': 'To Kwa Wan',
-  '紅磡': 'Hung Hom',
-  '何文田': 'Ho Man Tin',
-  '啟德': 'Kai Tak',
-  '九龍灣': 'Kowloon Bay',
-  '觀塘': 'Kwun Tong',
-  '牛頭角': 'Ngau Tau Kok',
-  '藍田': 'Lam Tin',
-  '油塘': 'Yau Tong',
-  '深井': 'Sham Tseng',
-  '馬灣': 'Ma Wan',
-  '荃灣': 'Tsuen Wan',
-  '屯門': 'Tuen Mun',
-  '黃金海岸': 'Gold Coast',
-  '元朗': 'Yuen Long',
-  '天水圍': 'Tin Shui Wai',
-  '錦田': 'Kam Tin',
-  '上水': 'Sheung Shui',
-  '粉嶺': 'Fanling',
-  '大埔': 'Tai Po',
-  '沙田': 'Sha Tin',
-  '大圍': 'Tai Wai',
-  '火炭': 'Fo Tan',
-  '西貢': 'Sai Kung',
-  '將軍澳': 'Tseung Kwan O',
-  '坑口': 'Hang Hau',
-  '寶琳': 'Po Lam',
-  '調景嶺': 'Tiu Keng Leng',
-  '康城': 'LOHAS Park',
-  '清水灣': 'Clear Water Bay',
-  '葵涌': 'Kwai Chung',
-  '葵芳': 'Kwai Fong',
-  '青衣': 'Tsing Yi',
-  '東涌': 'Tung Chung',
-  '愉景灣': 'Discovery Bay',
-  '迪士尼': 'Hong Kong Disneyland',
-  '機場': 'Airport',
-  '大澳': 'Tai O',
-  '長洲': 'Cheung Chau',
-  '南丫島': 'Lamma Island',
-  '坪洲': 'Peng Chau',
-  '馬鞍山': 'Ma On Shan',
-  '科學園': 'Science Park',
-  '白石角': 'Pak Shek Kok',
-};
+//
+// Sourced from src/data/area-names.json (single source of truth shared with
+// /en/restaurants/area/[slug] page). Also injects extra aliases (e.g. 圓方 →
+// Elements) and English-language abbreviations used commonly by EN users:
+//   tst → 尖沙咀 (Tsim Sha Tsui)
+//   tko → 將軍澳 (Tseung Kwan O)
+//   cwb → 銅鑼灣 (Causeway Bay)
+const AREA_NAME_EN: Record<string, string> = Object.fromEntries(
+  Object.entries(areaNames as Record<string, { en: string }>).map(([zh, v]) => [zh, v.en])
+);
+// Non-centre aliases (not in centres map). Add to the lookup table so the EN
+// header / search bar can show their canonical English name when matched.
+AREA_NAME_EN['圓方'] = 'Elements';
+
+// Reverse map used by the client to detect an English name query (e.g.
+// "Tsim Sha Tsui") and turn it into the zh area-centre key. Built from
+// AREA_NAME_EN, so adding a name to area-names.json is enough to make it
+// searchable. Abbreviations are appended at the end (longer names win).
+const AREA_NAME_EN_REVERSE: Record<string, string> = (() => {
+  const out: Record<string, string> = {};
+  for (const [zh, en] of Object.entries(AREA_NAME_EN)) {
+    if (!en) continue;
+    out[en.toLowerCase()] = zh;
+  }
+  // Abbreviations (common EN shorthand; only used when user types them).
+  out['tst'] = '尖沙咀';
+  out['tko'] = '將軍澳';
+  out['cwb'] = '銅鑼灣';
+  return out;
+})();
+// Sort longest-first so multi-word names match before abbreviations.
+const AREA_NAME_EN_SORTED = Object.keys(AREA_NAME_EN_REVERSE).sort((a, b) => b.length - a.length);
 
 function detectSubAreasFromBase(baseLower: string): string[] {
   const hits: string[] = [];
@@ -352,6 +299,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   <script type="application/json" id="area-centres" set:html={JSON.stringify(areaCentres)} />
   <!-- fix/radius-chips-honest: zh-name → english-slug map for area-page links. -->
   <script type="application/json" id="area-slugs" set:html={JSON.stringify(areaSlugs)} />
+  <!-- fix/area-labels-en-names: lowercase EN-name → zh-key reverse map. Read by
+       client JS to detect activeArea from English queries. Includes user-facing
+       abbreviations (tst/tko/cwb). Keys are lowercased before serving. -->
+  <script type="application/json" id="area-names-en" set:html={JSON.stringify(
+    Object.fromEntries(
+      Object.entries(AREA_NAME_EN_REVERSE).map(([en, zh]) => [en.toLowerCase(), zh])
+    )
+  )} />
 
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with SSR).
@@ -553,6 +508,16 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   // fix/radius-chips-honest: zh-name → english-slug map for area-page links.
   var AREA_SLUGS = {};
   try { AREA_SLUGS = JSON.parse(document.getElementById('area-slugs').textContent || '{}') || {}; } catch (e) { AREA_SLUGS = {}; }
+  // fix/area-labels-en-names: EN-name → zh-key reverse map. Includes
+  // abbreviations. Used to detect activeArea when the user types an English
+  // name (e.g. "Tsim Sha Tsui") or abbreviation (e.g. "tst").
+  var AREA_NAME_EN_REVERSE = {};
+  try {
+    var raw = JSON.parse(document.getElementById('area-names-en').textContent || '{}') || {};
+    Object.keys(raw).forEach(function (en) { AREA_NAME_EN_REVERSE[en.toLowerCase()] = raw[en]; });
+  } catch (e) { AREA_NAME_EN_REVERSE = {}; }
+  // Sort longest-first so multi-word names match before abbreviations.
+  var AREA_NAME_EN_SORTED = Object.keys(AREA_NAME_EN_REVERSE).sort(function (a, b) { return b.length - a.length; });
 
   // ---- Tokenizer ----
   // Split on spaces/punctuation, lowercased. Inserts a boundary at CJK↔alnum
@@ -593,13 +558,43 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   //        union); same bucketed sort; radius chips hidden.
   function runFilter(query, districtActive) {
     var tokens = tokenize(query);
-    // Detect activeArea: longest area-centre key fully contained in query.
+    // Detect activeArea: try zh-centre-key first (substring match, longest
+    // first). Then try English name + abbreviations (whole-word match, so
+    // "tai kok tsui coffee" hits "Tai Kok Tsui" but "taisui" doesn't).
     var activeArea = null;
     if (query && query.trim()) {
       var qLower = query.toLowerCase().trim();
+      // 1) zh-centre-key: substring match (longest first).
       for (var ai = 0; ai < AREA_KEYS_SORTED.length; ai++) {
         var k = AREA_KEYS_SORTED[ai];
         if (k && qLower.indexOf(k) !== -1) { activeArea = k; break; }
+      }
+      // 2) EN-name / abbreviation: whole-word regex match (longest first).
+      //    For full names we skip aliases shorter than 4 chars so e.g. "tai"
+      //    alone doesn't match "Tai Koo". Abbreviations (tst/tko/cwb) are
+      //    always considered because they're explicit user shorthand.
+      var matchedEnAlias = null;
+      if (!activeArea && AREA_NAME_EN_SORTED && AREA_NAME_EN_SORTED.length) {
+        var ABBREVS = { tst: 1, tko: 1, cwb: 1 };
+        for (var ei = 0; ei < AREA_NAME_EN_SORTED.length; ei++) {
+          var en = AREA_NAME_EN_SORTED[ei];
+          if (!en) continue;
+          if (en.length < 4 && !ABBREVS[en]) continue;
+          // Word boundary on both sides. \b doesn't always work around
+          // hyphens/apostrophes, so expand manually.
+          var escaped = en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          var re = new RegExp('(^|[^A-Za-z0-9])' + escaped + '($|[^A-Za-z0-9])', 'i');
+          if (re.test(qLower)) {
+            var zhKey = AREA_NAME_EN_REVERSE[en];
+            // Make sure this EN name actually maps to a centre (not just an
+            // alias like 圓方 whose zh-key isn't a centre key).
+            if (zhKey && AREA_CENTRES[zhKey]) {
+              activeArea = zhKey;
+              matchedEnAlias = en;
+              break;
+            }
+          }
+        }
       }
     }
     if (!activeArea) {
@@ -613,10 +608,20 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       }
       return { ids: out0, areaMode: false, areaName: null, showChips: false, dist: {} };
     }
-    // Area-mode. Split query into activeArea + filterTokens (rest after removing
-    // the area-key substring once).
+    // Area-mode. Split query into activeArea + filterTokens. Remove BOTH the
+    // zh-centre-key AND the matched EN alias (if any) so e.g. query "Tai Kok
+    // Tsui coffee" produces activeArea=尖沙咀, filterTokens=["coffee"].
     var qLower2 = query.toLowerCase().trim();
     var rest = qLower2.replace(activeArea.toLowerCase(), ' ', 1);
+    if (matchedEnAlias) {
+      // Remove the first whole-word occurrence of the EN alias text.
+      var escAlias = matchedEnAlias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      var aliasRe = new RegExp('(^|[^A-Za-z0-9])' + escAlias + '($|[^A-Za-z0-9])', 'i');
+      var m = rest.match(aliasRe);
+      if (m) {
+        rest = rest.slice(0, m.index) + ' ' + rest.slice(m.index + m[0].length);
+      }
+    }
     var filterTokens = tokenize(rest);
     var centre = AREA_CENTRES[activeArea];
     var clat = centre.lat, clng = centre.lng;
@@ -645,13 +650,25 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       // radius === 0 (All) keeps every record as before.
       var radiusChip = radius;
       if (radiusChip === -1) {
-        // Whole area — name hits ∪ within 1 km (current default behaviour).
+        // Whole area — name/address hits ∪ within 1 km. A record "hits" if
+        // its lowercased key contains the activeArea zh key OR the matched
+        // English alias. This mirrors the area-page candidate set: name hits
+        // outside the 1 km radius still surface so long-tail areas like 清水灣
+        // pick up address mentions. For zh queries the activeArea zh key is
+        // already a substring of those records; for EN queries (e.g. "Tai Koo")
+        // we fall back to the matched EN alias because the CJK name won't be
+        // in the address. We never apply the full token filter here — that
+        // belongs in the "area + extra filter tokens" branch above.
+        var hitKey = activeArea.toLowerCase();
+        var hitEn = matchedEnAlias ? matchedEnAlias.toLowerCase() : '';
         for (var mi = 0; mi < INDEX.length; mi++) {
           var em = INDEX[mi];
           if (!matchDistrict(districtActive, em)) continue;
-          if (tokens.length > 0 && !matchKey(em.key, tokens)) continue;
-          byId[em.id] = true;
-          distById[em.id] = distOfEntry(em);
+          var ek = em.key || '';
+          if (ek.indexOf(hitKey) !== -1 || (hitEn && ek.indexOf(hitEn) !== -1)) {
+            byId[em.id] = true;
+            distById[em.id] = distOfEntry(em);
+          }
         }
         var unionRadius = 1000;
         for (var ki = 0; ki < INDEX.length; ki++) {

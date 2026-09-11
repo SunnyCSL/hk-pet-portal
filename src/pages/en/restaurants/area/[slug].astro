@@ -20,96 +20,14 @@ import restaurants from '../../../../data/restaurants.json';
 import coords from '../../../../data/restaurant-coords.json';
 import areas from '../../../../data/area-centres.json';
 import areaSlugs from '../../../../data/area-slugs.json';
+import areaNames from '../../../../data/area-names.json';
 
-// English display name for each Chinese area-centre key. Mirrors AREA_NAME_EN
-// in src/pages/en/restaurants.astro (the /en search page). Fallback is the
-// raw CJK key when no mapping exists — same approach as the search page.
-const AREA_NAME_EN: Record<string, string> = {
-  '奧運': 'Olympic',
-  '旺角': 'Mong Kok',
-  '旺角東': 'Mong Kok East',
-  '太子': 'Prince Edward',
-  '大角咀': 'Tai Kok Tsui',
-  '西九龍': 'West Kowloon',
-  '圓方': 'Elements',
-  '尖沙咀': 'Tsim Sha Tsui',
-  '尖東': 'Tsim Sha Tsui East',
-  '佐敦': 'Jordan',
-  '油麻地': 'Yau Ma Tei',
-  '中環': 'Central',
-  '上環': 'Sheung Wan',
-  '西營盤': 'Sai Ying Pun',
-  '堅尼地城': 'Kennedy Town',
-  '石塘咀': 'Shek Tong Tsui',
-  '半山': 'Mid-Levels',
-  '山頂': 'The Peak',
-  '金鐘': 'Admiralty',
-  '銅鑼灣': 'Causeway Bay',
-  '跑馬地': 'Happy Valley',
-  '大坑': 'Tai Hang',
-  '天后': 'Tin Hau',
-  '北角': 'North Point',
-  '鰂魚涌': 'Quarry Bay',
-  '太古': 'Taikoo',
-  '西灣河': 'Sai Wan Ho',
-  '筲箕灣': 'Shau Kei Wan',
-  '柴灣': 'Chai Wan',
-  '香港仔': 'Aberdeen',
-  '黃竹坑': 'Wong Chuk Hang',
-  '海洋公園': 'Ocean Park',
-  '淺水灣': 'Repulse Bay',
-  '赤柱': 'Stanley',
-  '薄扶林': 'Pok Fu Lam',
-  '數碼港': 'Cyberport',
-  '鴨脷洲': 'Ap Lei Chau',
-  '長沙灣': 'Cheung Sha Wan',
-  '荔枝角': 'Lai Chi Kok',
-  '美孚': 'Mei Foo',
-  '土瓜灣': 'To Kwa Wan',
-  '紅磡': 'Hung Hom',
-  '何文田': 'Ho Man Tin',
-  '啟德': 'Kai Tak',
-  '九龍灣': 'Kowloon Bay',
-  '觀塘': 'Kwun Tong',
-  '牛頭角': 'Ngau Tau Kok',
-  '藍田': 'Lam Tin',
-  '油塘': 'Yau Tong',
-  '深井': 'Sham Tseng',
-  '馬灣': 'Ma Wan',
-  '荃灣': 'Tsuen Wan',
-  '屯門': 'Tuen Mun',
-  '黃金海岸': 'Gold Coast',
-  '元朗': 'Yuen Long',
-  '天水圍': 'Tin Shui Wai',
-  '錦田': 'Kam Tin',
-  '上水': 'Sheung Shui',
-  '粉嶺': 'Fanling',
-  '大埔': 'Tai Po',
-  '沙田': 'Sha Tin',
-  '大圍': 'Tai Wai',
-  '火炭': 'Fo Tan',
-  '西貢': 'Sai Kung',
-  '將軍澳': 'Tseung Kwan O',
-  '坑口': 'Hang Hau',
-  '寶琳': 'Po Lam',
-  '調景嶺': 'Tiu Keng Leng',
-  '康城': 'LOHAS Park',
-  '清水灣': 'Clear Water Bay',
-  '葵涌': 'Kwai Chung',
-  '葵芳': 'Kwai Fong',
-  '青衣': 'Tsing Yi',
-  '東涌': 'Tung Chung',
-  '愉景灣': 'Discovery Bay',
-  '迪士尼': 'Hong Kong Disneyland',
-  '機場': 'Airport',
-  '大澳': 'Tai O',
-  '長洲': 'Cheung Chau',
-  '南丫島': 'Lamma Island',
-  '坪洲': 'Peng Chau',
-  '馬鞍山': 'Ma On Shan',
-  '科學園': 'Science Park',
-  '白石角': 'Pak Shek Kok',
-};
+// English display name for each Chinese area-centre key. Sourced from
+// src/data/area-names.json (single source of truth shared with the /en search
+// page). Fallback to the raw CJK key when no mapping exists.
+const AREA_NAME_EN: Record<string, string> = Object.fromEntries(
+  Object.entries(areaNames as Record<string, { en: string }>).map(([zh, v]) => [zh, v.en])
+);
 
 // Sub-area names + alias groups — same list as /restaurants (zh) and the EN
 // search page. We add English-name keys to ALIAS_GROUPS so e.g. "Olympic"
@@ -188,8 +106,13 @@ function hitsArea(r: any): boolean {
   return false;
 }
 
-// ---- Candidate set = (within radius) ∪ (name/address hit) ----
-const DEFAULT_RADIUS = 2000;
+// ---- Compute nearby restaurants ----
+// 全區（Card #1）候選集合 = 名稱或地址命中 ∪ 1 公里內（與 /en/restaurants 搜尋頁
+// 全區 chip 完全一致）。3 張半徑卡（500米/1公里/2公里）則用嚴格 Haversine
+// 距離對全 906 條有坐標記錄計算，不受全區口徑影響。
+// 「展開全部」島嶼用 10 公里半徑 + area-prec 涵蓋遠處記錄。
+const UNION_RADIUS = 1000;       // 全區 = 1 km ∪ name/address hit
+const DEFAULT_RADIUS = 2000;     // 2 km 段卡 = 嚴格 2 km（保留與搜尋頁一致）
 type NearbyRow = {
   id: number;
   name_en: string;
@@ -220,16 +143,17 @@ const allWithCoords: NearbyRow[] = (restaurants as any[])
   })
   .filter((x: NearbyRow | null): x is NearbyRow => x !== null);
 
-const byId = new Map<number, NearbyRow>();
+const unionById = new Map<number, NearbyRow>();
 for (const r of allWithCoords) {
-  if (r.distance <= DEFAULT_RADIUS) byId.set(r.id, r);
+  if (r.distance <= UNION_RADIUS) unionById.set(r.id, r);
 }
+// Name/address hits added regardless of distance
 for (const r of (restaurants as any[])) {
-  if (byId.has(r.id)) continue;
+  if (unionById.has(r.id)) continue;
   if (!hitsArea(r)) continue;
   const c = coords[String(r.id)] as { lat?: number; lng?: number; prec?: string } | undefined;
   if (!c || c.lat == null || c.lng == null) continue;
-  byId.set(r.id, {
+  unionById.set(r.id, {
     id: r.id,
     name_en: r.name_en || '',
     name_zh: r.name_zh || '',
@@ -241,12 +165,13 @@ for (const r of (restaurants as any[])) {
     distance: haversine(CLAT, CLNG, c.lat, c.lng),
   });
 }
-
-// ---- Sort: precise first (asc by distance), then area-prec (asc by distance) ----
-const combinedRows: NearbyRow[] = Array.from(byId.values());
-const precise = combinedRows.filter(x => x.prec !== 'area').sort((a, b) => a.distance - b.distance);
-const areaPrec = combinedRows.filter(x => x.prec === 'area').sort((a, b) => a.distance - b.distance);
-const sortedAll = [...precise, ...areaPrec];
+// Sort: precise first (asc by distance), then area-prec (asc by distance).
+// Area-prec records only carry the area-centre coord, not a door address —
+// pushing them last is honest.
+const sortedAll: NearbyRow[] = Array.from(unionById.values());
+const precise = sortedAll.filter(x => x.prec !== 'area').sort((a, b) => a.distance - b.distance);
+const areaPrec = sortedAll.filter(x => x.prec === 'area').sort((a, b) => a.distance - b.distance);
+sortedAll.splice(0, sortedAll.length, ...precise, ...areaPrec);
 
 // Display name: prefer name_en, fall back to name_zh, then "<district> dog-friendly restaurant"
 function displayName(r: NearbyRow): string {
@@ -258,21 +183,15 @@ function formatDistance(d: number): string {
 }
 
 // ---- Stats ----
-// All four radius cards use the SAME definition: every record whose centre
-// falls inside the radius, including `prec='area'` (which only carries the
-// area-centre coord). Mixing definitions across cards (e.g. 2 km = union,
-// 500 m = precise-only) made the smaller numbers look misleadingly low.
-//
-// The candidate set is still the same union (radius + name/address hit), so a
-// long-tail area like Clear Water Bay still gets a non-zero count when
-// applicable.
+// Card #1 「Whole area」 = name/address hit ∪ 1 km（與搜尋頁全區 chip 完全一致）。
+// Cards #2/3/4 = 嚴格 Haversine 距離對全 906 條有坐標記錄計算，不受全區口徑影響。
+// 「Show all within 10 km」島嶼繼續保留以涵蓋遠處記錄。
 const totalNearby = sortedAll.length;
-const within500 = sortedAll.filter(x => x.distance <= 500).length;
-const within1km = sortedAll.filter(x => x.distance <= 1000).length;
-const within2km = sortedAll.filter(x => x.distance <= DEFAULT_RADIUS).length;
+const within500 = allWithCoords.filter(x => x.distance <= 500).length;
+const within1km = allWithCoords.filter(x => x.distance <= 1000).length;
+const within2km = allWithCoords.filter(x => x.distance <= DEFAULT_RADIUS).length;
 const stats = {
   total: totalNearby,
-  radiusLabel: 'Within 2 km',
   within500,
   within1km,
   within2km,
@@ -300,25 +219,31 @@ const nearestList = sortedAll.slice(0, TOP_COUNT).map((x) => ({
 // 20 records are precise — no group header needed).
 const boundaryIdx = nearestList.findIndex((x) => x.prec === 'area');
 
+// Island rows for the full list (show-all button). Builds a fresh
+// precise+areaPrec view from allWithCoords so the expansion can include
+// records beyond the 1 km union (up to SHOW_ALL_RADIUS / area-prec fallback).
 const SHOW_ALL_RADIUS = 10000;
 const SHOW_ALL_MAX = 100;
+const showAllRows = allWithCoords.filter(x => x.prec === 'area');
+const showAllSorted = [
+  ...allWithCoords.filter(x => x.prec !== 'area' && x.distance <= SHOW_ALL_RADIUS)
+    .sort((a, b) => a.distance - b.distance),
+  ...showAllRows.sort((a, b) => a.distance - b.distance),
+];
 // Island rows include name_zh for tooltip fallback when card display is in EN
 // but the canonical zh name is more recognizable for a local reader.
 const islandRows: Array<[number, string, string, string, string, number, number, string, number]> =
-  sortedAll
-    .filter((x) => x.distance <= SHOW_ALL_RADIUS || x.prec === 'area')
-    .slice(0, SHOW_ALL_MAX)
-    .map((x) => [
-      x.id,
-      displayName(x),
-      x.name_zh || '',
-      x.district,
-      x.address,
-      x.lat,
-      x.lng,
-      x.prec,
-      Math.round(x.distance),
-    ]);
+  showAllSorted.slice(0, SHOW_ALL_MAX).map((x) => [
+    x.id,
+    displayName(x),
+    x.name_zh || '',
+    x.district,
+    x.address,
+    x.lat,
+    x.lng,
+    x.prec,
+    Math.round(x.distance),
+  ]);
 
 // ---- Neighbouring areas ----
 type Neighbour = { name_zh: string; name_en: string; slug: string; distance: number; count: number };
@@ -345,7 +270,7 @@ const neighbours: Neighbour[] = Object.entries(areas)
 const pageTitle = `${areaNameEn} Dog-Friendly Restaurants`;
 function nearestDistanceLabel(): string {
   const firstPrecise = precise[0];
-  if (!firstPrecise) return totalNearby > 0 ? `Within ${stats.radiusLabel.replace('Within ','')}` : 'Within 2 km';
+  if (!firstPrecise) return 'within 2 km';
   const d = firstPrecise.distance;
   if (d < 50) return 'within 1-min walk';
   if (d < 1000) return `${Math.round(d)} m`;
@@ -354,7 +279,7 @@ function nearestDistanceLabel(): string {
 const nearestLabel = nearestDistanceLabel();
 const nearestClause = precise.length > 0 && precise[0].distance >= 50
   ? `closest ${nearestLabel}`
-  : 'within 2 km';
+  : 'whole area';
 const pageDesc = `${totalNearby} dog-friendly restaurants near ${areaNameEn} (Hong Kong FEHD-licensed), nearest first. ${nearestClause}. Interactive map and live official registry.`;
 const canonicalPath = `/en/restaurants/area/${slug}`;
 
@@ -427,9 +352,13 @@ function walkingMinutes(d: number): number | null {
     </header>
 
     <!-- Stats grid -->
+    <!-- Card #1 = "Whole area" (union: address hits ∪ within 1 km). Card #2/3/4
+         = strict radius from the area centre. Tooltip on Card #1 explains. -->
     <section aria-label="Area stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5">Within 2 km</div>
+        <div class="text-xs text-gray-500 mb-0.5" title="Address hits in the area or within 1 km of the area centre">
+          Whole area
+        </div>
         <div class="text-2xl font-bold text-near-black">{stats.total}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
       </div>
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
