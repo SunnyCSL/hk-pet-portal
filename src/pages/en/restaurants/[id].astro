@@ -161,15 +161,17 @@ const restLng = restCoords?.lng || 114.1694;
       </a>
     </div>
 
-    {/* feat/restaurant-types: cuisine (inferred from name) line. Hidden when
-        the record has no inferred cuisine — never render an empty field. */}
+    {/* feat/restaurant-types: cuisine line, label + tooltip reflect actual source. */}
     {(() => {
       const t = restaurantTypes[String(restaurant.id)];
       if (!t || !t.types || t.types.length === 0) return null;
+      const isOsm = t.source === 'osm';
+      const label = isOsm ? 'Type (source: OpenStreetMap)' : 'Type (inferred from name)';
+      const tip = isOsm ? 'Source: OpenStreetMap' : 'Inferred from the shop name';
       const labels = t.types.map((z: string) => CUISINE_EN_MAP[z] || z).join(' / ');
       return (
-        <p class="text-xs text-gray-500 mb-6" title={t.source === 'osm' ? 'OSM (ODbL) tag, for reference' : 'Inferred from the shop name'}>
-          <span class="font-medium text-gray-700">Type (inferred from name)</span>: {labels}
+        <p class="text-xs text-gray-500 mb-6" title={tip}>
+          <span class="font-medium text-gray-700">{label}</span>: {labels}
         </p>
       );
     })()}

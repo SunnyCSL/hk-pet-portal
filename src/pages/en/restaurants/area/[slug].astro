@@ -473,9 +473,10 @@ function walkingMinutes(d: number): number | null {
                       const t = restaurantTypes[String(r.id)];
                       if (!t || !t.types || t.types.length === 0) return null;
                       const labels = t.types.map((z: string) => CUISINE_EN_MAP[z] || z).join(' / ');
+                      const tip = t.source === 'osm' ? 'Source: OpenStreetMap' : 'Inferred from the shop name';
                       return (
                         <p class="text-[10px] mt-0.5 truncate flex items-center gap-1">
-                          <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="Inferred from the shop name">{labels}</span>
+                          <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title={tip}>{labels}</span>
                         </p>
                       );
                     })()}

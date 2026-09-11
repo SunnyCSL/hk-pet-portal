@@ -239,12 +239,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
                 {r.name_zh || r.name_en || `${r.district}狗友善餐廳`}
               </h3>
+              {/* feat/restaurant-types: chip with source-aware tooltip. */}
               {(() => {
                 const t = restaurantTypes[String(r.id)];
                 if (!t || !t.types || t.types.length === 0) return null;
+                const tip = t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤';
                 return (
                   <p class="text-[10px] mt-0.5 truncate flex items-center gap-1">
-                    <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="由店名推斷，或有誤">{t.types.join(' / ')}</span>
+                    <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title={tip}>{t.types.join(' / ')}</span>
                   </p>
                 );
               })()}
@@ -722,14 +724,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '</div>'
       + '</div></a>';
   }
-  // feat/restaurant-types: small gray chip rendered between the title and the
-  // address line. Returns empty string when the record has no inferred cuisine
-  // (no chip on those cards, per spec).
+  // feat/restaurant-types: small gray chip between title and address.
+  // Tooltip reflects actual source: 資料來源：OpenStreetMap / 由店名推斷，或有誤.
   function cuisineChipHtmlZh(id) {
     var t = RESTAURANT_TYPES_ZH[String(id)];
     if (!t || !t.types || t.types.length === 0) return '';
+    var tip = t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤';
     return '<p class="text-[10px] mt-0.5 truncate flex items-center gap-1">'
-      + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="由店名推斷，或有誤">'
+      + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="' + escapeHtml(tip) + '">'
       + escapeHtml(t.types.join(' / '))
       + '</span></p>';
   }

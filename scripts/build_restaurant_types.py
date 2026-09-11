@@ -76,6 +76,8 @@ KEYWORD_RULES: list[tuple[str, str]] = [
     ("咖啡", "咖啡"), ("珈琲", "咖啡"), ("啡室", "咖啡"),
     # 酒吧 — zh 字面 + a few english whole-words; same dominance rule applies.
     # ("酒吧", "酒吧") means 酒 / bar already present, so we DON'T strip it.
+    # "brew" alone (e.g. "DAS BIER TAPAS BREW") is NOT coffee anymore —
+    # it's a bar/beer word; see EN_WORD_BOUNDARY_RULES for the 酒吧 side.
     ("酒吧", "酒吧"), ("酒窖", "酒吧"), ("啤酒", "酒吧"), ("pub", "酒吧"),
     ("lounge", "酒吧"), ("taproom", "酒吧"), ("whisky", "酒吧"),
     # 茶飲
@@ -86,7 +88,10 @@ KEYWORD_RULES: list[tuple[str, str]] = [
     ("茶餐廳", "茶餐廳"), ("冰室", "茶餐廳"), ("冰廳", "茶餐廳"),
     ("茶室", "茶餐廳"), ("cha chaan", "茶餐廳"),
     # 中菜 — 酒樓 is a Chinese banquet hall, NOT 點心 (洪記海鮮酒樓 / 美京大酒樓).
-    ("小館", "中菜"), ("菜館", "中菜"), ("飯店", "中菜"),
+    # "飯店" (e.g. 皇后飯店 / Queen's Cafe) is NOT a Chinese banquet hall —
+    # it's an old-style 豉油西餐 café; the venue-suffix dominance pass
+    # in _classify strips 咖啡 from those too.  So neither path tags it.
+    ("小館", "中菜"), ("菜館", "中菜"),
     ("酒家", "中菜"), ("酒樓", "中菜"), ("私房菜", "中菜"),
     # 港式大排檔
     ("大排檔", "港式大排檔"), ("大牌檔", "港式大排檔"), ("茶檔", "港式大排檔"),
@@ -151,6 +156,8 @@ KEYWORD_RULES: list[tuple[str, str]] = [
     ("skewer", "串燒燒烤"), ("bbq", "串燒燒烤"),
     # 素食
     ("素食", "素食"), ("齋", "素食"), ("vegetarian", "素食"), ("vegan", "素食"),
+    # NOTE: a generic trailing-"素" (悦素) is handled specially in _classify
+    # to avoid false positives with 元素 / 素質 etc. — see _is_vegetarian_brand.
     # 甜品／烘焙
     ("甜品", "甜品／烘焙"), ("糖水", "甜品／烘焙"), ("dessert", "甜品／烘焙"),
     ("雪糕", "甜品／烘焙"), ("ice cream", "甜品／烘焙"), ("gelato", "甜品／烘焙"),
@@ -191,14 +198,20 @@ EN_WORD_BOUNDARY_RULES: list[tuple[str, str]] = [
     ("barista", "咖啡"),       # Barista Jam / Barista Coffee
     ("roaster", "咖啡"),       # "the roaster" / "Mountain Roaster"
     ("latte", "咖啡"),
-    ("brew", "咖啡"),          # "Tap Brew", "Slow Brew"
-    ("brewery", "咖啡"),       # not really coffee but rare
+    # NOTE: "brew" / "brewery" deliberately NOT here.  "DAS BIER TAPAS BREW"
+    # is a German-style bar, not a coffee shop.  Single-token "brew" cafes
+    # are rare; the trade-off favours not over-tagging bars as coffee.
     ("bar", "酒吧"),
     ("pub", "酒吧"),
     ("lounge", "酒吧"),
     ("taproom", "酒吧"),
     ("whisky", "酒吧"),
     ("beer", "酒吧"),          # "Beer Garden"
+    ("bier", "酒吧"),          # "DAS BIER …"  (German for beer)
+    ("tapas", "酒吧"),         # "DAS BIER TAPAS BREW" — tapas bars lean bar
+    ("brewpub", "酒吧"),       # "BREWPUB" is a brewpub = bar
+    ("ale", "酒吧"),           # "ALE HOUSE" word-boundary
+    ("酒窖", "酒吧"),          # mirror zh side as a safety net
     # 泰越星馬 — word-boundary so "pho" doesn't trigger on "syphon"/
     # "phooey". Specific compound en keys already substring-matched:
     # thai / viet / vietnamese.
@@ -217,6 +230,19 @@ DOMINANT_CATEGORIES: set[str] = {
     "粥品", "港式大排檔", "串燒燒烤", "素食", "甜品／烘焙",
     "壽司／刺身", "拉麵／烏冬", "日式燒肉", "法式", "火鍋",
 }
+
+# zh venue-suffix words: a name like "皇后飯店" / "YMCA 餐廳" tells us it's
+# a generic eating house, NOT specifically a coffee shop / bar / bubble tea
+# shop.  When the zh name contains one of these suffixes AND no zh coffee
+# sentinel (咖啡/珈琲/啡室/啡) and no zh bar sentinel (酒吧/酒窖/啤酒),
+# we strip 咖啡 / 酒吧 / 茶飲 even when the en name contains those words
+# (e.g. "Queen's Cafe" / "CENTRE CAFE").  Spec: 寧缺勿錯.
+VENUE_SUFFIXES_ZH: tuple[str, ...] = (
+    "餐廳", "飯店", "食店", "食堂", "酒樓", "酒家", "餐室",
+)
+COFFEE_SENTINELS_ZH: tuple[str, ...] = ("咖啡", "珈琲", "啡室", "啡")
+BAR_SENTINELS_ZH: tuple[str, ...] = ("酒吧", "酒窖", "啤酒")
+SHOULD_NOT_BE_COFFEE_CATS: tuple[str, ...] = ("咖啡", "酒吧", "茶飲")
 
 # Generic / ambiguous terms that we will SKIP even if a category keyword
 # happens to appear. e.g. "素" alone is too generic, "齋" alone is too generic.
@@ -343,6 +369,15 @@ def _classify(name_zh: str, name_en: str) -> list[str]:
         if _en_word_boundary_hit(kw, en_norm):
             hits.append((len(kw), kw, cat))
 
+    # Pass 3: "trailing-素" vegetarian brand.  Only when zh_norm ends with
+    # 素 (e.g. 悦素 / 元素 / 素質).  Guarded against compound false-positives
+    # (元素 / 素質 / 素描 / …) by ALSO requiring the zh_norm to NOT start
+    # with 素 (so we don't tag single-char "素" or "素描" but DO tag
+    # "<brand>素").  Counts as a 2-char keyword so it wins ties with 咖啡's
+    # en-only matchers.  The dominance pass then strips the 咖啡 en hit.
+    if _is_vegetarian_brand(zh_norm):
+        hits.append((2, "素(末)", "素食"))
+
     if not hits:
         return []
 
@@ -363,6 +398,19 @@ def _classify(name_zh: str, name_en: str) -> list[str]:
             cats.remove("咖啡")
         if "酒吧" in cats and not _zh_has_bar_sentinel(zh_norm):
             cats.remove("酒吧")
+
+    # Venue-suffix dominance — even WITHOUT a hit from DOMINANT_CATEGORIES,
+    # a generic "eating-place" suffix (餐廳/飯店/食堂/酒樓/酒家/餐室) tells us
+    # the place is a generic old-style café/eatery, not specifically a
+    # coffee shop / bar / bubble-tea shop.  Strip those categories when the
+    # zh name has the suffix AND no zh coffee/bar sentinel.  This catches
+    # "皇后飯店 / Queen's Cafe" and "YMCA 餐廳 / CENTRE CAFE" without
+    # needing to tag them as anything else.  寧缺勿錯.
+    if _zh_has_venue_suffix(zh_norm) and not _zh_has_coffee_sentinel(zh_norm) \
+            and not _zh_has_bar_sentinel(zh_norm):
+        for c in list(cats):
+            if c in SHOULD_NOT_BE_COFFEE_CATS:
+                cats.remove(c)
 
     # Re-cap at 2 after stripping.
     return cats[:2]
@@ -390,11 +438,41 @@ def _en_word_boundary_hit(kw: str, en_norm: str) -> bool:
 
 
 def _zh_has_coffee_sentinel(zh_norm: str) -> bool:
-    return any(s in zh_norm for s in ("咖啡", "珈琲", "啡室", "啡"))
+    return any(s in zh_norm for s in COFFEE_SENTINELS_ZH)
 
 
 def _zh_has_bar_sentinel(zh_norm: str) -> bool:
-    return any(s in zh_norm for s in ("酒吧", "酒窖", "啤酒"))
+    return any(s in zh_norm for s in BAR_SENTINELS_ZH)
+
+
+def _zh_has_venue_suffix(zh_norm: str) -> bool:
+    return any(s in zh_norm for s in VENUE_SUFFIXES_ZH)
+
+
+def _is_vegetarian_brand(zh_norm: str) -> bool:
+    """Return True iff the zh name looks like "<brand>素" (e.g. 悦素).
+
+    Heuristic: the last char of zh_norm is 素 AND the zh name is longer
+    than 1 char AND the char BEFORE 素 is NOT itself another ordinary
+    CJK char that would form a known non-vegetarian word (元素 / 素質 /
+    素描 / 素顏 / 素養 — all false positives we've explicitly checked for).
+    """
+    if not zh_norm or len(zh_norm) < 2:
+        return False
+    if zh_norm[-1] != "素":
+        return False
+    # Single-char "素" → not a brand.
+    if len(zh_norm) == 1:
+        return False
+    # Block-list of compound words that END in 素 but are NOT veg brands.
+    bad_starts = ("元", "素")  # 元素 / 素描 / 素質 / 素顏 / 素養
+    if zh_norm[0] in bad_starts:
+        return False
+    # Block "x素" where x is a common noun (e.g. 材質 where 質素 — actually
+    # we already cover 品質 vs 素質 below by means of len and starts).
+    if zh_norm in {"素食", "素菜"}:  # these are already caught by 素食 kw
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------

@@ -435,7 +435,7 @@ function walkingMinutes(d: number): number | null {
                       if (!t || !t.types || t.types.length === 0) return null;
                       return (
                         <p class="text-[10px] mt-0.5 truncate flex items-center gap-1">
-                          <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="由店名推斷，或有誤">{t.types.join(' / ')}</span>
+                          <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title={t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤'}>{t.types.join(' / ')}</span>
                         </p>
                       );
                     })()}
@@ -600,8 +600,9 @@ function walkingMinutes(d: number): number | null {
     function cuisineChipHtmlZh(id) {
       var t = RESTAURANT_TYPES_ZH[String(id)];
       if (!t || !t.types || t.types.length === 0) return '';
+      var tip = t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤';
       return '<p class="text-[10px] mt-0.5 truncate flex items-center gap-1">'
-        + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="由店名推斷，或有誤">'
+        + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="' + escapeHtml(tip) + '">'
         + escapeHtml(t.types.join(' / ')) + '</span></p>';
     }
 

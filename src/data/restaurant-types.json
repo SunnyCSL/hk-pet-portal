@@ -65,12 +65,6 @@
       "泰越星馬"
     ]
   },
-  "126": {
-    "source": "name-infer",
-    "types": [
-      "中菜"
-    ]
-  },
   "130": {
     "source": "name-infer",
     "types": [
@@ -300,12 +294,6 @@
       "壽司／刺身"
     ]
   },
-  "193": {
-    "source": "name-infer",
-    "types": [
-      "酒吧"
-    ]
-  },
   "194": {
     "source": "name-infer",
     "types": [
@@ -368,54 +356,6 @@
     "source": "name-infer",
     "types": [
       "茶餐廳"
-    ]
-  },
-  "221": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "222": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "223": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "224": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "225": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "226": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "227": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "228": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
     ]
   },
   "23": {
@@ -532,12 +472,6 @@
       "點心"
     ]
   },
-  "262": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
   "266": {
     "source": "name-infer",
     "types": [
@@ -625,10 +559,16 @@
       "印度尼泊爾"
     ]
   },
+  "302": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
   "303": {
     "source": "name-infer",
     "types": [
-      "咖啡"
+      "酒吧"
     ]
   },
   "312": {
@@ -747,12 +687,6 @@
       "咖啡"
     ]
   },
-  "371": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
   "377": {
     "source": "name-infer",
     "types": [
@@ -843,27 +777,31 @@
     "website": "https://www.tasteofasia.com.hk/"
   },
   "413": {
-    "source": "name-infer",
+    "opening_hours": "0900 - 2230",
+    "source": "osm",
     "types": [
-      "咖啡"
+      "西餐"
     ]
   },
   "414": {
-    "source": "name-infer",
+    "opening_hours": "0900 - 2230",
+    "source": "osm",
     "types": [
-      "咖啡"
+      "西餐"
     ]
   },
   "415": {
-    "source": "name-infer",
+    "opening_hours": "0900 - 2230",
+    "source": "osm",
     "types": [
-      "咖啡"
+      "西餐"
     ]
   },
   "416": {
-    "source": "name-infer",
+    "opening_hours": "0900 - 2230",
+    "source": "osm",
     "types": [
-      "咖啡"
+      "西餐"
     ]
   },
   "418": {
@@ -920,7 +858,7 @@
   "435": {
     "source": "name-infer",
     "types": [
-      "咖啡"
+      "素食"
     ]
   },
   "436": {
@@ -962,8 +900,7 @@
   "458": {
     "source": "name-infer",
     "types": [
-      "港式燒味",
-      "中菜"
+      "港式燒味"
     ]
   },
   "460": {
@@ -1492,12 +1429,6 @@
       "咖啡"
     ]
   },
-  "656": {
-    "source": "name-infer",
-    "types": [
-      "中菜"
-    ]
-  },
   "661": {
     "source": "name-infer",
     "types": [
@@ -1532,6 +1463,12 @@
     "source": "name-infer",
     "types": [
       "西餐"
+    ]
+  },
+  "675": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
     ]
   },
   "678": {
@@ -1678,12 +1615,6 @@
     "source": "name-infer",
     "types": [
       "咖啡"
-    ]
-  },
-  "73": {
-    "source": "name-infer",
-    "types": [
-      "中菜"
     ]
   },
   "732": {
@@ -2058,7 +1989,7 @@
     ]
   },
   "88": {
-    "source": "name-infer",
+    "source": "osm",
     "types": [
       "中菜"
     ]
@@ -2266,12 +2197,6 @@
     ]
   },
   "952": {
-    "source": "name-infer",
-    "types": [
-      "中菜"
-    ]
-  },
-  "958": {
     "source": "name-infer",
     "types": [
       "中菜"
