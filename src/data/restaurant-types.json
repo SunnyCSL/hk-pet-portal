@@ -358,6 +358,12 @@
       "茶餐廳"
     ]
   },
+  "226": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
   "23": {
     "source": "osm",
     "types": [
@@ -1424,6 +1430,12 @@
     ]
   },
   "647": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "656": {
     "source": "name-infer",
     "types": [
       "咖啡"

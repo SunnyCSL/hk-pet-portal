@@ -149,6 +149,7 @@ const restLng = restCoords?.lng || 114.1694;
         actual source.  OSM-sourced records show "資料來源：OpenStreetMap"
         (truthful advertising — OSM cuisine tag, not name inference).
         Name-inferred records keep the old "由店名推斷，或有誤" tooltip. */}
+
     {(() => {
       const t = restaurantTypes[String(restaurant.id)];
       if (!t || !t.types || t.types.length === 0) return null;
