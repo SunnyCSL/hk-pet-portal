@@ -6,6 +6,39 @@ import areaCentres from '../../data/area-centres.json';
 import areaSlugs from '../../data/area-slugs.json';
 import areaNames from '../../data/area-names.json';
 import restaurantCoords from '../../data/restaurant-coords.json';
+import restaurantTypes from '../../data/restaurant-types.json';
+
+// feat/restaurant-types: zh category → en display name. Mirrors the table in
+// /tmp/cuisine_rules.md. Records absent from restaurantTypes have no inferred
+// cuisine and so no chip is rendered for them.
+const CUISINE_EN_MAP: Record<string, string> = {
+  '咖啡': 'Coffee',
+  '酒吧': 'Bar',
+  '茶飲': 'Bubble tea',
+  '茶餐廳': 'Cha chaan teng',
+  '港式大排檔': 'Dai pai dong',
+  '港式燒味': 'Cantonese roast',
+  '火鍋': 'Hot pot',
+  '點心': 'Dim sum',
+  '壽司／刺身': 'Sushi & sashimi',
+  '拉麵／烏冬': 'Ramen & udon',
+  '日式': 'Japanese',
+  '日式燒肉': 'Yakiniku',
+  '韓式': 'Korean',
+  '泰越星馬': 'Thai / Viet / SEA',
+  '西餐': 'Western',
+  '法式': 'French',
+  '中菜': 'Chinese',
+  '中式地方菜': 'Regional Chinese',
+  '粉麵': 'Noodles',
+  '粥品': 'Congee',
+  '海鮮': 'Seafood',
+  '串燒燒烤': 'Skewers & BBQ',
+  '素食': 'Vegetarian',
+  '甜品／烘焙': 'Dessert & bakery',
+  '印度尼泊爾': 'Indian & Nepali',
+  '台灣': 'Taiwanese',
+};
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
@@ -256,6 +289,16 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
             <div class="min-w-0 flex-1">
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">{r.name_en || r.name_zh}</h3>
+              {(() => {
+                const t = restaurantTypes[String(r.id)];
+                if (!t || !t.types || t.types.length === 0) return null;
+                const labels = t.types.map((z: string) => CUISINE_EN_MAP[z] || z).join(' / ');
+                return (
+                  <p class="text-[10px] mt-0.5 truncate flex items-center gap-1">
+                    <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="Inferred from the shop name">{labels}</span>
+                  </p>
+                );
+              })()}
               <p class="text-xs text-gray-500 mt-0.5 truncate">
                 <span class="inline-flex items-center gap-1">
                   <span class="text-gray-300">📍</span>
@@ -307,6 +350,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       Object.entries(AREA_NAME_EN_REVERSE).map(([en, zh]) => [en.toLowerCase(), zh])
     )
   )} />
+  <!-- feat/restaurant-types: id → {types:[zh,...]} map; mirrored to EN for
+       JS-rendered cards. The EN chip uses CUISINE_EN_MAP to translate. -->
+  <script type="application/json" id="restaurant-types" set:html={JSON.stringify(restaurantTypes)} />
 
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with SSR).
@@ -518,6 +564,33 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   } catch (e) { AREA_NAME_EN_REVERSE = {}; }
   // Sort longest-first so multi-word names match before abbreviations.
   var AREA_NAME_EN_SORTED = Object.keys(AREA_NAME_EN_REVERSE).sort(function (a, b) { return b.length - a.length; });
+
+  // feat/restaurant-types: id → {types:[zh,...]} map + EN display lookup.
+  var RESTAURANT_TYPES_ZH = {};
+  try {
+    var rawRt = JSON.parse(document.getElementById('restaurant-types').textContent || '{}') || {};
+    Object.keys(rawRt).forEach(function (k) { RESTAURANT_TYPES_ZH[k] = rawRt[k]; });
+  } catch (e) { RESTAURANT_TYPES_ZH = {}; }
+  var CUISINE_EN_MAP = {
+    '咖啡': 'Coffee', '酒吧': 'Bar', '茶飲': 'Bubble tea',
+    '茶餐廳': 'Cha chaan teng', '港式大排檔': 'Dai pai dong',
+    '港式燒味': 'Cantonese roast', '火鍋': 'Hot pot', '點心': 'Dim sum',
+    '壽司／刺身': 'Sushi & sashimi', '拉麵／烏冬': 'Ramen & udon',
+    '日式': 'Japanese', '日式燒肉': 'Yakiniku', '韓式': 'Korean',
+    '泰越星馬': 'Thai / Viet / SEA', '西餐': 'Western', '法式': 'French',
+    '中菜': 'Chinese', '中式地方菜': 'Regional Chinese', '粉麵': 'Noodles',
+    '粥品': 'Congee', '海鮮': 'Seafood', '串燒燒烤': 'Skewers & BBQ',
+    '素食': 'Vegetarian', '甜品／烘焙': 'Dessert & bakery',
+    '印度尼泊爾': 'Indian & Nepali', '台灣': 'Taiwanese'
+  };
+  function cuisineChipHtmlEn(id) {
+    var t = RESTAURANT_TYPES_ZH[String(id)];
+    if (!t || !t.types || t.types.length === 0) return '';
+    var labels = t.types.map(function (z) { return CUISINE_EN_MAP[z] || z; }).join(' / ');
+    return '<p class="text-[10px] mt-0.5 truncate flex items-center gap-1">'
+      + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="Inferred from the shop name">'
+      + escapeHtml(labels) + '</span></p>';
+  }
 
   // ---- Tokenizer ----
   // Split on spaces/punctuation, lowercased. Inserts a boundary at CJK↔alnum
@@ -795,6 +868,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
       + '<div class="min-w-0 flex-1">'
       + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(nameEn) + '</h3>'
+      + cuisineChipHtmlEn(e.id)
       + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
       + '<span class="inline-flex items-center gap-1">'
       + '<span class="text-gray-300">📍</span> '

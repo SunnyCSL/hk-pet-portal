@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import restaurants from '../../data/restaurants.json';
 import coords from '../../data/restaurant-coords.json';
+import restaurantTypes from '../../data/restaurant-types.json';
 
 export async function getStaticPaths() {
   return restaurants.map((r: { id: number }) => ({
@@ -143,6 +144,18 @@ const restLng = restCoords?.lng || 114.1694;
         🔗 食環署官方名單 ↗
       </a>
     </div>
+
+    {/* feat/restaurant-types: cuisine (inferred from name) line. Hidden when
+        the record has no inferred cuisine — never render an empty field. */}
+    {(() => {
+      const t = restaurantTypes[String(restaurant.id)];
+      if (!t || !t.types || t.types.length === 0) return null;
+      return (
+        <p class="text-xs text-gray-500 mb-6" title={t.source === 'osm' ? 'OSM (ODbL) 標記，僅供參考' : '由店名推斷，或有誤'}>
+          <span class="font-medium text-gray-700">類型（由店名推斷）</span>：{t.types.join(' / ')}
+        </p>
+      );
+    })()}
 
     <!-- Related restaurants -->
     {related.length > 0 && (
