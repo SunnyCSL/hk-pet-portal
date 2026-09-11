@@ -1,0 +1,624 @@
+---
+// 中文地區專頁 — /restaurants/area/<english-slug>
+// SEO-oriented neighbourhood page. One static page per area-centre.
+//
+// Design rules (per task brief):
+//   - No ratings, no prices, no editorial copy/reviews, no per-shop descriptions
+//   - Stats and lists are auto-generated from data only
+//   - "Nearest first" = precise records sorted by distance, then area-prec
+//     records (which only carry area-centre coords — distance meaningless)
+//     pushed to the bottom in a separate "位置約略" group with no number
+//   - Candidate set = (restaurants within radius) ∪ (name/address hits on the
+//     area-name or its aliases). Same as the /restaurants search page
+//   - If final candidate count < 3, emit <meta name="robots" content="noindex,follow">
+//     so Google doesn't index a thin page (page is still kept + still in sitemap)
+//   - 4 neighbouring areas = nearest other area centres by Haversine
+//   - hreflang en emitted via BaseLayout when noEnAlternate=false (EN mirror
+//     exists at /en/restaurants/area/<slug>)
+//   - Mini Leaflet map shows area centre + nearby markers (existing site pattern)
+//
+// Source data:
+//   - src/data/area-centres.json     84 area centres (lat/lng)
+//   - src/data/restaurant-coords.json 906 coords (lat/lng, prec: building/street/area)
+//   - src/data/restaurants.json      906 restaurants
+//   - src/data/area-slugs.json       Chinese name → English slug map
+
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import restaurants from '../../../data/restaurants.json';
+import coords from '../../../data/restaurant-coords.json';
+import areas from '../../../data/area-centres.json';
+import areaSlugs from '../../../data/area-slugs.json';
+
+// Sub-area names + alias groups — same list as /restaurants so candidate-set
+// logic matches exactly. Mirrors the search page's "address hit OR alias hit"
+// logic so long-tail areas like 清水灣 still pick up restaurants whose name or
+// address contains the area string.
+const SUB_AREAS = [
+  '馬鞍山','科學園','白石角','香港仔','黃竹坑','海洋公園','淺水灣','赤柱','薄扶林','數碼港','鴨脷洲',
+  '中環','上環','西營盤','堅尼地城','石塘咀','半山','山頂','金鐘',
+  '銅鑼灣','跑馬地','大坑','天后','北角','鰂魚涌','太古','西灣河','筲箕灣','柴灣',
+  '尖沙咀','尖東','佐敦','油麻地','旺角','太子','大角咀',
+  '長沙灣','荔枝角','美孚',
+  '土瓜灣','紅磡','何文田','啟德',
+  '九龍灣','觀塘','牛頭角','藍田','油塘',
+  '深井','馬灣','荃灣',
+  '屯門','黃金海岸',
+  '元朗','天水圍','錦田',
+  '上水','粉嶺',
+  '大埔',
+  '沙田','大圍','火炭',
+  '西貢','將軍澳','坑口','寶琳','調景嶺','康城','清水灣',
+  '葵涌','葵芳','青衣',
+  '東涌','愉景灣','迪士尼','機場','大澳','長洲','南丫島','坪洲',
+];
+const ALIAS_GROUPS: Array<{ names: string[]; keys: string[] }> = [
+  { names: ['奧運','olympic','olympian'], keys: ['奧海城','海泓道','大角咀','利奧坊','海帆道','匯翔道','櫻桃街','奧柏'] },
+  { names: ['旺角東'], keys: ['旺角','太子'] },
+  { names: ['西九龍','west kowloon','elements','圓方'], keys: ['西九龍','柯士甸','圓方','elements'] },
+  { names: ['科學園','science park'], keys: ['科學園','白石角'] },
+];
+
+// Reverse slug → Chinese name lookup. Reject any slug that maps to a missing
+// area so we don't get a build error from a typo.
+const slugToName: Record<string, string> = Object.fromEntries(
+  Object.entries(areaSlugs).map(([zh, slug]) => [slug, zh])
+);
+
+export async function getStaticPaths() {
+  return Object.entries(areaSlugs)
+    .filter(([zh]) => areas[zh]) // skip slugs whose area centre is missing
+    .map(([zh, slug]) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const areaName = slugToName[slug as string];
+if (!areaName) {
+  return Astro.redirect('/404');
+}
+
+const centre = areas[areaName];
+const CLAT = centre.lat;
+const CLNG = centre.lng;
+
+// ---- Haversine ----
+function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371000.0;
+  const toRad = (x: number) => (x * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// "Does this restaurant's name/address mention the area or any of its aliases?"
+// Mirrors the alias-group logic in /restaurants so a candidate like 「太古城」
+// (no exact 太古 substring) still gets pulled into the 太古 candidate set via
+// the alias path. We only add to the alias set if `keys` actually matches the
+// record — otherwise we'd over-eagerly drag every record into 旺角 etc.
+function hitsArea(r: any): boolean {
+  const base = [r.name_zh || '', r.name_en || '', r.address || '', r.district || ''].join(' ');
+  if (base.includes(areaName)) return true;
+  for (const g of ALIAS_GROUPS) {
+    if (!g.names.includes(areaName)) continue;
+    if (g.keys.some(k => base.includes(k))) return true;
+  }
+  return false;
+}
+
+// ---- Compute nearby restaurants ----
+// Candidate set = (within DEFAULT_RADIUS by Haversine) ∪ (name/address hit).
+// Per task brief: same union as the /restaurants search page so a long-tail
+// area like 清水灣 picks up restaurants whose address contains 清水灣 even
+// when 2 km is empty.
+const DEFAULT_RADIUS = 2000;
+type NearbyRow = {
+  id: number;
+  name: string;
+  district: string;
+  address: string;
+  lat: number;
+  lng: number;
+  prec: 'building' | 'street' | 'area' | string;
+  distance: number;
+};
+
+const allWithCoords: NearbyRow[] = (restaurants as any[])
+  .map((r: any) => {
+    const c = coords[String(r.id)] as { lat?: number; lng?: number; prec?: string } | undefined;
+    if (!c || c.lat == null || c.lng == null) return null;
+    return {
+      id: r.id,
+      name: r.name_zh || r.name_en || `${r.district}狗友善餐廳`,
+      district: r.district,
+      address: r.address,
+      lat: c.lat,
+      lng: c.lng,
+      prec: c.prec || 'building',
+      distance: haversine(CLAT, CLNG, c.lat, c.lng),
+    };
+  })
+  .filter((x: NearbyRow | null): x is NearbyRow => x !== null);
+
+const byId = new Map<number, NearbyRow>();
+for (const r of allWithCoords) {
+  if (r.distance <= DEFAULT_RADIUS) byId.set(r.id, r);
+}
+// Union: same-name / alias hits added even if outside radius
+for (const r of (restaurants as any[])) {
+  if (byId.has(r.id)) continue;
+  if (!hitsArea(r)) continue;
+  const c = coords[String(r.id)] as { lat?: number; lng?: number; prec?: string } | undefined;
+  if (!c || c.lat == null || c.lng == null) continue;
+  byId.set(r.id, {
+    id: r.id,
+    name: r.name_zh || r.name_en || `${r.district}狗友善餐廳`,
+    district: r.district,
+    address: r.address,
+    lat: c.lat,
+    lng: c.lng,
+    prec: c.prec || 'building',
+    distance: haversine(CLAT, CLNG, c.lat, c.lng),
+  });
+}
+
+// ---- Sort: precise first (asc by distance), then area-prec (asc by distance) ----
+// Identical to /restaurants search page rule. Area-prec records only carry the
+// area-centre coord, not a door address — pushing them last is honest.
+const combinedRows: NearbyRow[] = Array.from(byId.values());
+const precise = combinedRows.filter(x => x.prec !== 'area').sort((a, b) => a.distance - b.distance);
+const areaPrec = combinedRows.filter(x => x.prec === 'area').sort((a, b) => a.distance - b.distance);
+const sortedAll = [...precise, ...areaPrec];
+
+// Distance formatter used in both frontmatter and the page HTML.
+function formatDistance(d: number): string {
+  return d < 1000 ? `${Math.round(d)} 米` : `${(d / 1000).toFixed(1)} 公里`;
+}
+
+// ---- Stats ----
+// "Within X km" headline numbers use the union (radius + name hit) so a thin
+// area like 清水灣 still reports > 0 even if everything is far away. Within
+// 500m / 1km / 2km counts only use the pure-radius count (no name-hit overlap
+// at those distances).
+const within2km = precise.filter(x => x.distance <= DEFAULT_RADIUS).length;
+const totalNearby = sortedAll.length;
+const within500 = precise.filter(x => x.distance <= 500).length;
+const within1km = precise.filter(x => x.distance <= 1000).length;
+const stats = {
+  total: totalNearby,
+  radiusLabel: formatDistance(DEFAULT_RADIUS),
+  within500,
+  within1km,
+  within2km,
+  totalArea: precise.length,
+};
+
+// noindex if fewer than 3 restaurants — too thin to deserve an index slot.
+// Page still kept + still in sitemap (follow-only).
+const shouldNoindex = totalNearby < 3;
+
+// Top 20 for SSR (the visible card list). The "show all" island below
+// extends to up to 100 rows / 10 km so the expansion stays useful without
+// dumping every restaurant in HK.
+const TOP_COUNT = 20;
+const nearestList = sortedAll.slice(0, TOP_COUNT).map((x) => ({
+  id: x.id,
+  name: x.name,
+  district: x.district,
+  address: x.address,
+  lat: x.lat,
+  lng: x.lng,
+  prec: x.prec,
+  distance: x.distance,
+}));
+
+// Find the boundary index inside nearestList where area-prec records start.
+// `boundary` is the position to insert the "位置約略" group header (or null
+// when all 20 records are precise — no header needed).
+const boundaryIdx = nearestList.findIndex((x) => x.prec === 'area');
+
+// Island rows for the full list (show-all button). Same sort: precise first,
+// then area-prec. Capped at SHOW_ALL_MAX / SHOW_ALL_RADIUS for sane DOM size.
+const SHOW_ALL_RADIUS = 10000;
+const SHOW_ALL_MAX = 100;
+const islandRows: Array<[number, string, string, string, number, number, string, number]> =
+  sortedAll
+    .filter((x) => x.distance <= SHOW_ALL_RADIUS || x.prec === 'area')
+    .slice(0, SHOW_ALL_MAX)
+    .map((x) => [
+      x.id,
+      x.name,
+      x.district,
+      x.address,
+      x.lat,
+      x.lng,
+      x.prec,
+      Math.round(x.distance),
+    ]);
+
+// ---- Neighbouring areas: 4 closest other area centres ----
+type Neighbour = { name: string; slug: string; distance: number; count: number };
+const neighbours: Neighbour[] = Object.entries(areas)
+  .filter(([name]) => name !== areaName)
+  .map(([name, c]) => {
+    const d = haversine(CLAT, CLNG, c.lat, c.lng);
+    const cnt = precise.filter(
+      (x) => x.prec !== 'area' && haversine(c.lat, c.lng, x.lat, x.lng) <= DEFAULT_RADIUS
+    ).length;
+    return { name, slug: areaSlugs[name] || '', distance: d, count: cnt };
+  })
+  .filter((n) => n.slug) // skip areas without a slug (shouldn't happen)
+  .sort((a, b) => a.distance - b.distance)
+  .slice(0, 4);
+
+// ---- SEO metadata ----
+const pageTitle = `${areaName}狗友善餐廳`;
+// Description: prefer the nearest precise record's distance; fall back to
+// "X 公里內" when the nearest is area-prec or there's nothing precise.
+function nearestDistanceLabel(): string {
+  const firstPrecise = precise[0];
+  if (!firstPrecise) return totalNearby > 0 ? `${stats.radiusLabel}範圍內` : `${formatDistance(DEFAULT_RADIUS)}範圍內`;
+  const d = firstPrecise.distance;
+  if (d < 50) return '步行 1 分鐘內';
+  if (d < 1000) return `${Math.round(d)} 米`;
+  return `${(d/1000).toFixed(1)} 公里`;
+}
+const nearestLabel = nearestDistanceLabel();
+const nearestClause = precise.length > 0 && precise[0].distance >= 50
+  ? `最近 ${nearestLabel}`
+  : `${formatDistance(DEFAULT_RADIUS)}範圍內`;
+const pageDesc = `${areaName}附近${totalNearby}間食環署核准嘅狗友善餐廳（依距離排序），${nearestClause}。互動地圖＋即時官方名單更新。`;
+const canonicalPath = `/restaurants/area/${slug}`;
+
+// JSON-LD: ItemList of nearby restaurants + Place schema for the area.
+const SITE = Astro.site?.toString().replace(/\/$/, '') || 'https://hk-pet-portal.vercel.app';
+const itemListLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${areaName}狗友善餐廳`,
+  itemListElement: nearestList
+    .filter((r) => r.prec !== 'area') // don't lie about positions of area-prec records
+    .slice(0, 10)
+    .map((r, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      item: {
+        '@type': 'Restaurant',
+        name: r.name,
+        address: r.address,
+        url: `${SITE}/restaurants/${r.id}`,
+        ...(r.lat && r.lng
+          ? { geo: { '@type': 'GeoCoordinates', latitude: r.lat, longitude: r.lng } }
+          : {}),
+        servesCuisine: 'Pet-friendly',
+      },
+    })),
+};
+const placeLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Place',
+  name: areaName,
+  geo: { '@type': 'GeoCoordinates', latitude: CLAT, longitude: CLNG },
+  url: `${SITE}${canonicalPath}`,
+};
+
+// Distance formatters — duplicated client-side for the island rendering.
+function walkingMinutes(d: number): number | null {
+  if (d > 1200) return null;
+  return Math.max(1, Math.round(d / 80));
+}
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  lang="zh"
+  noindex={shouldNoindex}
+  jsonLd={[itemListLd, placeLd]}
+>
+  <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-1.5 text-xs text-gray-500 mb-3 flex-wrap" aria-label="麵包屑導覽">
+      <a href="/" class="hover:text-brand no-underline">首頁</a>
+      <span class="text-gray-300">/</span>
+      <a href="/restaurants" class="hover:text-brand no-underline">餐廳</a>
+      <span class="text-gray-300">/</span>
+      <a href={`/restaurants?district=${encodeURIComponent(areaName)}`} class="hover:text-brand no-underline">{areaName}</a>
+      <span class="text-gray-300">/</span>
+      <span class="text-gray-500">地區專頁</span>
+    </nav>
+
+    <!-- Header -->
+    <header class="mb-5">
+      <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight">
+        📍 {areaName}狗友善餐廳
+      </h1>
+      <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+        {areaName}附近 {stats.total} 間食環署核准嘅狗友善餐廳（依距離由近至遠排列，自動從官方名單更新）。
+        {shouldNoindex && <span class="block mt-1 text-xs text-gray-400">呢個地區餐廳較少，部分結果嚟自名稱或地址包含「{areaName}」嘅搜尋命中。</span>}
+      </p>
+    </header>
+
+    <!-- Stats grid -->
+    <section aria-label="地區統計" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">{stats.radiusLabel} 內</div>
+        <div class="text-2xl font-bold text-near-black">{stats.total}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">500 米內</div>
+        <div class="text-2xl font-bold text-near-black">{stats.within500}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">1 公里內</div>
+        <div class="text-2xl font-bold text-near-black">{stats.within1km}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">2 公里內</div>
+        <div class="text-2xl font-bold text-near-black">{stats.within2km}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
+      </div>
+    </section>
+
+    <!-- Mini interactive map -->
+    <section class="bg-white rounded-xl border border-gray-100 overflow-hidden mb-5" aria-label="地區地圖">
+      <div id="area-map" class="h-56 md:h-72 bg-gray-50" data-lat={CLAT} data-lng={CLNG} data-name={areaName}></div>
+      <div class="px-4 py-2.5 text-xs text-gray-500 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span>📍 {areaName}中心點</span>
+        <span class="text-gray-200">·</span>
+        <span>{nearestList.length} 個最近餐廳標記</span>
+        <span class="text-gray-200">·</span>
+        <span>可拖動・放大縮細</span>
+      </div>
+    </section>
+
+    <!-- Nearest-first list -->
+    <section class="mb-5" aria-label={`${areaName}附近狗友善餐廳列表`}>
+      <div class="flex items-baseline justify-between mb-3">
+        <h2 class="text-lg md:text-xl font-bold text-near-black">{areaName}附近餐廳（最近優先）</h2>
+        <span class="text-xs text-gray-500" id="nearby-count">{nearestList.length} 間</span>
+      </div>
+
+      <div id="nearby-list" class="flex flex-col gap-2">
+        {nearestList.map((r, idx) => {
+          const mins = walkingMinutes(r.distance);
+          const isAreaPrec = r.prec === 'area';
+          const showGroupHeader = idx === boundaryIdx && idx > 0;
+          return (
+            <Fragment>
+              {showGroupHeader && (
+                <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2 mb-1 px-1" aria-label="位置約略組別">
+                  📍 位置約略
+                </div>
+              )}
+              <a
+                href={`/restaurants/${r.id}`}
+                class="nearby-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+                data-id={r.id}
+                data-lat={r.lat}
+                data-lng={r.lng}
+              >
+                <div class="flex items-center gap-3">
+                  <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
+                  <div class="min-w-0 flex-1">
+                    <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
+                      {r.name}
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-0.5 truncate">
+                      <span class="text-gray-300">📍</span> {r.district}
+                      <span class="mx-1.5 text-gray-200">·</span>
+                      <span class="text-gray-300">{r.address}</span>
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    {isAreaPrec ? (
+                      <span class="text-xs text-gray-400 whitespace-nowrap">位置約略</span>
+                    ) : (
+                      <span class="text-xs text-gray-400 whitespace-nowrap">
+                        {formatDistance(r.distance)}{mins != null ? ` · 步行 ${mins} 分鐘` : ''}
+                      </span>
+                    )}
+                    <span class="text-gray-300 group-hover:text-brand transition-colors text-xs">→</span>
+                  </div>
+                </div>
+              </a>
+            </Fragment>
+          );
+        })}
+      </div>
+
+      {islandRows.length > 0 && (
+        <p class="text-xs text-gray-500 mt-3 text-center" id="nearby-more-hint">
+          展開 10 公里內餐廳（最多 {islandRows.length} 間）
+          <button type="button" id="show-all" class="text-brand hover:underline ml-1 font-medium">展開 →</button>
+        </p>
+      )}
+    </section>
+
+    <!-- Neighbouring areas -->
+    {neighbours.length > 0 && (
+      <section class="mb-6" aria-label="相鄰地區導覽">
+        <h2 class="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wide">相鄰地區</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {neighbours.map((n) => (
+            <a
+              href={`/restaurants/area/${n.slug}`}
+              class="group bg-white border border-gray-100 rounded-xl p-3 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+            >
+              <div class="text-sm font-medium text-near-black group-hover:text-brand transition-colors truncate">
+                📍 {n.name}
+              </div>
+              <div class="text-xs text-gray-500 mt-0.5">
+                {formatDistance(n.distance)} · {n.count} 間
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- See also: search link -->
+    <section class="bg-brand-light border border-brand/20 rounded-xl p-4 mb-3">
+      <p class="text-sm text-near-black">
+        想搵 {areaName}指定餐廳？
+        <a href={`/restaurants?q=${encodeURIComponent(areaName)}`} class="text-brand font-medium hover:underline">
+          去餐廳搜尋頁 →
+        </a>
+      </p>
+    </section>
+
+    <!-- Methodology footnote (no editorialising, just data provenance) -->
+    <footer class="text-xs text-gray-500 leading-relaxed mt-6 pt-4 border-t border-gray-100">
+      <p>
+        餐廳資料來自香港食環署公開嘅狗隻進入食肆牌照名單。距離以餐廳地址坐標同{areaName}中心點之間嘅直線距離計算，僅供參考；實際步行路線可能更長。
+      </p>
+    </footer>
+  </div>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+
+  <!-- Island rows: full list (sorted: precise first, then area-prec) -->
+  <script type="application/json" id="nearby-island" set:html={JSON.stringify({ rows: islandRows })} />
+
+  <script is:inline>
+  // ---- Area map: render centre + nearby markers from the SSR list ----
+  (function () {
+    var mapEl = document.getElementById('area-map');
+    if (!mapEl || typeof L === 'undefined') return;
+    var lat = parseFloat(mapEl.getAttribute('data-lat'));
+    var lng = parseFloat(mapEl.getAttribute('data-lng'));
+    var name = mapEl.getAttribute('data-name') || '';
+
+    var map = L.map(mapEl, {
+      center: [lat, lng],
+      zoom: 14,
+      zoomControl: true,
+      scrollWheelZoom: true,
+    });
+
+    L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; CARTO &copy; OpenStreetMap',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Area centre marker (distinctive orange)
+    var centreIcon = L.divIcon({
+      className: 'area-centre-marker',
+      html: '<div style="width:18px;height:18px;background:#F59E0B;border:3px solid white;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>',
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+    });
+    L.marker([lat, lng], { icon: centreIcon, zIndexOffset: 1000 })
+      .addTo(map)
+      .bindPopup('<strong>' + name + '中心點</strong>');
+
+    // Nearby restaurant markers (from SSR list, top 20)
+    var greenIcon = L.divIcon({
+      className: 'area-rest-marker',
+      html: '<div style="width:10px;height:10px;background:#2D9B4E;border:2px solid white;border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,0.3);"></div>',
+      iconSize: [10, 10],
+      iconAnchor: [5, 5],
+    });
+    var items = document.querySelectorAll('#nearby-list .nearby-item');
+    var bounds = L.latLngBounds([[lat, lng]]);
+    for (var i = 0; i < items.length; i++) {
+      var link = items[i];
+      var la = parseFloat(link.getAttribute('data-lat'));
+      var ln = parseFloat(link.getAttribute('data-lng'));
+      var nm = link.querySelector('h3') ? link.querySelector('h3').textContent : '';
+      if (isNaN(la) || isNaN(ln)) continue;
+      var m = L.marker([la, ln], { icon: greenIcon }).addTo(map);
+      m.bindPopup('<strong>' + nm + '</strong><br><a href="' + link.getAttribute('href') + '">查看餐廳 →</a>');
+      bounds.extend([la, ln]);
+    }
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
+    }
+    setTimeout(function () { map.invalidateSize(); }, 200);
+  })();
+
+  // ---- Show-all button: append island rows ----
+  // Island rows are pre-sorted: precise first (by distance asc), then area-prec
+  // (also asc by distance). Render a "位置約略" group header when the first
+  // area-prec row appears.
+  (function () {
+    var btn = document.getElementById('show-all');
+    var list = document.getElementById('nearby-list');
+    var hint = document.getElementById('nearby-more-hint');
+    var countEl = document.getElementById('nearby-count');
+    if (!btn || !list || !hint) return;
+
+    var raw = null;
+    try {
+      raw = JSON.parse(document.getElementById('nearby-island').textContent || '{}').rows || [];
+    } catch (e) { raw = []; }
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function formatDistance(d) {
+      if (d == null) return '';
+      return d < 1000 ? Math.round(d) + ' 米' : (d / 1000).toFixed(1) + ' 公里';
+    }
+    function walkingMinutes(d) {
+      if (d == null || d > 1200) return null;
+      return Math.max(1, Math.round(d / 80));
+    }
+
+    btn.addEventListener('click', function () {
+      var frag = document.createDocumentFragment();
+      var groupHeaderInserted = false;
+      for (var i = 0; i < raw.length; i++) {
+        var r = raw[i];
+        var id = r[0], name = r[1], distName = r[2], addr = r[3], lat = r[4], lng = r[5], prec = r[6], dist = r[7];
+        var distStr = formatDistance(dist);
+        var mins = walkingMinutes(dist);
+        var isAreaPrec = prec === 'area';
+        if (isAreaPrec && !groupHeaderInserted) {
+          var hdr = document.createElement('div');
+          hdr.className = 'text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2 mb-1 px-1';
+          hdr.setAttribute('aria-label', '位置約略組別');
+          hdr.textContent = '📍 位置約略';
+          frag.appendChild(hdr);
+          groupHeaderInserted = true;
+        }
+        var distHtml = isAreaPrec
+          ? '<span class="text-xs text-gray-400 whitespace-nowrap">位置約略</span>'
+          : '<span class="text-xs text-gray-400 whitespace-nowrap">' + escapeHtml(distStr + (mins != null ? ' · 步行 ' + mins + ' 分鐘' : '')) + '</span>';
+        var a = document.createElement('a');
+        a.href = '/restaurants/' + id;
+        a.className = 'nearby-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline';
+        a.setAttribute('data-id', id);
+        a.setAttribute('data-lat', lat);
+        a.setAttribute('data-lng', lng);
+        a.innerHTML =
+          '<div class="flex items-center gap-3">'
+          + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
+          + '<div class="min-w-0 flex-1">'
+          + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(name) + '</h3>'
+          + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
+          + '<span class="text-gray-300">📍</span> ' + escapeHtml(distName)
+          + '<span class="mx-1.5 text-gray-200">·</span>'
+          + '<span class="text-gray-300">' + escapeHtml(addr) + '</span>'
+          + '</p>'
+          + '</div>'
+          + '<div class="flex items-center gap-2 shrink-0">'
+          + distHtml
+          + '<span class="text-gray-300 group-hover:text-brand transition-colors text-xs">→</span>'
+          + '</div>'
+          + '</div>';
+        frag.appendChild(a);
+      }
+      list.appendChild(frag);
+      if (countEl) {
+        var current = parseInt(countEl.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+        countEl.textContent = (current + raw.length) + ' 間';
+      }
+      hint.style.display = 'none';
+    });
+  })();
+  </script>
+</BaseLayout>

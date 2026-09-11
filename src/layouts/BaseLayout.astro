@@ -31,6 +31,13 @@ export interface Props {
    * is empty.
    */
   noEnAlternate?: boolean;
+  /**
+   * Set true when the page is too thin to deserve index slots (e.g. area
+   * pages with < 3 nearby restaurants). Emits <meta name="robots"
+   * content="noindex,follow"> so search engines follow links but don't
+   * index the page itself. Page still kept + still in sitemap.
+   */
+  noindex?: boolean;
 }
 
 const {
@@ -44,6 +51,7 @@ const {
   modifiedTime,
   lang = 'zh',
   noEnAlternate = false,
+  noindex = false,
 } = Astro.props;
 const isZh = lang === 'zh';
 
@@ -121,6 +129,7 @@ const allLd = [...baseLdBlocks, ...extraLd];
     <link rel="alternate" hreflang="zh-HK" href={`${SITE}${zhPath}`} />
     {!noEnAlternate && <link rel="alternate" hreflang="en" href={`${SITE}${enPath}`} />}
     <link rel="alternate" hreflang="x-default" href={`${SITE}${zhPath}`} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
 
     <!-- Open Graph (Phase 0 Batch 2) -->
     <meta property="og:type" content={ogType} />

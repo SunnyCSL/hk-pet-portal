@@ -1,0 +1,700 @@
+---
+// English area neighbourhood page — /en/restaurants/area/<english-slug>
+// 1:1 mirror of /restaurants/area/[slug].astro. Same candidate set, same sort
+// rules (precise records first by distance, area-prec records last in an
+// "Approximate location" group with no number). Same < 3 → noindex rule.
+// hreflang alternates are auto-emitted by BaseLayout (zh-HK + en + x-default).
+//
+// Design rules:
+//   - All UI labels in English (H1 = "<Area EN> Dog-Friendly Restaurants")
+//   - Cards prefer name_en, fall back to name_zh
+//   - Sub-area / alias logic matches zh + /en/restaurants search page so a
+//     long-tail area like Clear Water Bay still picks up restaurants whose
+//     address contains 清水灣
+//   - EN area-name dictionary mirrors src/pages/en/restaurants.astro's
+//     AREA_NAME_EN (kept in sync so the H1 reads "<Area EN> Dog-Friendly
+//     Restaurants" consistently across the site)
+
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import restaurants from '../../../../data/restaurants.json';
+import coords from '../../../../data/restaurant-coords.json';
+import areas from '../../../../data/area-centres.json';
+import areaSlugs from '../../../../data/area-slugs.json';
+
+// English display name for each Chinese area-centre key. Mirrors AREA_NAME_EN
+// in src/pages/en/restaurants.astro (the /en search page). Fallback is the
+// raw CJK key when no mapping exists — same approach as the search page.
+const AREA_NAME_EN: Record<string, string> = {
+  '奧運': 'Olympic',
+  '旺角': 'Mong Kok',
+  '旺角東': 'Mong Kok East',
+  '太子': 'Prince Edward',
+  '大角咀': 'Tai Kok Tsui',
+  '西九龍': 'West Kowloon',
+  '圓方': 'Elements',
+  '尖沙咀': 'Tsim Sha Tsui',
+  '尖東': 'Tsim Sha Tsui East',
+  '佐敦': 'Jordan',
+  '油麻地': 'Yau Ma Tei',
+  '中環': 'Central',
+  '上環': 'Sheung Wan',
+  '西營盤': 'Sai Ying Pun',
+  '堅尼地城': 'Kennedy Town',
+  '石塘咀': 'Shek Tong Tsui',
+  '半山': 'Mid-Levels',
+  '山頂': 'The Peak',
+  '金鐘': 'Admiralty',
+  '銅鑼灣': 'Causeway Bay',
+  '跑馬地': 'Happy Valley',
+  '大坑': 'Tai Hang',
+  '天后': 'Tin Hau',
+  '北角': 'North Point',
+  '鰂魚涌': 'Quarry Bay',
+  '太古': 'Taikoo',
+  '西灣河': 'Sai Wan Ho',
+  '筲箕灣': 'Shau Kei Wan',
+  '柴灣': 'Chai Wan',
+  '香港仔': 'Aberdeen',
+  '黃竹坑': 'Wong Chuk Hang',
+  '海洋公園': 'Ocean Park',
+  '淺水灣': 'Repulse Bay',
+  '赤柱': 'Stanley',
+  '薄扶林': 'Pok Fu Lam',
+  '數碼港': 'Cyberport',
+  '鴨脷洲': 'Ap Lei Chau',
+  '長沙灣': 'Cheung Sha Wan',
+  '荔枝角': 'Lai Chi Kok',
+  '美孚': 'Mei Foo',
+  '土瓜灣': 'To Kwa Wan',
+  '紅磡': 'Hung Hom',
+  '何文田': 'Ho Man Tin',
+  '啟德': 'Kai Tak',
+  '九龍灣': 'Kowloon Bay',
+  '觀塘': 'Kwun Tong',
+  '牛頭角': 'Ngau Tau Kok',
+  '藍田': 'Lam Tin',
+  '油塘': 'Yau Tong',
+  '深井': 'Sham Tseng',
+  '馬灣': 'Ma Wan',
+  '荃灣': 'Tsuen Wan',
+  '屯門': 'Tuen Mun',
+  '黃金海岸': 'Gold Coast',
+  '元朗': 'Yuen Long',
+  '天水圍': 'Tin Shui Wai',
+  '錦田': 'Kam Tin',
+  '上水': 'Sheung Shui',
+  '粉嶺': 'Fanling',
+  '大埔': 'Tai Po',
+  '沙田': 'Sha Tin',
+  '大圍': 'Tai Wai',
+  '火炭': 'Fo Tan',
+  '西貢': 'Sai Kung',
+  '將軍澳': 'Tseung Kwan O',
+  '坑口': 'Hang Hau',
+  '寶琳': 'Po Lam',
+  '調景嶺': 'Tiu Keng Leng',
+  '康城': 'LOHAS Park',
+  '清水灣': 'Clear Water Bay',
+  '葵涌': 'Kwai Chung',
+  '葵芳': 'Kwai Fong',
+  '青衣': 'Tsing Yi',
+  '東涌': 'Tung Chung',
+  '愉景灣': 'Discovery Bay',
+  '迪士尼': 'Hong Kong Disneyland',
+  '機場': 'Airport',
+  '大澳': 'Tai O',
+  '長洲': 'Cheung Chau',
+  '南丫島': 'Lamma Island',
+  '坪洲': 'Peng Chau',
+  '馬鞍山': 'Ma On Shan',
+  '科學園': 'Science Park',
+  '白石角': 'Pak Shek Kok',
+};
+
+// Sub-area names + alias groups — same list as /restaurants (zh) and the EN
+// search page. We add English-name keys to ALIAS_GROUPS so e.g. "Olympic"
+// (EN header) also pulls in 奧海城 records via the alias path.
+const SUB_AREAS = [
+  '馬鞍山','科學園','白石角','香港仔','黃竹坑','海洋公園','淺水灣','赤柱','薄扶林','數碼港','鴨脷洲',
+  '中環','上環','西營盤','堅尼地城','石塘咀','半山','山頂','金鐘',
+  '銅鑼灣','跑馬地','大坑','天后','北角','鰂魚涌','太古','西灣河','筲箕灣','柴灣',
+  '尖沙咀','尖東','佐敦','油麻地','旺角','太子','大角咀',
+  '長沙灣','荔枝角','美孚',
+  '土瓜灣','紅磡','何文田','啟德',
+  '九龍灣','觀塘','牛頭角','藍田','油塘',
+  '深井','馬灣','荃灣',
+  '屯門','黃金海岸',
+  '元朗','天水圍','錦田',
+  '上水','粉嶺',
+  '大埔',
+  '沙田','大圍','火炭',
+  '西貢','將軍澳','坑口','寶琳','調景嶺','康城','清水灣',
+  '葵涌','葵芳','青衣',
+  '東涌','愉景灣','迪士尼','機場','大澳','長洲','南丫島','坪洲',
+];
+const ALIAS_GROUPS: Array<{ names: string[]; keys: string[] }> = [
+  { names: ['奧運','olympic','olympian'], keys: ['奧海城','海泓道','大角咀','利奧坊','海帆道','匯翔道','櫻桃街','奧柏'] },
+  { names: ['旺角東','mong kok east'], keys: ['旺角','太子'] },
+  { names: ['西九龍','west kowloon','elements','圓方'], keys: ['西九龍','柯士甸','圓方','elements'] },
+  { names: ['科學園','science park'], keys: ['科學園','白石角'] },
+];
+
+// Reverse slug → Chinese name lookup. Reject any slug that maps to a missing
+// area so we don't get a build error from a typo.
+const slugToName: Record<string, string> = Object.fromEntries(
+  Object.entries(areaSlugs).map(([zh, slug]) => [slug, zh])
+);
+
+export async function getStaticPaths() {
+  return Object.entries(areaSlugs)
+    .filter(([zh]) => areas[zh])
+    .map(([zh, slug]) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const areaNameZh = slugToName[slug as string];
+if (!areaNameZh) {
+  return Astro.redirect('/en/404');
+}
+
+const areaNameEn = AREA_NAME_EN[areaNameZh] || areaNameZh;
+const centre = areas[areaNameZh];
+const CLAT = centre.lat;
+const CLNG = centre.lng;
+
+// ---- Haversine ----
+function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371000.0;
+  const toRad = (x: number) => (x * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Does this restaurant's name/address mention the area or any of its aliases?
+// Mirrors the zh page logic; alias names also match in lower-case for EN.
+function hitsArea(r: any): boolean {
+  const base = [r.name_zh || '', r.name_en || '', r.address || '', r.district || ''].join(' ');
+  const baseLower = base.toLowerCase();
+  if (base.includes(areaNameZh)) return true;
+  if (baseLower.includes(areaNameEn.toLowerCase())) return true;
+  for (const g of ALIAS_GROUPS) {
+    if (!g.names.some(n => n === areaNameZh || n.toLowerCase() === areaNameEn.toLowerCase())) continue;
+    if (g.keys.some(k => base.includes(k) || baseLower.includes(k.toLowerCase()))) return true;
+  }
+  return false;
+}
+
+// ---- Candidate set = (within radius) ∪ (name/address hit) ----
+const DEFAULT_RADIUS = 2000;
+type NearbyRow = {
+  id: number;
+  name_en: string;
+  name_zh: string;
+  district: string;
+  address: string;
+  lat: number;
+  lng: number;
+  prec: 'building' | 'street' | 'area' | string;
+  distance: number;
+};
+
+const allWithCoords: NearbyRow[] = (restaurants as any[])
+  .map((r: any) => {
+    const c = coords[String(r.id)] as { lat?: number; lng?: number; prec?: string } | undefined;
+    if (!c || c.lat == null || c.lng == null) return null;
+    return {
+      id: r.id,
+      name_en: r.name_en || '',
+      name_zh: r.name_zh || '',
+      district: r.district,
+      address: r.address,
+      lat: c.lat,
+      lng: c.lng,
+      prec: c.prec || 'building',
+      distance: haversine(CLAT, CLNG, c.lat, c.lng),
+    };
+  })
+  .filter((x: NearbyRow | null): x is NearbyRow => x !== null);
+
+const byId = new Map<number, NearbyRow>();
+for (const r of allWithCoords) {
+  if (r.distance <= DEFAULT_RADIUS) byId.set(r.id, r);
+}
+for (const r of (restaurants as any[])) {
+  if (byId.has(r.id)) continue;
+  if (!hitsArea(r)) continue;
+  const c = coords[String(r.id)] as { lat?: number; lng?: number; prec?: string } | undefined;
+  if (!c || c.lat == null || c.lng == null) continue;
+  byId.set(r.id, {
+    id: r.id,
+    name_en: r.name_en || '',
+    name_zh: r.name_zh || '',
+    district: r.district,
+    address: r.address,
+    lat: c.lat,
+    lng: c.lng,
+    prec: c.prec || 'building',
+    distance: haversine(CLAT, CLNG, c.lat, c.lng),
+  });
+}
+
+// ---- Sort: precise first (asc by distance), then area-prec (asc by distance) ----
+const combinedRows: NearbyRow[] = Array.from(byId.values());
+const precise = combinedRows.filter(x => x.prec !== 'area').sort((a, b) => a.distance - b.distance);
+const areaPrec = combinedRows.filter(x => x.prec === 'area').sort((a, b) => a.distance - b.distance);
+const sortedAll = [...precise, ...areaPrec];
+
+// Display name: prefer name_en, fall back to name_zh, then "<district> dog-friendly restaurant"
+function displayName(r: NearbyRow): string {
+  return r.name_en || r.name_zh || `${r.district} dog-friendly restaurant`;
+}
+
+function formatDistance(d: number): string {
+  return d < 1000 ? `${Math.round(d)} m` : `${(d / 1000).toFixed(1)} km`;
+}
+
+// ---- Stats ----
+const within2km = precise.filter(x => x.distance <= DEFAULT_RADIUS).length;
+const totalNearby = sortedAll.length;
+const within500 = precise.filter(x => x.distance <= 500).length;
+const within1km = precise.filter(x => x.distance <= 1000).length;
+const stats = {
+  total: totalNearby,
+  radiusLabel: 'Within 2 km',
+  within500,
+  within1km,
+  within2km,
+  totalArea: precise.length,
+};
+
+// noindex if fewer than 3 restaurants — same threshold as the zh page.
+const shouldNoindex = totalNearby < 3;
+
+// Top 20 for SSR (the visible card list).
+const TOP_COUNT = 20;
+const nearestList = sortedAll.slice(0, TOP_COUNT).map((x) => ({
+  id: x.id,
+  name: displayName(x),
+  name_zh: x.name_zh,
+  district: x.district,
+  address: x.address,
+  lat: x.lat,
+  lng: x.lng,
+  prec: x.prec,
+  distance: x.distance,
+}));
+
+// Boundary index where area-prec records start in the SSR list (null if all
+// 20 records are precise — no group header needed).
+const boundaryIdx = nearestList.findIndex((x) => x.prec === 'area');
+
+const SHOW_ALL_RADIUS = 10000;
+const SHOW_ALL_MAX = 100;
+// Island rows include name_zh for tooltip fallback when card display is in EN
+// but the canonical zh name is more recognizable for a local reader.
+const islandRows: Array<[number, string, string, string, string, number, number, string, number]> =
+  sortedAll
+    .filter((x) => x.distance <= SHOW_ALL_RADIUS || x.prec === 'area')
+    .slice(0, SHOW_ALL_MAX)
+    .map((x) => [
+      x.id,
+      displayName(x),
+      x.name_zh || '',
+      x.district,
+      x.address,
+      x.lat,
+      x.lng,
+      x.prec,
+      Math.round(x.distance),
+    ]);
+
+// ---- Neighbouring areas ----
+type Neighbour = { name_zh: string; name_en: string; slug: string; distance: number; count: number };
+const neighbours: Neighbour[] = Object.entries(areas)
+  .filter(([name]) => name !== areaNameZh)
+  .map(([name, c]) => {
+    const d = haversine(CLAT, CLNG, c.lat, c.lng);
+    const cnt = precise.filter(
+      (x) => x.prec !== 'area' && haversine(c.lat, c.lng, x.lat, x.lng) <= DEFAULT_RADIUS
+    ).length;
+    return {
+      name_zh: name,
+      name_en: AREA_NAME_EN[name] || name,
+      slug: areaSlugs[name] || '',
+      distance: d,
+      count: cnt,
+    };
+  })
+  .filter((n) => n.slug)
+  .sort((a, b) => a.distance - b.distance)
+  .slice(0, 4);
+
+// ---- SEO metadata ----
+const pageTitle = `${areaNameEn} Dog-Friendly Restaurants`;
+function nearestDistanceLabel(): string {
+  const firstPrecise = precise[0];
+  if (!firstPrecise) return totalNearby > 0 ? `Within ${stats.radiusLabel.replace('Within ','')}` : 'Within 2 km';
+  const d = firstPrecise.distance;
+  if (d < 50) return 'within 1-min walk';
+  if (d < 1000) return `${Math.round(d)} m`;
+  return `${(d/1000).toFixed(1)} km`;
+}
+const nearestLabel = nearestDistanceLabel();
+const nearestClause = precise.length > 0 && precise[0].distance >= 50
+  ? `closest ${nearestLabel}`
+  : 'within 2 km';
+const pageDesc = `${totalNearby} dog-friendly restaurants near ${areaNameEn} (Hong Kong FEHD-licensed), nearest first. ${nearestClause}. Interactive map and live official registry.`;
+const canonicalPath = `/en/restaurants/area/${slug}`;
+
+// JSON-LD: ItemList of nearby restaurants + Place schema for the area.
+const SITE = Astro.site?.toString().replace(/\/$/, '') || 'https://hk-pet-portal.vercel.app';
+const itemListLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: pageTitle,
+  itemListElement: nearestList
+    .filter((r) => r.prec !== 'area')
+    .slice(0, 10)
+    .map((r, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      item: {
+        '@type': 'Restaurant',
+        name: r.name,
+        address: r.address,
+        url: `${SITE}/en/restaurants/${r.id}`,
+        ...(r.lat && r.lng
+          ? { geo: { '@type': 'GeoCoordinates', latitude: r.lat, longitude: r.lng } }
+          : {}),
+        servesCuisine: 'Pet-friendly',
+      },
+    })),
+};
+const placeLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Place',
+  name: areaNameEn,
+  geo: { '@type': 'GeoCoordinates', latitude: CLAT, longitude: CLNG },
+  url: `${SITE}${canonicalPath}`,
+};
+
+function walkingMinutes(d: number): number | null {
+  if (d > 1200) return null;
+  return Math.max(1, Math.round(d / 80));
+}
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  lang="en"
+  noindex={shouldNoindex}
+  jsonLd={[itemListLd, placeLd]}
+>
+  <div class="max-w-3xl mx-auto px-4 py-6 md:py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-1.5 text-xs text-gray-500 mb-3 flex-wrap" aria-label="Breadcrumb">
+      <a href="/en" class="hover:text-brand no-underline">Home</a>
+      <span class="text-gray-300">/</span>
+      <a href="/en/restaurants" class="hover:text-brand no-underline">Restaurants</a>
+      <span class="text-gray-300">/</span>
+      <a href={`/en/restaurants?district=${encodeURIComponent(areaNameZh)}`} class="hover:text-brand no-underline">{areaNameEn}</a>
+      <span class="text-gray-300">/</span>
+      <span class="text-gray-500">Area page</span>
+    </nav>
+
+    <!-- Header -->
+    <header class="mb-5">
+      <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight">
+        📍 {pageTitle}
+      </h1>
+      <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+        {totalNearby} Hong Kong FEHD-licensed dog-friendly restaurants near {areaNameEn}, sorted nearest first. Auto-updated from the official registry.
+        {shouldNoindex && <span class="block mt-1 text-xs text-gray-400">This area has few restaurants; some results come from name/address matches containing “{areaNameZh}”.</span>}
+      </p>
+    </header>
+
+    <!-- Stats grid -->
+    <section aria-label="Area stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">Within 2 km</div>
+        <div class="text-2xl font-bold text-near-black">{stats.total}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">Within 500 m</div>
+        <div class="text-2xl font-bold text-near-black">{stats.within500}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">Within 1 km</div>
+        <div class="text-2xl font-bold text-near-black">{stats.within1km}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
+      </div>
+      <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+        <div class="text-xs text-gray-500 mb-0.5">Within 2 km (radius)</div>
+        <div class="text-2xl font-bold text-near-black">{stats.within2km}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
+      </div>
+    </section>
+
+    <!-- Mini interactive map -->
+    <section class="bg-white rounded-xl border border-gray-100 overflow-hidden mb-5" aria-label="Area map">
+      <div id="area-map" class="h-56 md:h-72 bg-gray-50" data-lat={CLAT} data-lng={CLNG} data-name={areaNameEn}></div>
+      <div class="px-4 py-2.5 text-xs text-gray-500 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span>📍 {areaNameEn} centre</span>
+        <span class="text-gray-200">·</span>
+        <span>{nearestList.length} nearby markers</span>
+        <span class="text-gray-200">·</span>
+        <span>Drag · scroll to zoom</span>
+      </div>
+    </section>
+
+    <!-- Nearest-first list -->
+    <section class="mb-5" aria-label={`Restaurants near ${areaNameEn}`}>
+      <div class="flex items-baseline justify-between mb-3">
+        <h2 class="text-lg md:text-xl font-bold text-near-black">Restaurants near {areaNameEn} (Nearest first)</h2>
+        <span class="text-xs text-gray-500" id="nearby-count">{nearestList.length} venues</span>
+      </div>
+
+      <div id="nearby-list" class="flex flex-col gap-2">
+        {nearestList.map((r, idx) => {
+          const mins = walkingMinutes(r.distance);
+          const isAreaPrec = r.prec === 'area';
+          const showGroupHeader = idx === boundaryIdx && idx > 0;
+          return (
+            <Fragment>
+              {showGroupHeader && (
+                <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2 mb-1 px-1" aria-label="Approximate location group">
+                  📍 Approximate location
+                </div>
+              )}
+              <a
+                href={`/en/restaurants/${r.id}`}
+                class="nearby-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+                data-id={r.id}
+                data-lat={r.lat}
+                data-lng={r.lng}
+              >
+                <div class="flex items-center gap-3">
+                  <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
+                  <div class="min-w-0 flex-1">
+                    <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
+                      {r.name}
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-0.5 truncate">
+                      <span class="text-gray-300">📍</span> {r.district}
+                      <span class="mx-1.5 text-gray-200">·</span>
+                      <span class="text-gray-300">{r.address}</span>
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    {isAreaPrec ? (
+                      <span class="text-xs text-gray-400 whitespace-nowrap">Approximate</span>
+                    ) : (
+                      <span class="text-xs text-gray-400 whitespace-nowrap">
+                        {formatDistance(r.distance)}{mins != null ? ` · ${mins}-min walk` : ''}
+                      </span>
+                    )}
+                    <span class="text-gray-300 group-hover:text-brand transition-colors text-xs">→</span>
+                  </div>
+                </div>
+              </a>
+            </Fragment>
+          );
+        })}
+      </div>
+
+      {islandRows.length > 0 && (
+        <p class="text-xs text-gray-500 mt-3 text-center" id="nearby-more-hint">
+          Show all restaurants within 10 km (up to {islandRows.length} venues)
+          <button type="button" id="show-all" class="text-brand hover:underline ml-1 font-medium">Show all →</button>
+        </p>
+      )}
+    </section>
+
+    <!-- Neighbouring areas -->
+    {neighbours.length > 0 && (
+      <section class="mb-6" aria-label="Neighbouring areas">
+        <h2 class="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wide">Neighbouring areas</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {neighbours.map((n) => (
+            <a
+              href={`/en/restaurants/area/${n.slug}`}
+              class="group bg-white border border-gray-100 rounded-xl p-3 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+            >
+              <div class="text-sm font-medium text-near-black group-hover:text-brand transition-colors truncate">
+                📍 {n.name_en}
+              </div>
+              <div class="text-xs text-gray-500 mt-0.5">
+                {formatDistance(n.distance)} · {n.count} venues
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- See also: search link -->
+    <section class="bg-brand-light border border-brand/20 rounded-xl p-4 mb-3">
+      <p class="text-sm text-near-black">
+        Looking for a specific venue in {areaNameEn}?
+        <a href={`/en/restaurants?q=${encodeURIComponent(areaNameEn)}`} class="text-brand font-medium hover:underline">
+          Open restaurant search →
+        </a>
+      </p>
+    </section>
+
+    <!-- Methodology footnote -->
+    <footer class="text-xs text-gray-500 leading-relaxed mt-6 pt-4 border-t border-gray-100">
+      <p>
+        Restaurant data is sourced from the Hong Kong FEHD public list of dog-permitted food premises. Distances are straight-line (Haversine) measurements between each restaurant's geocoded address and the {areaNameEn} centre; walking routes may be longer.
+      </p>
+    </footer>
+  </div>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+
+  <!-- Island rows: full list (sorted: precise first, then area-prec) -->
+  <script type="application/json" id="nearby-island" set:html={JSON.stringify({ rows: islandRows })} />
+
+  <script is:inline>
+  // ---- Area map ----
+  (function () {
+    var mapEl = document.getElementById('area-map');
+    if (!mapEl || typeof L === 'undefined') return;
+    var lat = parseFloat(mapEl.getAttribute('data-lat'));
+    var lng = parseFloat(mapEl.getAttribute('data-lng'));
+    var name = mapEl.getAttribute('data-name') || '';
+
+    var map = L.map(mapEl, {
+      center: [lat, lng],
+      zoom: 14,
+      zoomControl: true,
+      scrollWheelZoom: true,
+    });
+
+    L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; CARTO &copy; OpenStreetMap',
+      maxZoom: 19,
+    }).addTo(map);
+
+    var centreIcon = L.divIcon({
+      className: 'area-centre-marker',
+      html: '<div style="width:18px;height:18px;background:#F59E0B;border:3px solid white;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>',
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+    });
+    L.marker([lat, lng], { icon: centreIcon, zIndexOffset: 1000 })
+      .addTo(map)
+      .bindPopup('<strong>' + name + ' centre</strong>');
+
+    var greenIcon = L.divIcon({
+      className: 'area-rest-marker',
+      html: '<div style="width:10px;height:10px;background:#2D9B4E;border:2px solid white;border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,0.3);"></div>',
+      iconSize: [10, 10],
+      iconAnchor: [5, 5],
+    });
+    var items = document.querySelectorAll('#nearby-list .nearby-item');
+    var bounds = L.latLngBounds([[lat, lng]]);
+    for (var i = 0; i < items.length; i++) {
+      var link = items[i];
+      var la = parseFloat(link.getAttribute('data-lat'));
+      var ln = parseFloat(link.getAttribute('data-lng'));
+      var nm = link.querySelector('h3') ? link.querySelector('h3').textContent : '';
+      if (isNaN(la) || isNaN(ln)) continue;
+      var m = L.marker([la, ln], { icon: greenIcon }).addTo(map);
+      m.bindPopup('<strong>' + nm + '</strong><br><a href="' + link.getAttribute('href') + '">View restaurant →</a>');
+      bounds.extend([la, ln]);
+    }
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
+    }
+    setTimeout(function () { map.invalidateSize(); }, 200);
+  })();
+
+  // ---- Show-all button: append island rows ----
+  // Island rows are pre-sorted: precise first (by distance asc), then area-prec
+  // (also asc by distance). Render an "Approximate location" group header when
+  // the first area-prec row appears.
+  (function () {
+    var btn = document.getElementById('show-all');
+    var list = document.getElementById('nearby-list');
+    var hint = document.getElementById('nearby-more-hint');
+    var countEl = document.getElementById('nearby-count');
+    if (!btn || !list || !hint) return;
+
+    var raw = null;
+    try {
+      raw = JSON.parse(document.getElementById('nearby-island').textContent || '{}').rows || [];
+    } catch (e) { raw = []; }
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function formatDistance(d) {
+      if (d == null) return '';
+      return d < 1000 ? Math.round(d) + ' m' : (d / 1000).toFixed(1) + ' km';
+    }
+    function walkingMinutes(d) {
+      if (d == null || d > 1200) return null;
+      return Math.max(1, Math.round(d / 80));
+    }
+
+    btn.addEventListener('click', function () {
+      var frag = document.createDocumentFragment();
+      var groupHeaderInserted = false;
+      for (var i = 0; i < raw.length; i++) {
+        var r = raw[i];
+        var id = r[0], name = r[1], addr = r[4], distName = r[3], lat = r[5], lng = r[6], prec = r[7], dist = r[8];
+        var distStr = formatDistance(dist);
+        var mins = walkingMinutes(dist);
+        var isAreaPrec = prec === 'area';
+        if (isAreaPrec && !groupHeaderInserted) {
+          var hdr = document.createElement('div');
+          hdr.className = 'text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2 mb-1 px-1';
+          hdr.setAttribute('aria-label', 'Approximate location group');
+          hdr.textContent = '📍 Approximate location';
+          frag.appendChild(hdr);
+          groupHeaderInserted = true;
+        }
+        var distHtml = isAreaPrec
+          ? '<span class="text-xs text-gray-400 whitespace-nowrap">Approximate</span>'
+          : '<span class="text-xs text-gray-400 whitespace-nowrap">' + escapeHtml(distStr + (mins != null ? ' · ' + mins + '-min walk' : '')) + '</span>';
+        var a = document.createElement('a');
+        a.href = '/en/restaurants/' + id;
+        a.className = 'nearby-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline';
+        a.setAttribute('data-id', id);
+        a.setAttribute('data-lat', lat);
+        a.setAttribute('data-lng', lng);
+        a.innerHTML =
+          '<div class="flex items-center gap-3">'
+          + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
+          + '<div class="min-w-0 flex-1">'
+          + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(name) + '</h3>'
+          + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
+          + '<span class="text-gray-300">📍</span> ' + escapeHtml(distName)
+          + '<span class="mx-1.5 text-gray-200">·</span>'
+          + '<span class="text-gray-300">' + escapeHtml(addr) + '</span>'
+          + '</p>'
+          + '</div>'
+          + '<div class="flex items-center gap-2 shrink-0">'
+          + distHtml
+          + '<span class="text-gray-300 group-hover:text-brand transition-colors text-xs">→</span>'
+          + '</div>'
+          + '</div>';
+        frag.appendChild(a);
+      }
+      list.appendChild(frag);
+      if (countEl) {
+        var current = parseInt(countEl.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+        countEl.textContent = (current + raw.length) + ' venues';
+      }
+      hint.style.display = 'none';
+    });
+  })();
+  </script>
+</BaseLayout>
