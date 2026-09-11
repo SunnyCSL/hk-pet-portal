@@ -108,11 +108,12 @@ function hitsArea(r: any): boolean {
 }
 
 // ---- Compute nearby restaurants ----
-// Candidate set = (within DEFAULT_RADIUS by Haversine) ∪ (name/address hit).
-// Per task brief: same union as the /restaurants search page so a long-tail
-// area like 清水灣 picks up restaurants whose address contains 清水灣 even
-// when 2 km is empty.
-const DEFAULT_RADIUS = 2000;
+// 全區（Card #1）候選集合 = 名稱或地址命中 ∪ 1 公里內（與 /restaurants 搜尋頁
+// 全區 chip 完全一致）。3 張半徑卡（500米/1公里/2公里）則用嚴格 Haversine
+// 距離對全 906 條有坐標記錄計算，不受全區口徑影響。
+// 「展開全部」島嶼用 10 公里半徑 + area-prec 涵蓋遠處記錄。
+const UNION_RADIUS = 1000;       // 全區 = 1 km ∪ name/address hit
+const DEFAULT_RADIUS = 2000;     // 2 km 段卡 = 嚴格 2 km（保留與搜尋頁一致）
 type NearbyRow = {
   id: number;
   name: string;
@@ -141,17 +142,18 @@ const allWithCoords: NearbyRow[] = (restaurants as any[])
   })
   .filter((x: NearbyRow | null): x is NearbyRow => x !== null);
 
-const byId = new Map<number, NearbyRow>();
+// 全區候選集合 = 1 km 內 ∪ name/address hit（與搜尋頁全區 chip 一致）
+const unionById = new Map<number, NearbyRow>();
 for (const r of allWithCoords) {
-  if (r.distance <= DEFAULT_RADIUS) byId.set(r.id, r);
+  if (r.distance <= UNION_RADIUS) unionById.set(r.id, r);
 }
-// Union: same-name / alias hits added even if outside radius
+// 名稱／地址命中 — 唔理距離都加入
 for (const r of (restaurants as any[])) {
-  if (byId.has(r.id)) continue;
+  if (unionById.has(r.id)) continue;
   if (!hitsArea(r)) continue;
   const c = coords[String(r.id)] as { lat?: number; lng?: number; prec?: string } | undefined;
   if (!c || c.lat == null || c.lng == null) continue;
-  byId.set(r.id, {
+  unionById.set(r.id, {
     id: r.id,
     name: r.name_zh || r.name_en || `${r.district}狗友善餐廳`,
     district: r.district,
@@ -162,14 +164,14 @@ for (const r of (restaurants as any[])) {
     distance: haversine(CLAT, CLNG, c.lat, c.lng),
   });
 }
+// 列表用「全區」集合（最近優先），無需額外 2 km 圈
+const sortedAll: NearbyRow[] = Array.from(unionById.values());
+const precise = sortedAll.filter(x => x.prec !== 'area').sort((a, b) => a.distance - b.distance);
+const areaPrec = sortedAll.filter(x => x.prec === 'area').sort((a, b) => a.distance - b.distance);
+sortedAll.splice(0, sortedAll.length, ...precise, ...areaPrec);
 
-// ---- Sort: precise first (asc by distance), then area-prec (asc by distance) ----
-// Identical to /restaurants search page rule. Area-prec records only carry the
-// area-centre coord, not a door address — pushing them last is honest.
-const combinedRows: NearbyRow[] = Array.from(byId.values());
-const precise = combinedRows.filter(x => x.prec !== 'area').sort((a, b) => a.distance - b.distance);
-const areaPrec = combinedRows.filter(x => x.prec === 'area').sort((a, b) => a.distance - b.distance);
-const sortedAll = [...precise, ...areaPrec];
+// ---- Sort done above (precise first by distance, then area-prec) ----
+// Already applied to sortedAll before this section.
 
 // Distance formatter used in both frontmatter and the page HTML.
 function formatDistance(d: number): string {
@@ -177,20 +179,13 @@ function formatDistance(d: number): string {
 }
 
 // ---- Stats ----
-// All four radius cards use the SAME definition: every record whose centre
-// falls inside the radius, including `prec='area'` (which only carries the
-// area-centre coord). Mixing definitions across cards (e.g. 2 km = union,
-// 500 m = precise-only) made the smaller numbers look misleadingly low.
-//
-// The candidate set is still the same union (radius + name/address hit), so a
-// long-tail area like 清水灣 still gets a non-zero count when applicable.
-//
-// Card #1 ("全區") uses the union total (radius ∪ name/address hit), NOT a
-// strict 2 km count — that's what cards 2/3/4 (strict distance) measure.
+// Card #1 「全區」 = name/address hit ∪ 1 公里內（與搜尋頁全區 chip 完全一致）。
+// Cards #2/3/4 = 嚴格 Haversine 距離對全 906 條有坐標記錄計算，不受全區口徑影響。
+// 「展開 10 公里內」島嶼繼續保留以涵蓋遠處記錄。
 const totalNearby = sortedAll.length;
-const within500 = sortedAll.filter(x => x.distance <= 500).length;
-const within1km = sortedAll.filter(x => x.distance <= 1000).length;
-const within2km = sortedAll.filter(x => x.distance <= DEFAULT_RADIUS).length;
+const within500 = allWithCoords.filter(x => x.distance <= 500).length;
+const within1km = allWithCoords.filter(x => x.distance <= 1000).length;
+const within2km = allWithCoords.filter(x => x.distance <= DEFAULT_RADIUS).length;
 const stats = {
   total: totalNearby,
   within500,
@@ -223,24 +218,28 @@ const nearestList = sortedAll.slice(0, TOP_COUNT).map((x) => ({
 // when all 20 records are precise — no header needed).
 const boundaryIdx = nearestList.findIndex((x) => x.prec === 'area');
 
-// Island rows for the full list (show-all button). Same sort: precise first,
-// then area-prec. Capped at SHOW_ALL_MAX / SHOW_ALL_RADIUS for sane DOM size.
+// Island rows for the full list (show-all button). Builds a fresh
+// precise+areaPrec view from allWithCoords so the expansion can include
+// records beyond the 1 km union (up to SHOW_ALL_RADIUS / area-prec fallback).
 const SHOW_ALL_RADIUS = 10000;
 const SHOW_ALL_MAX = 100;
+const showAllRows = allWithCoords.filter(x => x.prec === 'area');
+const showAllSorted = [
+  ...allWithCoords.filter(x => x.prec !== 'area' && x.distance <= SHOW_ALL_RADIUS)
+    .sort((a, b) => a.distance - b.distance),
+  ...showAllRows.sort((a, b) => a.distance - b.distance),
+];
 const islandRows: Array<[number, string, string, string, number, number, string, number]> =
-  sortedAll
-    .filter((x) => x.distance <= SHOW_ALL_RADIUS || x.prec === 'area')
-    .slice(0, SHOW_ALL_MAX)
-    .map((x) => [
-      x.id,
-      x.name,
-      x.district,
-      x.address,
-      x.lat,
-      x.lng,
-      x.prec,
-      Math.round(x.distance),
-    ]);
+  showAllSorted.slice(0, SHOW_ALL_MAX).map((x) => [
+    x.id,
+    x.name,
+    x.district,
+    x.address,
+    x.lat,
+    x.lng,
+    x.prec,
+    Math.round(x.distance),
+  ]);
 
 // ---- Neighbouring areas: 4 closest other area centres ----
 type Neighbour = { name: string; slug: string; distance: number; count: number };

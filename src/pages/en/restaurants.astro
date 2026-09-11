@@ -650,13 +650,25 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       // radius === 0 (All) keeps every record as before.
       var radiusChip = radius;
       if (radiusChip === -1) {
-        // Whole area — name hits ∪ within 1 km (current default behaviour).
+        // Whole area — name/address hits ∪ within 1 km. A record "hits" if
+        // its lowercased key contains the activeArea zh key OR the matched
+        // English alias. This mirrors the area-page candidate set: name hits
+        // outside the 1 km radius still surface so long-tail areas like 清水灣
+        // pick up address mentions. For zh queries the activeArea zh key is
+        // already a substring of those records; for EN queries (e.g. "Tai Koo")
+        // we fall back to the matched EN alias because the CJK name won't be
+        // in the address. We never apply the full token filter here — that
+        // belongs in the "area + extra filter tokens" branch above.
+        var hitKey = activeArea.toLowerCase();
+        var hitEn = matchedEnAlias ? matchedEnAlias.toLowerCase() : '';
         for (var mi = 0; mi < INDEX.length; mi++) {
           var em = INDEX[mi];
           if (!matchDistrict(districtActive, em)) continue;
-          if (tokens.length > 0 && !matchKey(em.key, tokens)) continue;
-          byId[em.id] = true;
-          distById[em.id] = distOfEntry(em);
+          var ek = em.key || '';
+          if (ek.indexOf(hitKey) !== -1 || (hitEn && ek.indexOf(hitEn) !== -1)) {
+            byId[em.id] = true;
+            distById[em.id] = distOfEntry(em);
+          }
         }
         var unionRadius = 1000;
         for (var ki = 0; ki < INDEX.length; ki++) {

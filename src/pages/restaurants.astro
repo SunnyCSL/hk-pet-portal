@@ -545,13 +545,19 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       // radius === 0 (全部) keeps every record as before.
       var radiusChip = radius;
       if (radiusChip === -1) {
-        // 全區 — name hits ∪ within 1 km (current default behaviour).
+        // 全區 — 名稱／地址命中 ∪ 1 公里內。「命中」用 activeArea 中文名 或 匹配嘅
+        // 英文 alias（如 "Tai Koo"）。area page 候選集合口徑一致，唔會因為 query
+        // token 包含英文 area 名（例如 "tai"/"koo"）而將 CJK 地址命中過濾走。
+        var hitKey = activeArea.toLowerCase();
+        var hitEn = matchedEnAlias ? matchedEnAlias.toLowerCase() : '';
         for (var mi = 0; mi < INDEX.length; mi++) {
           var em = INDEX[mi];
           if (!matchDistrict(districtActive, em)) continue;
-          if (tokens.length > 0 && !matchKey(em.key, tokens)) continue;
-          byId[em.id] = true;
-          distById[em.id] = distOfEntry(em);
+          var ek = em.key || '';
+          if (ek.indexOf(hitKey) !== -1 || (hitEn && ek.indexOf(hitEn) !== -1)) {
+            byId[em.id] = true;
+            distById[em.id] = distOfEntry(em);
+          }
         }
         var unionRadius = 1000;
         for (var ki = 0; ki < INDEX.length; ki++) {
