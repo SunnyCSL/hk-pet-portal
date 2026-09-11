@@ -5,19 +5,116 @@ import stats from '../data/restaurant-stats.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
-// Phase 0 Batch 2: client-side pagination 50/page. First 50 rendered as static
-// cards (SSR'd for SEO), remaining 856 embedded as a compact JSON data island
-// (`id + name_zh + name_en + district`) and rendered client-side. Address is
-// only used for sub-area detection; we accept losing full text search on
-// address in exchange for keeping the rendered HTML <150KB.
+// Phase 2 (fix/restaurant-search-v2): unified search index across all 906 records.
+// Build-time: each record gets a precomputed `search_key` = base + extras.
+// Extras include SUB_AREAS detected from address+name AND any alias group
+// whose `keys` (real address/name substrings) match the base.
+// First 50 cards keep SSR (data-key/data-name/data-district/data-addr), island
+// holds 51..906 as compact arrays so the rendered HTML stays compact while the
+// client can do proper token + AND search across the whole dataset.
 const PAGE_SIZE = 50;
-type Mini = { id: number; name_zh: string; district: string };
-const firstPage = (restaurants as any[]).slice(0, PAGE_SIZE) as any[];
-const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => ({
+const STATIC_COUNT = 50;
+
+// Sub-area names (shared with client). Order matters: longer/more specific
+// first so e.g. '西九龍' wins over '九龍' if both ever overlapped.
+const SUB_AREAS = [
+  '馬鞍山','科學園','白石角',
+  '香港仔','黃竹坑','海洋公園','淺水灣','赤柱','薄扶林','數碼港','鴨脷洲',
+  '中環','上環','西營盤','堅尼地城','石塘咀','半山','山頂','金鐘',
+  '銅鑼灣','跑馬地','大坑','天后',
+  '北角','鰂魚涌','太古','西灣河','筲箕灣','柴灣',
+  '尖沙咀','尖東','佐敦','油麻地',
+  '旺角','太子','大角咀',
+  '長沙灣','荔枝角','美孚',
+  '土瓜灣','紅磡','何文田','啟德',
+  '九龍灣','觀塘','牛頭角','藍田','油塘',
+  '深井','馬灣','荃灣',
+  '屯門','黃金海岸',
+  '元朗','天水圍','錦田',
+  '上水','粉嶺',
+  '大埔',
+  '沙田','大圍','火炭',
+  '西貢','將軍澳','坑口','寶琳','調景嶺','康城','清水灣',
+  '葵涌','葵芳','青衣',
+  '東涌','愉景灣','迪士尼','機場','大澳','長洲','南丫島','坪洲',
+];
+
+// Alias groups: queries in `names` should match records whose address/name
+// contains any of `keys`. Both sides lowercased.
+const ALIAS_GROUPS: Array<{ names: string[]; keys: string[] }> = [
+  { names: ['奧運','olympic','olympian'], keys: ['奧海城','海泓道','大角咀','利奧坊','海帆道','匯翔道','櫻桃街','奧柏'] },
+  { names: ['旺角東'], keys: ['旺角','太子'] },
+  { names: ['西九龍','west kowloon','elements','圓方'], keys: ['西九龍','柯士甸','圓方','elements'] },
+  { names: ['科學園','science park'], keys: ['科學園','白石角'] },
+  { names: ['數碼港','cyberport'], keys: ['數碼港','薄扶林'] },
+  { names: ['太古'], keys: ['太古','鰂魚涌'] },
+  { names: ['將軍澳'], keys: ['將軍澳','坑口','寶琳','調景嶺','康城'] },
+  { names: ['東涌'], keys: ['東涌','愉景灣'] },
+  { names: ['馬鞍山'], keys: ['馬鞍山','烏溪沙'] },
+  { names: ['機場','airport'], keys: ['機場','赤鱲角','航天城'] },
+  { names: ['迪士尼','disneyland'], keys: ['迪士尼','竹篙灣'] },
+  { names: ['中文大學','cuhk'], keys: ['中文大學','馬料水'] },
+  { names: ['香港科技大學','hkust'], keys: ['香港科技大學','清水灣'] },
+  { names: ['香港大學','hku'], keys: ['香港大學','薄扶林'] },
+  { names: ['海洋公園','ocean park'], keys: ['海洋公園','黃竹坑'] },
+  { names: ['黃金海岸','gold coast'], keys: ['黃金海岸','青山公路'] },
+  { names: ['天水圍'], keys: ['天水圍','天慈'] },
+];
+
+function detectSubAreasFromBase(baseLower: string): string[] {
+  const hits: string[] = [];
+  for (const s of SUB_AREAS) {
+    if (baseLower.includes(s)) hits.push(s);
+  }
+  return hits;
+}
+
+function detectAliasesFromBase(baseLower: string): string[] {
+  const hits: string[] = [];
+  for (const g of ALIAS_GROUPS) {
+    if (g.keys.some(k => baseLower.includes(k))) {
+      for (const n of g.names) hits.push(n);
+    }
+  }
+  return hits;
+}
+
+function buildSearchKey(r: any): string {
+  const base = [r.name_zh || '', r.name_en || '', r.address || '', r.district || '']
+    .join(' ')
+    .toLowerCase();
+  const extras = [...detectSubAreasFromBase(base), ...detectAliasesFromBase(base)];
+  // Dedupe (rare but possible overlap) and join with single spaces
+  const seen = new Set<string>();
+  const merged: string[] = [];
+  for (const x of extras) {
+    if (!seen.has(x)) { seen.add(x); merged.push(x); }
+  }
+  return base + ' ' + merged.join(' ');
+}
+
+type StaticCard = { id: number; name_zh: string; name_en: string; district: string; address: string; key: string };
+type IslandRow = [number, string, string, string, string, string];
+
+const firstPage: StaticCard[] = (restaurants as any[]).slice(0, STATIC_COUNT).map((r: any) => ({
   id: r.id,
   name_zh: r.name_zh || r.name_en || '',
-  district: r.district,
+  name_en: r.name_en || r.name_zh || '',
+  district: r.district || '',
+  address: r.address || '',
+  key: buildSearchKey(r),
 }));
+
+const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r: any) => {
+  const base = [r.name_zh || '', r.name_en || '', r.address || '', r.district || ''].join(' ').toLowerCase();
+  const extras = [...detectSubAreasFromBase(base), ...detectAliasesFromBase(base)];
+  const seen = new Set<string>();
+  const merged: string[] = [];
+  for (const x of extras) {
+    if (!seen.has(x)) { seen.add(x); merged.push(x); }
+  }
+  return [r.id, r.name_zh || r.name_en || '', r.name_en || r.name_zh || '', r.district || '', r.address || '', merged.join(' ')];
+});
 ---
 
 <BaseLayout title="🍽️ 餐廳搜尋" lang="zh">
@@ -58,12 +155,13 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
 
     <!-- Results list — first 50 are server-rendered for SEO; rest are JS-rendered into this same wrapper -->
     <div id="restaurant-list" class="flex flex-col gap-2">
-      {firstPage.map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => (
+      {firstPage.map((r: StaticCard) => (
         <a href={`/restaurants/${r.id}`}
           class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
           data-name={(r.name_zh || r.name_en || '').toLowerCase()}
           data-district={r.district}
           data-addr={(r.address || '').toLowerCase()}
+          data-key={r.key}
         >
           <div class="flex items-center gap-3">
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
@@ -102,66 +200,152 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     </div>
   </div>
 
-  <!-- Phase 0 Batch 2: data island for JS pagination. Address intentionally omitted to keep island size manageable. -->
+  <!-- fix/restaurant-search-v2: data island for JS pagination. Compact array form
+       [id, name_zh, name_en, district, address, extras] so the index stays small
+       while making address + sub-area labels searchable from the client. -->
   <script type="application/json" id="rest-data" set:html={JSON.stringify({ restaurants: restData })} />
 
   <script is:inline>
-  // Sub-area detection from address (kept unchanged — only acts on visible cards).
+  // Sub-area names used to compute the search key (kept in sync with the SSR
+  // frontmatter). Order matters: longer/more specific first.
   var SUB_AREAS = [
-    ['馬鞍山',0],['科學園',0],['白石角',0],
-    ['香港仔',0],['黃竹坑',0],['海洋公園',0],['淺水灣',0],['赤柱',0],['薄扶林',0],['數碼港',0],['鴨脷洲',0],
-    ['中環',0],['上環',0],['西營盤',0],['堅尼地城',0],['石塘咀',0],['半山',0],['山頂',0],['金鐘',0],
-    ['銅鑼灣',0],['跑馬地',0],['大坑',0],['天后',0],
-    ['北角',0],['鰂魚涌',0],['太古',0],['西灣河',0],['筲箕灣',0],['柴灣',0],
-    ['尖沙咀',0],['尖東',0],['佐敦',0],['油麻地',0],
-    ['旺角',0],['太子',0],['大角咀',0],
-    ['長沙灣',0],['荔枝角',0],['美孚',0],
-    ['土瓜灣',0],['紅磡',0],['何文田',0],['啟德',0],
-    ['九龍灣',0],['觀塘',0],['牛頭角',0],['藍田',0],['油塘',0],
-    ['深井',0],['馬灣',0],['荃灣',0],
-    ['屯門',0],['黃金海岸',0],
-    ['元朗',0],['天水圍',0],['錦田',0],
-    ['上水',0],['粉嶺',0],
-    ['大埔',0],
-    ['沙田',0],['大圍',0],['火炭',0],
-    ['西貢',0],['將軍澳',0],['坑口',0],['寶琳',0],['調景嶺',0],['康城',0],['清水灣',0],
-    ['葵涌',0],['葵芳',0],['青衣',0],
-    ['東涌',0],['愉景灣',0],['迪士尼',0],['機場',0],['大澳',0],['長洲',0],['南丫島',0],['坪洲',0],
+    '馬鞍山','科學園','白石角',
+    '香港仔','黃竹坑','海洋公園','淺水灣','赤柱','薄扶林','數碼港','鴨脷洲',
+    '中環','上環','西營盤','堅尼地城','石塘咀','半山','山頂','金鐘',
+    '銅鑼灣','跑馬地','大坑','天后',
+    '北角','鰂魚涌','太古','西灣河','筲箕灣','柴灣',
+    '尖沙咀','尖東','佐敦','油麻地',
+    '旺角','太子','大角咀',
+    '長沙灣','荔枝角','美孚',
+    '土瓜灣','紅磡','何文田','啟德',
+    '九龍灣','觀塘','牛頭角','藍田','油塘',
+    '深井','馬灣','荃灣',
+    '屯門','黃金海岸',
+    '元朗','天水圍','錦田',
+    '上水','粉嶺',
+    '大埔',
+    '沙田','大圍','火炭',
+    '西貢','將軍澳','坑口','寶琳','調景嶺','康城','清水灣',
+    '葵涌','葵芳','青衣',
+    '東涌','愉景灣','迪士尼','機場','大澳','長洲','南丫島','坪洲',
   ];
 
   function detectSubArea(addr, name) {
     var combined = (addr || '') + ' ' + (name || '');
     for (var i = 0; i < SUB_AREAS.length; i++) {
-      if (combined.indexOf(SUB_AREAS[i][0]) !== -1) return SUB_AREAS[i][0];
+      if (combined.indexOf(SUB_AREAS[i]) !== -1) return SUB_AREAS[i];
     }
     return null;
   }
 
-  // ---- Pagination + filter state ----
   var PAGE_SIZE = 50;
-  var island = [];
-  try { island = JSON.parse(document.getElementById('rest-data').textContent || '{}').restaurants || []; } catch (e) { island = []; }
-  var state = { page: 1, itemsPerPage: PAGE_SIZE, filteredSlice: null };
 
+  // Helper: safe attribute setter (data-key values contain spaces + punctuation
+  // so we still rely on getAttribute — escapeHtml only matters when constructing
+  // HTML from user-supplied strings via innerHTML).
   function escapeHtml(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  function makeCard(r) {
-    var nameZh = r.name_zh || r.name_en || (r.district || '') + '狗友善餐廳';
-    var sub = detectSubArea(r.address || '', r.name_zh || '');
-    var subLabel = sub || r.district || '';
-    // island cards lack address — show only the district+sub-area, no full address line.
-    var addrHtml = r.address
-      ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300">' + escapeHtml(r.address) + '</span>'
+  // ---- Build the unified index (906 entries, original dataset order) ----
+  // Each entry: { id, key, district, name_zh, name_en, address }
+  var INDEX = [];
+  function buildKey(nameZh, nameEn, address, district, extras) {
+    var base = [nameZh || '', nameEn || '', address || '', district || '']
+      .join(' ')
+      .toLowerCase();
+    return base + ' ' + (extras || '');
+  }
+
+  // 1) Read static SSR cards (first 50) — prefer precomputed data-key.
+  var staticEls = Array.prototype.slice.call(document.querySelectorAll('#restaurant-list .restaurant-item:not([data-island-card="1"])'));
+  for (var s = 0; s < staticEls.length; s++) {
+    var el = staticEls[s];
+    var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
+    if (!idMatch) continue;
+    var sid = parseInt(idMatch[1], 10);
+    var sKey = el.getAttribute('data-key') || '';
+    var sName = el.getAttribute('data-name') || '';
+    var sAddr = el.getAttribute('data-addr') || '';
+    var sDist = el.getAttribute('data-district') || '';
+    if (!sKey) {
+      // Fallback (shouldn't trigger in practice): rebuild from DOM values.
+      sKey = buildKey(sName, '', sAddr, sDist, '');
+    }
+    INDEX.push({ id: sid, key: sKey, district: sDist, name_zh: sName, name_en: '', address: sAddr });
+  }
+
+  // 2) Read island entries (51..906). Format: [id, name_zh, name_en, district, address, extras].
+  var rawIsland = [];
+  try { rawIsland = JSON.parse(document.getElementById('rest-data').textContent || '{}').restaurants || []; } catch (e) { rawIsland = []; }
+  // Dedupe: same id should not appear twice (static first 50 + island 51..906
+  // cover 1..906 with no overlap, but be defensive).
+  var seenIds = {};
+  INDEX.forEach(function (e) { seenIds[e.id] = true; });
+  for (var i = 0; i < rawIsland.length; i++) {
+    var r = rawIsland[i];
+    var id = r[0], nzh = r[1] || '', nen = r[2] || '', dist = r[3] || '', addr = r[4] || '', extras = r[5] || '';
+    if (seenIds[id]) continue;
+    seenIds[id] = true;
+    INDEX.push({ id: id, key: buildKey(nzh, nen, addr, dist, extras), district: dist, name_zh: nzh, name_en: nen, address: addr });
+  }
+
+  // ---- Tokenizer ----
+  // Split on spaces/punctuation, lowercased. Inserts a boundary at CJK↔alnum
+  // transitions so e.g. "奧運Outback" → ["奧運","outback"].
+  function tokenize(s) {
+    if (!s) return [];
+    var str = String(s).toLowerCase().replace(/\u3000/g, ' ');
+    // turn common punctuation into spaces
+    str = str.replace(/[、，,;；\/\\|+·．]/g, ' ');
+    // Insert space at CJK↔[0-9a-z%'&.-] boundaries
+    str = str.replace(/([一-鿿])([0-9a-z%'&.\-])/g, '$1 $2');
+    str = str.replace(/([0-9a-z%'&.\-])([一-鿿])/g, '$1 $2');
+    return str.split(/\s+/).filter(Boolean);
+  }
+
+  function matchKey(key, tokens) {
+    for (var t = 0; t < tokens.length; t++) {
+      var tok = tokens[t];
+      if (tok.length === 0) continue;
+      if (key.indexOf(tok) === -1) return false;
+    }
+    return true;
+  }
+
+  function matchDistrict(districtActive, entry) {
+    if (!districtActive) return true;
+    return entry.district === districtActive;
+  }
+
+  function runFilter(query, districtActive) {
+    var tokens = tokenize(query);
+    var out = [];
+    for (var i = 0; i < INDEX.length; i++) {
+      var e = INDEX[i];
+      if (!matchDistrict(districtActive, e)) continue;
+      if (tokens.length > 0 && !matchKey(e.key, tokens)) continue;
+      out.push(e.id);
+    }
+    return out;
+  }
+
+  // ---- Render helpers ----
+  function makeCardFromEntry(e) {
+    var nameZh = e.name_zh || e.name_en || (e.district || '') + '狗友善餐廳';
+    var sub = detectSubArea(e.address || '', e.name_zh || '');
+    var subLabel = sub || e.district || '';
+    var addrHtml = e.address
+      ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300">' + escapeHtml(e.address) + '</span>'
       : '';
-    return '<a href="/restaurants/' + r.id + '"'
+    return '<a href="/restaurants/' + e.id + '"'
       + ' class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"'
-      + ' data-name="' + escapeHtml((r.name_zh || r.name_en || '').toLowerCase()) + '"'
-      + ' data-district="' + escapeHtml(r.district || '') + '"'
-      + ' data-addr="' + escapeHtml((r.address || '').toLowerCase()) + '">'
+      + ' data-name="' + escapeHtml((e.name_zh || e.name_en || '').toLowerCase()) + '"'
+      + ' data-district="' + escapeHtml(e.district || '') + '"'
+      + ' data-addr="' + escapeHtml((e.address || '').toLowerCase()) + '"'
+      + ' data-key="' + escapeHtml(e.key || '') + '">'
       + '<div class="flex items-center gap-3">'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
       + '<div class="min-w-0 flex-1">'
@@ -176,36 +360,26 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
       + '</div></a>';
   }
 
-  function getAllItems() {
-    var list = document.getElementById('restaurant-list');
-    return list ? Array.prototype.slice.call(list.querySelectorAll('.restaurant-item')) : [];
+  function findIndexEntry(id) {
+    for (var i = 0; i < INDEX.length; i++) {
+      if (INDEX[i].id === id) return INDEX[i];
+    }
+    return null;
   }
 
-  function getCurrentFilteredIds() {
-    // Run on demand: filters `.restaurant-item` elements directly, so collect
-    // matches against the merged dataset (static + island) by id.
-    var q = (document.getElementById('search-input').value || '').toLowerCase();
-    var districtActive = document.body.getAttribute('data-active-district') || '';
-    var matches = [];
-    getAllItems().forEach(function (el) {
-      var match = true;
-      var name = el.getAttribute('data-name') || '';
-      var itemDistrict = el.getAttribute('data-district') || '';
-      var itemAddr = el.getAttribute('data-addr') || '';
-      if (districtActive && itemDistrict !== districtActive) match = false;
-      if (q && !name.includes(q) && !itemDistrict.includes(q) && !itemAddr.includes(q)) match = false;
-      if (match) {
-        var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
-        if (idMatch) matches.push(parseInt(idMatch[1], 10));
-      }
-    });
-    return matches;
+  // ---- Pagination / state ----
+  var state = { page: 1 };
+
+  function currentMatches() {
+    var q = document.getElementById('search-input').value || '';
+    var d = document.body.getAttribute('data-active-district') || '';
+    return runFilter(q, d);
   }
 
   function rebuildPage() {
     var list = document.getElementById('restaurant-list');
     if (!list) return;
-    var ids = state.filteredSlice || getCurrentFilteredIds();
+    var ids = currentMatches();
     var total = ids.length;
     var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     if (state.page > totalPages) state.page = totalPages;
@@ -214,9 +388,9 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     var end = start + PAGE_SIZE;
     var visibleIds = ids.slice(start, end);
     var visibleSet = {};
-    visibleIds.forEach(function (id) { visibleSet[id] = true; });
+    for (var vi = 0; vi < visibleIds.length; vi++) visibleSet[visibleIds[vi]] = true;
 
-    // Hide non-matching static cards, show matching static cards.
+    // Hide/show static SSR cards by id.
     Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item'), function (el) {
       var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
       var id = idMatch ? parseInt(idMatch[1], 10) : null;
@@ -224,25 +398,28 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
       el.style.display = visibleSet[id] ? '' : 'none';
     });
 
-    // Render island cards for the current page beyond the static first PAGE_SIZE.
-    var byId = {};
-    island.forEach(function (r) { byId[r.id] = r; });
-    // Remove any previously injected extras.
+    // Strip previously-injected island cards.
     var extras = list.querySelectorAll('[data-island-card="1"]');
-    extras.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    visibleIds.forEach(function (id) {
-      if (id && byId[id]) {
-        var tmp = document.createElement('div');
-        tmp.innerHTML = makeCard(byId[id]);
-        var node = tmp.firstChild;
-        if (node) {
-          node.setAttribute('data-island-card', '1');
-          list.appendChild(node);
-        }
+    for (var xi = 0; xi < extras.length; xi++) {
+      var ex = extras[xi];
+      if (ex.parentNode) ex.parentNode.removeChild(ex);
+    }
+    // Render any visible id that doesn't already have a static card on the page.
+    for (var idi = 0; idi < visibleIds.length; idi++) {
+      var id = visibleIds[idi];
+      var staticCard = list.querySelector('#restaurant-list .restaurant-item[data-key][href$="/restaurants/' + id + '"]:not([data-island-card="1"])');
+      if (staticCard && staticCard.offsetParent !== null) continue; // already visible via SSR
+      var entry = findIndexEntry(id);
+      if (!entry) continue;
+      var tmp = document.createElement('div');
+      tmp.innerHTML = makeCardFromEntry(entry);
+      var node = tmp.firstChild;
+      if (node) {
+        node.setAttribute('data-island-card', '1');
+        list.appendChild(node);
       }
-    });
+    }
 
-    // Update result count + pager UI.
     var countEl = document.getElementById('result-count');
     if (countEl) countEl.textContent = total + ' 間';
     var cur = document.getElementById('pg-current');
@@ -266,40 +443,6 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
   }
 
   function filterList() {
-    // Recompute the ordered match list across the entire dataset so pagination
-    // shows ALL matching cards (not just the first 50 of them).
-    var q = (document.getElementById('search-input').value || '').toLowerCase();
-    var districtActive = document.body.getAttribute('data-active-district') || '';
-
-    // Static first 50:
-    var staticMatches = [];
-    Array.prototype.forEach.call(document.querySelectorAll('#restaurant-list .restaurant-item:not([data-island-card="1"])'), function (el) {
-      var match = true;
-      var name = el.getAttribute('data-name') || '';
-      var itemDistrict = el.getAttribute('data-district') || '';
-      var itemAddr = el.getAttribute('data-addr') || '';
-      if (districtActive && itemDistrict !== districtActive) match = false;
-      if (q && !name.includes(q) && !itemDistrict.includes(q) && !itemAddr.includes(q)) match = false;
-      if (match) {
-        var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
-        if (idMatch) staticMatches.push(parseInt(idMatch[1], 10));
-      }
-    });
-
-    // Island (no address available, search by name+district only):
-    var islandMatches = [];
-    if (!q || true) {
-      for (var i = 0; i < island.length; i++) {
-        var r = island[i];
-        if (districtActive && r.district !== districtActive) continue;
-        var nameLow = (r.name_zh || r.name_en || '').toLowerCase();
-        var distLow = (r.district || '').toLowerCase();
-        if (q && !nameLow.includes(q) && !distLow.includes(q)) continue;
-        islandMatches.push(r.id);
-      }
-    }
-
-    state.filteredSlice = staticMatches.concat(islandMatches);
     state.page = 1;
     rebuildPage();
   }
@@ -326,6 +469,11 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
   }
 
   // ---- Pager wiring ----
+  // ---- Search input: live re-filter on each keystroke ----
+  document.getElementById('search-input').addEventListener('input', function () {
+    filterList();
+  });
+
   document.getElementById('pg-prev').addEventListener('click', function () {
     if (state.page > 1) { state.page--; rebuildPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   });
@@ -333,8 +481,8 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     state.page++; rebuildPage(); window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // ---- Sub-area labels on initial static cards ----
-  document.querySelectorAll('.sub-area-label').forEach(function (el) {
+  // ---- Sub-area labels on initial static cards (cosmetic, no behaviour change) ----
+  document.querySelectorAll('#restaurant-list .sub-area-label').forEach(function (el) {
     var addr = el.getAttribute('data-addr') || '';
     var name = el.getAttribute('data-name') || '';
     var sub = detectSubArea(addr, name);
@@ -348,13 +496,7 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     var d = params.get('district');
     if (q) document.getElementById('search-input').value = q;
     if (d) setDistrict(d);
-    if (q || d) {
-      filterList();
-    } else {
-      // No filter: still render the visible page (page 1 = first 50).
-      state.filteredSlice = null;
-      rebuildPage();
-    }
+    rebuildPage();
   });
   </script>
 </BaseLayout>

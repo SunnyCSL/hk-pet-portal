@@ -4,17 +4,112 @@ import restaurants from '../../data/restaurants.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
-// Phase 1 i18n mirror of src/pages/restaurants.astro.
-// Uses English name_en for display. Falls back to name_zh → "District dog-friendly restaurant"
-// so brand-new entries without an English translation still surface.
+// Phase 2 (fix/restaurant-search-v2): unified search index across all 906 records.
+// Build-time: each record gets a precomputed `search_key` = base + extras.
+// Extras include SUB_AREAS detected from address+name AND any alias group
+// whose `keys` (real address/name substrings) match the base.
+// First 50 cards keep SSR (data-key/data-name/data-district/data-addr), island
+// holds 51..906 as compact arrays so the rendered HTML stays compact while the
+// client can do proper token + AND search across the whole dataset.
+// EN version shows name_en first; otherwise mirrors the zh version 1:1.
 const PAGE_SIZE = 50;
-type Mini = { id: number; name_en: string; district: string };
-const firstPage = (restaurants as any[]).slice(0, PAGE_SIZE) as any[];
-const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => ({
+const STATIC_COUNT = 50;
+
+const SUB_AREAS = [
+  '馬鞍山','科學園','白石角',
+  '香港仔','黃竹坑','海洋公園','淺水灣','赤柱','薄扶林','數碼港','鴨脷洲',
+  '中環','上環','西營盤','堅尼地城','石塘咀','半山','山頂','金鐘',
+  '銅鑼灣','跑馬地','大坑','天后',
+  '北角','鰂魚涌','太古','西灣河','筲箕灣','柴灣',
+  '尖沙咀','尖東','佐敦','油麻地',
+  '旺角','太子','大角咀',
+  '長沙灣','荔枝角','美孚',
+  '土瓜灣','紅磡','何文田','啟德',
+  '九龍灣','觀塘','牛頭角','藍田','油塘',
+  '深井','馬灣','荃灣',
+  '屯門','黃金海岸',
+  '元朗','天水圍','錦田',
+  '上水','粉嶺',
+  '大埔',
+  '沙田','大圍','火炭',
+  '西貢','將軍澳','坑口','寶琳','調景嶺','康城','清水灣',
+  '葵涌','葵芳','青衣',
+  '東涌','愉景灣','迪士尼','機場','大澳','長洲','南丫島','坪洲',
+];
+
+const ALIAS_GROUPS: Array<{ names: string[]; keys: string[] }> = [
+  { names: ['奧運','olympic','olympian'], keys: ['奧海城','海泓道','大角咀','利奧坊','海帆道','匯翔道','櫻桃街','奧柏'] },
+  { names: ['旺角東'], keys: ['旺角','太子'] },
+  { names: ['西九龍','west kowloon','elements','圓方'], keys: ['西九龍','柯士甸','圓方','elements'] },
+  { names: ['科學園','science park'], keys: ['科學園','白石角'] },
+  { names: ['數碼港','cyberport'], keys: ['數碼港','薄扶林'] },
+  { names: ['太古'], keys: ['太古','鰂魚涌'] },
+  { names: ['將軍澳'], keys: ['將軍澳','坑口','寶琳','調景嶺','康城'] },
+  { names: ['東涌'], keys: ['東涌','愉景灣'] },
+  { names: ['馬鞍山'], keys: ['馬鞍山','烏溪沙'] },
+  { names: ['機場','airport'], keys: ['機場','赤鱲角','航天城'] },
+  { names: ['迪士尼','disneyland'], keys: ['迪士尼','竹篙灣'] },
+  { names: ['中文大學','cuhk'], keys: ['中文大學','馬料水'] },
+  { names: ['香港科技大學','hkust'], keys: ['香港科技大學','清水灣'] },
+  { names: ['香港大學','hku'], keys: ['香港大學','薄扶林'] },
+  { names: ['海洋公園','ocean park'], keys: ['海洋公園','黃竹坑'] },
+  { names: ['黃金海岸','gold coast'], keys: ['黃金海岸','青山公路'] },
+  { names: ['天水圍'], keys: ['天水圍','天慈'] },
+];
+
+function detectSubAreasFromBase(baseLower: string): string[] {
+  const hits: string[] = [];
+  for (const s of SUB_AREAS) {
+    if (baseLower.includes(s)) hits.push(s);
+  }
+  return hits;
+}
+
+function detectAliasesFromBase(baseLower: string): string[] {
+  const hits: string[] = [];
+  for (const g of ALIAS_GROUPS) {
+    if (g.keys.some(k => baseLower.includes(k))) {
+      for (const n of g.names) hits.push(n);
+    }
+  }
+  return hits;
+}
+
+function buildSearchKey(r: any): string {
+  const base = [r.name_zh || '', r.name_en || '', r.address || '', r.district || '']
+    .join(' ')
+    .toLowerCase();
+  const extras = [...detectSubAreasFromBase(base), ...detectAliasesFromBase(base)];
+  const seen = new Set<string>();
+  const merged: string[] = [];
+  for (const x of extras) {
+    if (!seen.has(x)) { seen.add(x); merged.push(x); }
+  }
+  return base + ' ' + merged.join(' ');
+}
+
+type StaticCard = { id: number; name_zh: string; name_en: string; district: string; address: string; key: string };
+type IslandRow = [number, string, string, string, string, string];
+
+const firstPage: StaticCard[] = (restaurants as any[]).slice(0, STATIC_COUNT).map((r: any) => ({
   id: r.id,
+  name_zh: r.name_zh || r.name_en || '',
   name_en: r.name_en || r.name_zh || '',
-  district: r.district,
+  district: r.district || '',
+  address: r.address || '',
+  key: buildSearchKey(r),
 }));
+
+const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r: any) => {
+  const base = [r.name_zh || '', r.name_en || '', r.address || '', r.district || ''].join(' ').toLowerCase();
+  const extras = [...detectSubAreasFromBase(base), ...detectAliasesFromBase(base)];
+  const seen = new Set<string>();
+  const merged: string[] = [];
+  for (const x of extras) {
+    if (!seen.has(x)) { seen.add(x); merged.push(x); }
+  }
+  return [r.id, r.name_zh || r.name_en || '', r.name_en || r.name_zh || '', r.district || '', r.address || '', merged.join(' ')];
+});
 ---
 
 <BaseLayout title="🍽️ Restaurants" lang="en">
@@ -55,12 +150,13 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
 
     <!-- Results list — first 50 are server-rendered for SEO; rest are JS-rendered into this same wrapper -->
     <div id="restaurant-list" class="flex flex-col gap-2">
-      {firstPage.map((r: { id: number; name_zh: string; name_en: string; district: string; address: string }) => (
+      {firstPage.map((r: StaticCard) => (
         <a href={`/en/restaurants/${r.id}`}
           class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
           data-name={(r.name_en || r.name_zh || '').toLowerCase()}
           data-district={r.district}
           data-addr={(r.address || '').toLowerCase()}
+          data-key={r.key}
         >
           <div class="flex items-center gap-3">
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
@@ -99,13 +195,12 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     </div>
   </div>
 
-  <!-- Phase 1 i18n: data island for JS pagination. Mirrors zh version but uses name_en. -->
+  <!-- fix/restaurant-search-v2: data island for JS pagination. Compact array form
+       [id, name_zh, name_en, district, address, extras] — mirrors zh version. -->
   <script type="application/json" id="rest-data" set:html={JSON.stringify({ restaurants: restData })} />
 
   <script is:inline>
-  // Sub-area detection (English district names only — Phase 1 keeps zh sub-area list
-  // as the source of truth; English page shows district-level only until Phase 2
-  // expands the lookup).
+  // Sub-area names used to compute the search key (kept in sync with SSR).
   var SUB_AREAS = [
     '馬鞍山','科學園','白石角',
     '香港仔','黃竹坑','海洋公園','淺水灣','赤柱','薄扶林','數碼港','鴨脷洲',
@@ -137,9 +232,6 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
   }
 
   var PAGE_SIZE = 50;
-  var island = [];
-  try { island = JSON.parse(document.getElementById('rest-data').textContent || '{}').restaurants || []; } catch (e) { island = []; }
-  var state = { page: 1, itemsPerPage: PAGE_SIZE, filteredSlice: null };
 
   function escapeHtml(s) {
     return String(s == null ? '' : s)
@@ -147,18 +239,93 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  function makeCard(r) {
-    var nameEn = r.name_en || r.name_zh || (r.district || '') + ' dog-friendly restaurant';
-    var sub = detectSubArea(r.address || '', r.name_en || r.name_zh || '');
-    var subLabel = sub || r.district || '';
-    var addrHtml = r.address
-      ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300">' + escapeHtml(r.address) + '</span>'
+  // ---- Build the unified index (906 entries, dataset order) ----
+  var INDEX = [];
+  function buildKey(nameZh, nameEn, address, district, extras) {
+    var base = [nameZh || '', nameEn || '', address || '', district || '']
+      .join(' ')
+      .toLowerCase();
+    return base + ' ' + (extras || '');
+  }
+
+  // 1) Static SSR cards (first 50) — prefer precomputed data-key.
+  var staticEls = Array.prototype.slice.call(document.querySelectorAll('#restaurant-list .restaurant-item:not([data-island-card="1"])'));
+  for (var s = 0; s < staticEls.length; s++) {
+    var el = staticEls[s];
+    var idMatch = (el.getAttribute('href') || '').match(/\/en\/restaurants\/(\d+)/);
+    if (!idMatch) continue;
+    var sid = parseInt(idMatch[1], 10);
+    var sKey = el.getAttribute('data-key') || '';
+    var sName = el.getAttribute('data-name') || '';
+    var sAddr = el.getAttribute('data-addr') || '';
+    var sDist = el.getAttribute('data-district') || '';
+    if (!sKey) sKey = buildKey('', sName, sAddr, sDist, '');
+    INDEX.push({ id: sid, key: sKey, district: sDist, name_zh: '', name_en: sName, address: sAddr });
+  }
+
+  // 2) Island entries (51..906): [id, name_zh, name_en, district, address, extras].
+  var rawIsland = [];
+  try { rawIsland = JSON.parse(document.getElementById('rest-data').textContent || '{}').restaurants || []; } catch (e) { rawIsland = []; }
+  var seenIds = {};
+  INDEX.forEach(function (e) { seenIds[e.id] = true; });
+  for (var i = 0; i < rawIsland.length; i++) {
+    var r = rawIsland[i];
+    var id = r[0], nzh = r[1] || '', nen = r[2] || '', dist = r[3] || '', addr = r[4] || '', extras = r[5] || '';
+    if (seenIds[id]) continue;
+    seenIds[id] = true;
+    INDEX.push({ id: id, key: buildKey(nzh, nen, addr, dist, extras), district: dist, name_zh: nzh, name_en: nen, address: addr });
+  }
+
+  // ---- Tokenizer (CJK↔alnum boundary splitter) ----
+  function tokenize(s) {
+    if (!s) return [];
+    var str = String(s).toLowerCase().replace(/\u3000/g, ' ');
+    str = str.replace(/[、，,;；\/\\|+·．]/g, ' ');
+    str = str.replace(/([一-鿿])([0-9a-z%'&.\-])/g, '$1 $2');
+    str = str.replace(/([0-9a-z%'&.\-])([一-鿿])/g, '$1 $2');
+    return str.split(/\s+/).filter(Boolean);
+  }
+
+  function matchKey(key, tokens) {
+    for (var t = 0; t < tokens.length; t++) {
+      var tok = tokens[t];
+      if (tok.length === 0) continue;
+      if (key.indexOf(tok) === -1) return false;
+    }
+    return true;
+  }
+
+  function matchDistrict(districtActive, entry) {
+    if (!districtActive) return true;
+    return entry.district === districtActive;
+  }
+
+  function runFilter(query, districtActive) {
+    var tokens = tokenize(query);
+    var out = [];
+    for (var i = 0; i < INDEX.length; i++) {
+      var e = INDEX[i];
+      if (!matchDistrict(districtActive, e)) continue;
+      if (tokens.length > 0 && !matchKey(e.key, tokens)) continue;
+      out.push(e.id);
+    }
+    return out;
+  }
+
+  // ---- Render helpers ----
+  function makeCardFromEntry(e) {
+    var nameEn = e.name_en || e.name_zh || (e.district || '') + ' dog-friendly restaurant';
+    var sub = detectSubArea(e.address || '', e.name_en || e.name_zh || '');
+    var subLabel = sub || e.district || '';
+    var addrHtml = e.address
+      ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300">' + escapeHtml(e.address) + '</span>'
       : '';
-    return '<a href="/en/restaurants/' + r.id + '"'
+    return '<a href="/en/restaurants/' + e.id + '"'
       + ' class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"'
-      + ' data-name="' + escapeHtml((r.name_en || r.name_zh || '').toLowerCase()) + '"'
-      + ' data-district="' + escapeHtml(r.district || '') + '"'
-      + ' data-addr="' + escapeHtml((r.address || '').toLowerCase()) + '">'
+      + ' data-name="' + escapeHtml((e.name_en || e.name_zh || '').toLowerCase()) + '"'
+      + ' data-district="' + escapeHtml(e.district || '') + '"'
+      + ' data-addr="' + escapeHtml((e.address || '').toLowerCase()) + '"'
+      + ' data-key="' + escapeHtml(e.key || '') + '">'
       + '<div class="flex items-center gap-3">'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
       + '<div class="min-w-0 flex-1">'
@@ -173,34 +340,25 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
       + '</div></a>';
   }
 
-  function getAllItems() {
-    var list = document.getElementById('restaurant-list');
-    return list ? Array.prototype.slice.call(list.querySelectorAll('.restaurant-item')) : [];
+  function findIndexEntry(id) {
+    for (var i = 0; i < INDEX.length; i++) {
+      if (INDEX[i].id === id) return INDEX[i];
+    }
+    return null;
   }
 
-  function getCurrentFilteredIds() {
-    var q = (document.getElementById('search-input').value || '').toLowerCase();
-    var districtActive = document.body.getAttribute('data-active-district') || '';
-    var matches = [];
-    getAllItems().forEach(function (el) {
-      var match = true;
-      var name = el.getAttribute('data-name') || '';
-      var itemDistrict = el.getAttribute('data-district') || '';
-      var itemAddr = el.getAttribute('data-addr') || '';
-      if (districtActive && itemDistrict !== districtActive) match = false;
-      if (q && !name.includes(q) && !itemDistrict.includes(q) && !itemAddr.includes(q)) match = false;
-      if (match) {
-        var idMatch = (el.getAttribute('href') || '').match(/\/en\/restaurants\/(\d+)/);
-        if (idMatch) matches.push(parseInt(idMatch[1], 10));
-      }
-    });
-    return matches;
+  var state = { page: 1 };
+
+  function currentMatches() {
+    var q = document.getElementById('search-input').value || '';
+    var d = document.body.getAttribute('data-active-district') || '';
+    return runFilter(q, d);
   }
 
   function rebuildPage() {
     var list = document.getElementById('restaurant-list');
     if (!list) return;
-    var ids = state.filteredSlice || getCurrentFilteredIds();
+    var ids = currentMatches();
     var total = ids.length;
     var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     if (state.page > totalPages) state.page = totalPages;
@@ -209,7 +367,7 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     var end = start + PAGE_SIZE;
     var visibleIds = ids.slice(start, end);
     var visibleSet = {};
-    visibleIds.forEach(function (id) { visibleSet[id] = true; });
+    for (var vi = 0; vi < visibleIds.length; vi++) visibleSet[visibleIds[vi]] = true;
 
     Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item'), function (el) {
       var idMatch = (el.getAttribute('href') || '').match(/\/en\/restaurants\/(\d+)/);
@@ -218,21 +376,25 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
       el.style.display = visibleSet[id] ? '' : 'none';
     });
 
-    var byId = {};
-    island.forEach(function (r) { byId[r.id] = r; });
     var extras = list.querySelectorAll('[data-island-card="1"]');
-    extras.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    visibleIds.forEach(function (id) {
-      if (id && byId[id]) {
-        var tmp = document.createElement('div');
-        tmp.innerHTML = makeCard(byId[id]);
-        var node = tmp.firstChild;
-        if (node) {
-          node.setAttribute('data-island-card', '1');
-          list.appendChild(node);
-        }
+    for (var xi = 0; xi < extras.length; xi++) {
+      var ex = extras[xi];
+      if (ex.parentNode) ex.parentNode.removeChild(ex);
+    }
+    for (var idi = 0; idi < visibleIds.length; idi++) {
+      var id = visibleIds[idi];
+      var staticCard = list.querySelector('#restaurant-list .restaurant-item[data-key][href$="/en/restaurants/' + id + '"]:not([data-island-card="1"])');
+      if (staticCard && staticCard.offsetParent !== null) continue;
+      var entry = findIndexEntry(id);
+      if (!entry) continue;
+      var tmp = document.createElement('div');
+      tmp.innerHTML = makeCardFromEntry(entry);
+      var node = tmp.firstChild;
+      if (node) {
+        node.setAttribute('data-island-card', '1');
+        list.appendChild(node);
       }
-    });
+    }
 
     var countEl = document.getElementById('result-count');
     if (countEl) countEl.textContent = total + ' venues';
@@ -257,34 +419,6 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
   }
 
   function filterList() {
-    var q = (document.getElementById('search-input').value || '').toLowerCase();
-    var districtActive = document.body.getAttribute('data-active-district') || '';
-
-    var staticMatches = [];
-    Array.prototype.forEach.call(document.querySelectorAll('#restaurant-list .restaurant-item:not([data-island-card="1"])'), function (el) {
-      var match = true;
-      var name = el.getAttribute('data-name') || '';
-      var itemDistrict = el.getAttribute('data-district') || '';
-      var itemAddr = el.getAttribute('data-addr') || '';
-      if (districtActive && itemDistrict !== districtActive) match = false;
-      if (q && !name.includes(q) && !itemDistrict.includes(q) && !itemAddr.includes(q)) match = false;
-      if (match) {
-        var idMatch = (el.getAttribute('href') || '').match(/\/en\/restaurants\/(\d+)/);
-        if (idMatch) staticMatches.push(parseInt(idMatch[1], 10));
-      }
-    });
-
-    var islandMatches = [];
-    for (var i = 0; i < island.length; i++) {
-      var r = island[i];
-      if (districtActive && r.district !== districtActive) continue;
-      var nameLow = (r.name_en || r.name_zh || '').toLowerCase();
-      var distLow = (r.district || '').toLowerCase();
-      if (q && !nameLow.includes(q) && !distLow.includes(q)) continue;
-      islandMatches.push(r.id);
-    }
-
-    state.filteredSlice = staticMatches.concat(islandMatches);
     state.page = 1;
     rebuildPage();
   }
@@ -310,6 +444,11 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     setDistrict('');
   }
 
+  // ---- Search input: live re-filter on each keystroke ----
+  document.getElementById('search-input').addEventListener('input', function () {
+    filterList();
+  });
+
   document.getElementById('pg-prev').addEventListener('click', function () {
     if (state.page > 1) { state.page--; rebuildPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   });
@@ -317,7 +456,7 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     state.page++; rebuildPage(); window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  document.querySelectorAll('.sub-area-label').forEach(function (el) {
+  document.querySelectorAll('#restaurant-list .sub-area-label').forEach(function (el) {
     var addr = el.getAttribute('data-addr') || '';
     var name = el.getAttribute('data-name') || '';
     var sub = detectSubArea(addr, name);
@@ -330,12 +469,7 @@ const restData = (restaurants as any[]).slice(PAGE_SIZE).map((r: any): Mini => (
     var d = params.get('district');
     if (q) document.getElementById('search-input').value = q;
     if (d) setDistrict(d);
-    if (q || d) {
-      filterList();
-    } else {
-      state.filteredSlice = null;
-      rebuildPage();
-    }
+    rebuildPage();
   });
   </script>
 </BaseLayout>
