@@ -408,11 +408,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   //   2. No activeArea → legacy token-AND filter, dataset order, no chips.
   //   3. activeArea + filterTokens empty (pure area query):
   //        results = token-matched ∪ records within current radius of centre;
-  //        sort by eff = dist + (prec=='area' ? 400 : 0); null-dist last;
-  //        radius chips visible.
+  //        bucketed sort: precise (prec≠'area') cards first by raw dist;
+  //        area-prec cards last by raw dist; null-dist last. radius chips visible.
   //   4. activeArea + filterTokens non-empty (e.g. "奧運 Outback"):
   //        results = INDEX records whose key contains ALL filterTokens (no radius
-  //        union); sort by eff above; radius chips hidden.
+  //        union); same bucketed sort; radius chips hidden.
   function runFilter(query, districtActive) {
     var tokens = tokenize(query);
     // Detect activeArea: longest area-centre key fully contained in query.
@@ -491,7 +491,10 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         }
       }
     }
-    // Sort by eff = dist + (prec=='area' ? 400 : 0); null dist last.
+    // Sort: precise records first (asc by dist); then area-prec records last
+    // (also asc by dist). Null dist last overall. No fake-distance penalty —
+    // area-prec records visually group into the '位置約略' bucket and we want
+    // them physically separated from precise records with real numbers.
     var entries = [];
     for (var id in byId) {
       var ent = null;
@@ -499,12 +502,13 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       entries.push({ id: Number(id), dist: distById[id], prec: ent ? ent.prec : null });
     }
     entries.sort(function (a, b) {
+      var aArea = a.prec === 'area' ? 1 : 0;
+      var bArea = b.prec === 'area' ? 1 : 0;
+      if (aArea !== bArea) return aArea - bArea;
       if (a.dist == null && b.dist == null) return 0;
       if (a.dist == null) return 1;
       if (b.dist == null) return -1;
-      var aEff = a.dist + (a.prec === 'area' ? 400 : 0);
-      var bEff = b.dist + (b.prec === 'area' ? 400 : 0);
-      return aEff - bEff;
+      return a.dist - b.dist;
     });
     var ids = [];
     for (var si = 0; si < entries.length; si++) ids.push(entries[si].id);
@@ -553,11 +557,18 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       : '';
     var distHtml = '';
     if (dist != null) {
-      var approx = e.prec === 'area' ? '約 ' : '';
-      var dStr = formatDistanceZh(dist);
-      var mins = walkingMinutes(dist);
-      var walk = mins != null ? ' · 步行 ' + mins + ' 分鐘' : '';
-      distHtml = '<span class="dist-badge text-xs text-gray-400 whitespace-nowrap">' + escapeHtml(approx + dStr + walk) + '</span>';
+      var entry = findIndexEntry(e.id);
+      // Area-prec records only carry the area-centre coordinate, not a real
+      // door address — showing "~0 米" or "920 米" would lie about the actual
+      // distance. Surface the limitation honestly: badge says "位置約略" only.
+      if (entry && entry.prec === 'area') {
+        distHtml = '<span class="dist-badge text-xs text-gray-400 whitespace-nowrap">位置約略</span>';
+      } else {
+        var dStr = formatDistanceZh(dist);
+        var mins = walkingMinutes(dist);
+        var walk = mins != null ? ' · 步行 ' + mins + ' 分鐘' : '';
+        distHtml = '<span class="dist-badge text-xs text-gray-400 whitespace-nowrap">' + escapeHtml(dStr + walk) + '</span>';
+      }
     } else {
       distHtml = '<span class="dist-badge text-xs text-gray-400 hidden whitespace-nowrap"></span>';
     }
@@ -592,10 +603,13 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     '較遠',
     '位置約略',
   ];
-  function bucketFor(d, hasPrec) {
-    // 0..3: distance buckets. 4: prec='area'. -1: null distance.
+  function bucketFor(d, isAreaPrec) {
+    // 0..3: distance buckets for precise (building/street) records.
+    // 4: '位置約略' — any record with area-prec (no real door address).
+    // -1: no coords at all (very rare); such rows carry no group header on
+    // purpose — they are sparse outliers, not a meaningful user-facing bucket.
+    if (isAreaPrec) return 4;
     if (d == null) return -1;
-    if (!hasPrec) return 4;
     if (d <= 400) return 0;
     if (d <= 1200) return 1;
     if (d <= 3000) return 2;
@@ -686,12 +700,17 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       if (badge) {
         if (d != null) {
           var entry = findIndexEntry(id);
-          var approx = entry && entry.prec === 'area' ? '約 ' : '';
-          var dStr = formatDistanceZh(d);
-          var mins = walkingMinutes(d);
-          var walk = mins != null ? ' · 步行 ' + mins + ' 分鐘' : '';
-          badge.textContent = approx + dStr + walk;
-          badge.classList.remove('hidden');
+          // area-prec → show "位置約略" instead of a (fake) numeric distance.
+          if (entry && entry.prec === 'area') {
+            badge.textContent = '位置約略';
+            badge.classList.remove('hidden');
+          } else {
+            var dStr = formatDistanceZh(d);
+            var mins = walkingMinutes(d);
+            var walk = mins != null ? ' · 步行 ' + mins + ' 分鐘' : '';
+            badge.textContent = dStr + walk;
+            badge.classList.remove('hidden');
+          }
         } else {
           badge.textContent = '';
           badge.classList.add('hidden');
@@ -738,7 +757,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         var entry2 = findIndexEntry(id);
         var d = distMap[id] != null ? distMap[id] : null;
         var prec = entry2 ? entry2.prec : null;
-        var b = bucketFor(d, prec !== 'area');
+        var b = bucketFor(d, prec === 'area');
         if (b !== lastBucket) {
           if (b >= 0 && b < GROUP_LABELS_ZH.length) {
             list.appendChild(groupHeaderEl(GROUP_LABELS_ZH[b]));

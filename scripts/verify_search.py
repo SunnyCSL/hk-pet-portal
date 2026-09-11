@@ -220,7 +220,12 @@ async def _check_zh(browser) -> dict:
         "太古":   {"1km": 11, "500m": 9,
                    "first5": [146, 857, 177, 342, 333]},
         "將軍澳": {"1km": 26,
-                   "first5": [283, 401, 920, 188, 548]},
+                   "first5": [188, 548, 123, 598, 854]},
+        # NOTE on 將軍澳 first5: the 4 area-prec cards in the result are now
+        # physically pushed to the end of the list (bucket 4 "位置約略"), so
+        # the first 5 ids are all building-prec records ~920–954 m from the
+        # centre. The last 4 ids (sorted same direction) are area-prec with
+        # "位置約略" badge instead of "約 N 米".
     }
     out["B"] = {}
     for area, exp in area_cases.items():
@@ -279,23 +284,130 @@ async def _check_zh(browser) -> dict:
         out["C"] = out.get("C", {})
         out["C"][q] = {"count": actual, "chipsHidden": chips_ok}
 
-    # === D. dist badge format check on 奧運 1km cards ===
-    _print("D", "dist badges contain 米/公里 and ~ for prec=area")
+    # === D. dist badges + bucket header + non-decreasing distances ===
+    # D-rules after the area-nearby-search v2 fix:
+    #   D1. 奧運 1km cards — first 30 cards' numeric distances are non-decreasing.
+    #   D2. 奧運 1km has no "約" prefix anywhere (all 奧運 cards are precise).
+    #   D3. 將軍澳 1km cards in the last "位置約略" bucket ALL show
+    #       "位置約略" badge (no fake "約 N 米").
+    #   D4. The "位置約略" group header is visible in 將軍澳 mode.
+    _print("D", "badge format / monotonic / area-only fix")
+
+    # --- D1 + D2: 奧運 ---
     await _set_query(page, "奧運")
-    res_o = await _read_results(page)
-    sample = res_o["distBadges"][:8]
-    has_metric = any(("米" in b or "公里" in b) for b in sample)
-    has_approx = any(b.startswith("約 ") for b in sample)
-    _print("D", f"sample badges={sample}")
-    _print("D", f"{'✓' if has_metric else '✗'} contains 米/公里 (got {has_metric})")
-    # Check 將軍澳 area-prec cards show "約"
+    await page.wait_for_timeout(120)
+    oly = await _read_results(page)
+    oly_badges = oly["distBadges"][:30]
+    oly_with_num = []
+    for b in oly_badges:
+        m = re.match(r"(\d+)\s*米", b) or re.match(r"([\d.]+)\s*公里", b)
+        if m:
+            val = float(m.group(1))
+            oly_with_num.append(val * 1000 if "公里" in b else val)
+    monotonic = all(oly_with_num[i] <= oly_with_num[i+1] for i in range(len(oly_with_num)-1))
+    oly_no_approx = not any(b.startswith("約 ") for b in oly_badges)
+    _print("D", f"奧運 badges[:5]={oly_badges[:5]} oly_no_approx={oly_no_approx} monotonic={monotonic} (n={len(oly_with_num)})")
+    _print("D", f"{'✓' if oly_no_approx else '✗'} 奧運 no '約' prefix anywhere (got {oly_no_approx})")
+    _print("D", f"{'✓' if monotonic   else '✗'} 奧運 first30 distances non-decreasing")
+
+    # --- D3 + D4: 將軍澳 ---
     await _set_query(page, "將軍澳")
-    res_tko = await _read_results(page)
-    tk_badges = res_tko["distBadges"][:5]
-    _print("D", f"將軍澳 first badges={tk_badges}")
-    has_approx_tko = any(b.startswith("約 ") for b in tk_badges)
-    _print("D", f"{'✓' if has_approx_tko else '✗'} 將軍澳 contains '約 ' prefix (got {has_approx_tko})")
-    out["D"] = {"sample": sample, "tko_first": tk_badges, "has_metric": has_metric, "has_approx": has_approx_tko}
+    await page.wait_for_timeout(120)
+    tko = await _read_results(page)
+    tko_badges = tko["distBadges"]
+    tko_count = len(tko["visibleIds"])
+    # Identify area-prec cards: their badges should be exactly "位置約略".
+    # For 將軍澳 1km results there are 4 area-prec records; they appear
+    # physically last.
+    area_badge_exact = "位置約略"
+    # Find where bucket-4 header appears in DOM and slice from there.
+    # headers are #area-group-* divs with text label. read via JS.
+    tko_groups = await page.evaluate(
+        """() => {
+            const groups = document.querySelectorAll('.area-group-header');
+            return Array.from(groups).map(g => ({
+              label: (g.textContent || '').trim(),
+              visible: g.offsetParent !== null,
+            }));
+        }"""
+    )
+    area_group_present = any(g["visible"] and g["label"] == "位置約略" for g in tko_groups)
+    _print("D", f"將軍澳 group headers={tko_groups}  area_group_present={area_group_present}")
+
+    # Find the index of the "位置約略" group header in the rendered card stream
+    # by re-reading list, and the badges that come AFTER it.
+    cards_after = await page.evaluate(
+        """() => {
+            const list = document.getElementById('restaurant-list');
+            if (!list) return [];
+            const out = [];
+            for (const child of list.children) {
+              if (child.classList.contains('area-group-header')) {
+                out.push({ kind: 'group', label: (child.textContent || '').trim() });
+              } else if (child.classList.contains('restaurant-item')) {
+                const m = (child.getAttribute('href') || '').match(/\\/restaurants\\/(\\d+)/);
+                if (m) out.push({ kind: 'card', id: Number(m[1]) });
+              }
+            }
+            return out;
+        }"""
+    )
+    # Find every card-id that comes after the first "位置約略" group header.
+    cards_in_bucket4 = []
+    seen_header = False
+    for n in cards_after:
+        if n["kind"] == "group":
+            if n["label"] == "位置約略":
+                seen_header = True
+            else:
+                # next group means we left bucket 4
+                if seen_header:
+                    break
+            continue
+        if seen_header:
+            cards_in_bucket4.append(n["id"])
+    _print("D", f"將軍澳 cards in bucket '位置約略' (ids) = {cards_in_bucket4}")
+
+    # For each bucket-4 card, its visible badge must be exactly "位置約略"
+    # (not "約 N 米" / "米 · 步行 ...").
+    tko_res = await _read_results(page)
+    tko_badge_by_id = {}
+    tko_dom = await page.evaluate(
+        """() => {
+            const list = document.getElementById('restaurant-list');
+            if (!list) return [];
+            const out = [];
+            for (const child of list.children) {
+              if (!child.classList.contains('restaurant-item')) continue;
+              const m = (child.getAttribute('href') || '').match(/\\/restaurants\\/(\\d+)/);
+              if (!m) continue;
+              const badge = child.querySelector('.dist-badge');
+              out.push({
+                id: Number(m[1]),
+                badge: badge ? (badge.textContent || '').trim() : null,
+              });
+            }
+            return out;
+        }"""
+    )
+    tko_badge_by_id = {row["id"]: row["badge"] for row in tko_dom}
+    bucket4_badges = [tko_badge_by_id.get(cid) for cid in cards_in_bucket4]
+    all_bucket4_area = all(b == area_badge_exact for b in bucket4_badges if b)
+    _print("D", f"bucket4 badges={bucket4_badges} all ='{area_badge_exact}'? {all_bucket4_area}")
+    _print("D", f"{'✓' if area_group_present else '✗'} 將軍澳 '位置約略' group header present")
+    _print("D", f"{'✓' if all_bucket4_area else '✗'} 將軍澳 bucket4 cards all show '{area_badge_exact}' (got {len([b for b in bucket4_badges if b == area_badge_exact])}/{len(bucket4_badges)})")
+
+    out["D"] = {
+        "oly_badges_first5": oly_badges[:5],
+        "oly_no_approx": oly_no_approx,
+        "oly_monotonic": monotonic,
+        "tko_group_headers": tko_groups,
+        "tko_bucket4_ids": cards_in_bucket4,
+        "tko_bucket4_badges": bucket4_badges,
+        "all_bucket4_area": all_bucket4_area,
+        "area_group_present": area_group_present,
+        "tko_count": tko_count,
+    }
 
     out["zh_console_errors"] = list(console_errors)
     return out
@@ -377,20 +489,108 @@ async def _check_en(browser, zh_out: dict) -> dict:
     _print("E", f"{'✓' if actual==0 else '✗'} EN 'Olympic Outback' expected=0 actual={actual} chipsHidden={not res['chipsVisible']}")
     out["C_en"] = {"Olympic Outback": actual}
 
-    # EN dist badge format: should contain "m"/"km"/"min walk", "~" for area-prec
+    # EN dist badges + monotonic + bucket header
+    # EN mirrors zh: precise records first with numeric "N m · N-min walk";
+    # area-prec records show "Approximate" badge and live under group
+    # header "Approximate location".
+    import re as _re_en2  # local alias to keep D-section independent
+    _print("E", "EN dist badges + monotonic + area-only fix")
+
     await _set_query(page, "奧運")
-    res_o = await _read_results(page)
-    sample = res_o["distBadges"][:8]
-    has_metric = any(("m" in b or "km" in b) and "min walk" in b for b in sample)
-    _print("E", f"EN 奧運 sample badges={sample}")
-    _print("E", f"{'✓' if has_metric else '✗'} EN badges contain 'm' + 'min walk'")
+    await page.wait_for_timeout(120)
+    oly = await _read_results(page)
+    oly_badges = oly["distBadges"][:30]
+    oly_with_num = []
+    for b in oly_badges:
+        m = _re_en2.match(r"([\d.]+)\s*(m|km)\b", b)
+        if m:
+            val = float(m.group(1))
+            oly_with_num.append(val if m.group(2) == "m" else val * 1000)
+    monotonic = all(oly_with_num[i] <= oly_with_num[i+1] for i in range(len(oly_with_num)-1))
+    oly_no_approx = not any(b.startswith("~") for b in oly_badges)
+    _print("E", f"EN 奧運 badges[:5]={oly_badges[:5]} oly_no_approx={oly_no_approx} monotonic={monotonic} (n={len(oly_with_num)})")
+    _print("E", f"{'✓' if oly_no_approx else '✗'} EN 奧運 no '~' prefix anywhere")
+    _print("E", f"{'✓' if monotonic   else '✗'} EN 奧運 first30 distances non-decreasing")
+
+    # 將軍澳 (EN: queries via CJK, area detection is language-independent)
     await _set_query(page, "將軍澳")
-    res_tko = await _read_results(page)
-    tk_badges = res_tko["distBadges"][:5]
-    has_approx = any(b.startswith("~") for b in tk_badges)
-    _print("E", f"EN 將軍澳 first badges={tk_badges}")
-    _print("E", f"{'✓' if has_approx else '✗'} EN 將軍澳 '~' prefix expected")
-    out["D_en"] = {"sample": sample, "tko": tk_badges}
+    await page.wait_for_timeout(120)
+    tko_groups = await page.evaluate(
+        """() => {
+            const groups = document.querySelectorAll('.area-group-header');
+            return Array.from(groups).map(g => ({
+              label: (g.textContent || '').trim(),
+              visible: g.offsetParent !== null,
+            }));
+        }"""
+    )
+    area_group_present = any(g["visible"] and g["label"] == "Approximate location" for g in tko_groups)
+    _print("E", f"EN 將軍澳 group headers={tko_groups}  area_group_present={area_group_present}")
+
+    cards_after = await page.evaluate(
+        """() => {
+            const list = document.getElementById('restaurant-list');
+            if (!list) return [];
+            const out = [];
+            for (const child of list.children) {
+              if (child.classList.contains('area-group-header')) {
+                out.push({ kind: 'group', label: (child.textContent || '').trim() });
+              } else if (child.classList.contains('restaurant-item')) {
+                const m = (child.getAttribute('href') || '').match(/\\/restaurants\\/(\\d+)/);
+                if (m) out.push({ kind: 'card', id: Number(m[1]) });
+              }
+            }
+            return out;
+        }"""
+    )
+    cards_in_bucket4 = []
+    seen_header = False
+    for n in cards_after:
+        if n["kind"] == "group":
+            if n["label"] == "Approximate location":
+                seen_header = True
+            else:
+                if seen_header:
+                    break
+            continue
+        if seen_header:
+            cards_in_bucket4.append(n["id"])
+    _print("E", f"EN 將軍澳 cards in bucket 'Approximate location' (ids) = {cards_in_bucket4}")
+
+    tko_dom = await page.evaluate(
+        """() => {
+            const list = document.getElementById('restaurant-list');
+            if (!list) return [];
+            const out = [];
+            for (const child of list.children) {
+              if (!child.classList.contains('restaurant-item')) continue;
+              const m = (child.getAttribute('href') || '').match(/\\/restaurants\\/(\\d+)/);
+              if (!m) continue;
+              const badge = child.querySelector('.dist-badge');
+              out.push({
+                id: Number(m[1]),
+                badge: badge ? (badge.textContent || '').trim() : null,
+              });
+            }
+            return out;
+        }"""
+    )
+    tko_badge_by_id = {row["id"]: row["badge"] for row in tko_dom}
+    bucket4_badges = [tko_badge_by_id.get(cid) for cid in cards_in_bucket4]
+    all_bucket4_area = all(b == "Approximate" for b in bucket4_badges if b)
+    _print("E", f"EN bucket4 badges={bucket4_badges} all ='Approximate'? {all_bucket4_area}")
+    _print("E", f"{'✓' if area_group_present else '✗'} EN 將軍澳 'Approximate location' group header present")
+    _print("E", f"{'✓' if all_bucket4_area else '✗'} EN 將軍澳 bucket4 cards all show 'Approximate' ({len([b for b in bucket4_badges if b == 'Approximate'])}/{len(bucket4_badges)})")
+    out["D_en"] = {
+        "oly_badges_first5": oly_badges[:5],
+        "oly_no_approx": oly_no_approx,
+        "oly_monotonic": monotonic,
+        "tko_group_headers": tko_groups,
+        "tko_bucket4_ids": cards_in_bucket4,
+        "tko_bucket4_badges": bucket4_badges,
+        "all_bucket4_area": all_bucket4_area,
+        "area_group_present": area_group_present,
+    }
 
     out["en_console_errors"] = list(console_errors)
     return out
