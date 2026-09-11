@@ -8,8 +8,7 @@
   "10": {
     "source": "name-infer",
     "types": [
-      "甜品／烘焙",
-      "咖啡"
+      "甜品／烘焙"
     ]
   },
   "100": {
@@ -22,6 +21,12 @@
     "source": "name-infer",
     "types": [
       "茶餐廳"
+    ]
+  },
+  "109": {
+    "source": "name-infer",
+    "types": [
+      "點心"
     ]
   },
   "111": {
@@ -92,6 +97,12 @@
       "泰越星馬"
     ]
   },
+  "135": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
   "137": {
     "source": "name-infer",
     "types": [
@@ -120,6 +131,12 @@
     "source": "name-infer",
     "types": [
       "甜品／烘焙"
+    ]
+  },
+  "150": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
     ]
   },
   "151": {
@@ -274,8 +291,7 @@
   "189": {
     "source": "name-infer",
     "types": [
-      "甜品／烘焙",
-      "咖啡"
+      "甜品／烘焙"
     ]
   },
   "19": {
@@ -293,7 +309,8 @@
   "194": {
     "source": "name-infer",
     "types": [
-      "咖啡"
+      "咖啡",
+      "酒吧"
     ]
   },
   "197": {
@@ -305,7 +322,8 @@
   "200": {
     "source": "name-infer",
     "types": [
-      "咖啡"
+      "咖啡",
+      "酒吧"
     ]
   },
   "203": {
@@ -318,6 +336,12 @@
     "source": "name-infer",
     "types": [
       "咖啡"
+    ]
+  },
+  "206": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
     ]
   },
   "207": {
@@ -433,14 +457,12 @@
   "235": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "泰越星馬"
     ]
   },
   "236": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "泰越星馬"
     ]
   },
@@ -477,8 +499,19 @@
   "246": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
+    ]
+  },
+  "248": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "252": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
     ]
   },
   "256": {
@@ -514,7 +547,6 @@
   "269": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
@@ -599,6 +631,12 @@
       "咖啡"
     ]
   },
+  "312": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
   "318": {
     "source": "name-infer",
     "types": [
@@ -675,8 +713,7 @@
   "353": {
     "source": "name-infer",
     "types": [
-      "西餐",
-      "咖啡"
+      "西餐"
     ]
   },
   "355": {
@@ -735,12 +772,6 @@
       "西餐"
     ]
   },
-  "383": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
   "384": {
     "source": "name-infer",
     "types": [
@@ -751,12 +782,6 @@
     "source": "name-infer",
     "types": [
       "甜品／烘焙"
-    ]
-  },
-  "394": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
     ]
   },
   "396": {
@@ -775,7 +800,7 @@
     "source": "name-infer",
     "types": [
       "海鮮",
-      "點心"
+      "中菜"
     ]
   },
   "407": {
@@ -865,15 +890,25 @@
   "427": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "428": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
+    ]
+  },
+  "430": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "431": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
     ]
   },
   "432": {
@@ -950,6 +985,24 @@
       "咖啡"
     ]
   },
+  "465": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "466": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "472": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
   "473": {
     "source": "name-infer",
     "types": [
@@ -996,22 +1049,19 @@
   "486": {
     "source": "name-infer",
     "types": [
-      "咖啡",
-      "酒吧"
+      "咖啡"
     ]
   },
   "487": {
     "source": "name-infer",
     "types": [
-      "咖啡",
-      "酒吧"
+      "咖啡"
     ]
   },
   "488": {
     "source": "name-infer",
     "types": [
-      "咖啡",
-      "酒吧"
+      "咖啡"
     ]
   },
   "49": {
@@ -1041,13 +1091,14 @@
   "5": {
     "source": "name-infer",
     "types": [
-      "咖啡"
+      "咖啡",
+      "酒吧"
     ]
   },
-  "50": {
+  "502": {
     "source": "name-infer",
     "types": [
-      "印度尼泊爾"
+      "酒吧"
     ]
   },
   "503": {
@@ -1091,7 +1142,7 @@
   "524": {
     "source": "name-infer",
     "types": [
-      "點心"
+      "中菜"
     ]
   },
   "525": {
@@ -1116,63 +1167,54 @@
   "531": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "532": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "533": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "534": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "535": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "536": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "537": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "538": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "539": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
@@ -1186,21 +1228,18 @@
   "540": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "541": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "542": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
@@ -1268,7 +1307,6 @@
   "579": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
@@ -1288,6 +1326,12 @@
     "source": "osm",
     "types": [
       "中菜"
+    ]
+  },
+  "600": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
     ]
   },
   "607": {
@@ -1451,7 +1495,6 @@
   "656": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "中菜"
     ]
   },
@@ -1488,8 +1531,7 @@
   "673": {
     "source": "name-infer",
     "types": [
-      "西餐",
-      "酒吧"
+      "西餐"
     ]
   },
   "678": {
@@ -1520,7 +1562,6 @@
   "692": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
@@ -1530,17 +1571,21 @@
       "粉麵"
     ]
   },
+  "695": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
   "696": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
   "697": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },
@@ -1621,6 +1666,12 @@
     "source": "name-infer",
     "types": [
       "西餐"
+    ]
+  },
+  "725": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
     ]
   },
   "729": {
@@ -1728,8 +1779,7 @@
   "756": {
     "source": "name-infer",
     "types": [
-      "咖啡",
-      "泰越星馬"
+      "咖啡"
     ]
   },
   "761": {
@@ -1741,15 +1791,13 @@
   "762": {
     "source": "name-infer",
     "types": [
-      "甜品／烘焙",
-      "咖啡"
+      "甜品／烘焙"
     ]
   },
   "763": {
     "source": "name-infer",
     "types": [
-      "甜品／烘焙",
-      "咖啡"
+      "甜品／烘焙"
     ]
   },
   "766": {
@@ -2048,8 +2096,7 @@
   "894": {
     "source": "name-infer",
     "types": [
-      "粉麵",
-      "印度尼泊爾"
+      "粉麵"
     ]
   },
   "895": {
@@ -2203,7 +2250,6 @@
   "936": {
     "source": "name-infer",
     "types": [
-      "咖啡",
       "茶餐廳"
     ]
   },

@@ -68,20 +68,26 @@ EN_MAP: dict[str, str] = {
 #
 # Order in the dict doesn't matter; we sort at runtime by keyword length desc.
 KEYWORD_RULES: list[tuple[str, str]] = [
-    # 咖啡
-    ("咖啡", "咖啡"), ("coffee", "咖啡"), ("cafe", "咖啡"), ("café", "咖啡"),
-    ("espresso", "咖啡"), ("roaster", "咖啡"), ("brew", "咖啡"), ("brewery", "咖啡"),
-    ("latte", "咖啡"), ("barista", "咖啡"), ("arabica", "咖啡"), ("starbucks", "咖啡"),
-    ("%arabica", "咖啡"), ("% arabica", "咖啡"),
-    # 酒吧
-    ("酒吧", "酒吧"), ("pub", "酒吧"), ("lounge", "酒吧"), ("啤酒", "酒吧"),
-    ("beer", "酒吧"), ("taproom", "酒吧"), ("wine", "酒吧"), ("whisky", "酒吧"),
+    # 咖啡 — zh side: 字面 咖啡/珈琲/啡室/啡 (e.g. 愛啡).  en side (whole-word,
+    # see _classify): "cafe", "coffee", "espresso", "roastery", "coffeehouse".
+    # Naive "cafe" substring used to over-tag (Café Locomotive → 越南+咖啡)
+    # and collide with "冰室"/"茶餐廳" via length priority. Word-boundary
+    # matching plus a downstream "dominance" pass (see _classify) keeps it sane.
+    ("咖啡", "咖啡"), ("珈琲", "咖啡"), ("啡室", "咖啡"),
+    # 酒吧 — zh 字面 + a few english whole-words; same dominance rule applies.
+    # ("酒吧", "酒吧") means 酒 / bar already present, so we DON'T strip it.
+    ("酒吧", "酒吧"), ("酒窖", "酒吧"), ("啤酒", "酒吧"), ("pub", "酒吧"),
+    ("lounge", "酒吧"), ("taproom", "酒吧"), ("whisky", "酒吧"),
     # 茶飲
-    ("茶飲", "茶飲"), ("奶茶", "茶飲"), ("台式飲品", "茶飲"), ("bubble tea", "茶飲"),
-    ("珍珠", "茶飲"), ("手搖", "茶飲"),
-    # 茶餐廳
+    ("茶飲", "茶飲"), ("奶茶", "茶飲"), ("台式飲品", "茶飲"),
+    ("bubble tea", "茶飲"), ("珍珠", "茶飲"), ("手搖", "茶飲"),
+    # 茶餐廳 — note: "冰室"/"茶餐廳" hit the dominance list, so 咖啡 is
+    # auto-stripped from co-occurrences like "JERVOIS CAFE / 蘇杭冰室".
     ("茶餐廳", "茶餐廳"), ("冰室", "茶餐廳"), ("冰廳", "茶餐廳"),
     ("茶室", "茶餐廳"), ("cha chaan", "茶餐廳"),
+    # 中菜 — 酒樓 is a Chinese banquet hall, NOT 點心 (洪記海鮮酒樓 / 美京大酒樓).
+    ("小館", "中菜"), ("菜館", "中菜"), ("飯店", "中菜"),
+    ("酒家", "中菜"), ("酒樓", "中菜"), ("私房菜", "中菜"),
     # 港式大排檔
     ("大排檔", "港式大排檔"), ("大牌檔", "港式大排檔"), ("茶檔", "港式大排檔"),
     # 港式燒味
@@ -91,9 +97,12 @@ KEYWORD_RULES: list[tuple[str, str]] = [
     # 火鍋
     ("火鍋", "火鍋"), ("hot pot", "火鍋"), ("打邊爐", "火鍋"),
     ("雞煲", "火鍋"), ("麻辣鍋", "火鍋"), ("shabu", "火鍋"),
-    # 點心
-    ("點心", "點心"), ("dim sum", "點心"), ("酒樓", "點心"),
-    ("飲茶", "點心"), ("燒賣", "點心"), ("蝦餃", "點心"),
+    # 點心 — 酒樓 is NOT a 點心 trigger (it's just a Chinese banquet hall
+    # like 洪記海鮮酒樓 → 海鮮+中菜). 點心 must come from 點心/dim sum/
+    # 飲茶/茶樓/dumpling house.
+    ("點心", "點心"), ("dim sum", "點心"),
+    ("飲茶", "點心"), ("茶樓", "點心"), ("dumpling house", "點心"),
+    ("燒賣", "點心"), ("蝦餃", "點心"),
     # 壽司／刺身 (specific beats generic)
     ("壽司", "壽司／刺身"), ("sushi", "壽司／刺身"), ("刺身", "壽司／刺身"),
     ("sashimi", "壽司／刺身"), ("居酒屋", "壽司／刺身"), ("izakaya", "壽司／刺身"),
@@ -112,7 +121,7 @@ KEYWORD_RULES: list[tuple[str, str]] = [
     ("泡菜", "韓式"), ("部隊鍋", "韓式"),
     # 泰越星馬
     ("泰式", "泰越星馬"), ("泰國", "泰越星馬"), ("泰", "泰越星馬"), ("thai", "泰越星馬"),
-    ("越南", "泰越星馬"), ("viet", "泰越星馬"), ("pho", "泰越星馬"),
+    ("越南", "泰越星馬"), ("viet", "泰越星馬"),
     ("冬蔭", "泰越星馬"), ("星馬", "泰越星馬"), ("新加坡", "泰越星馬"),
     ("南洋", "泰越星馬"), ("海南雞", "泰越星馬"),
     # 西餐
@@ -122,9 +131,6 @@ KEYWORD_RULES: list[tuple[str, str]] = [
     ("意大利", "西餐"), ("pizza", "西餐"), ("薄餅", "西餐"),
     # 法式
     ("法國", "法式"), ("french", "法式"),
-    # 中菜 (generic)
-    ("小館", "中菜"), ("菜館", "中菜"), ("飯店", "中菜"),
-    ("酒家", "中菜"), ("私房菜", "中菜"),
     # 中式地方菜 (specific beats generic 中菜)
     ("川菜", "中式地方菜"), ("四川", "中式地方菜"), ("湘菜", "中式地方菜"),
     ("上海菜", "中式地方菜"), ("京菜", "中式地方菜"), ("北京", "中式地方菜"),
@@ -150,9 +156,14 @@ KEYWORD_RULES: list[tuple[str, str]] = [
     ("雪糕", "甜品／烘焙"), ("ice cream", "甜品／烘焙"), ("gelato", "甜品／烘焙"),
     ("蛋糕", "甜品／烘焙"), ("烘焙", "甜品／烘焙"), ("餅店", "甜品／烘焙"),
     ("餅家", "甜品／烘焙"), ("麵包", "甜品／烘焙"), ("bakery", "甜品／烘焙"),
-    # 印度尼泊爾
-    ("印度", "印度尼泊爾"), ("indian", "印度尼泊爾"), ("咖喱", "印度尼泊爾"),
-    ("curry", "印度尼泊爾"), ("尼泊爾", "印度尼泊爾"), ("nepal", "印度尼泊爾"),
+    # 印度尼泊爾 — explicit only. Bare 咖喱/curry is too ambiguous
+    # (e.g. "OMG緊張咖哩麵" is just a 咖哩 noodle shop, not Indian/Nepali).
+    # Require 印度/indian, 尼泊爾/nepal/nepali, masala, or the
+    # compound "curry house"/"咖喱屋"/"印度餐廳".
+    ("印度", "印度尼泊爾"), ("indian", "印度尼泊爾"),
+    ("尼泊爾", "印度尼泊爾"), ("nepal", "印度尼泊爾"), ("nepali", "印度尼泊爾"),
+    ("masala", "印度尼泊爾"),
+    ("curry house", "印度尼泊爾"), ("咖喱屋", "印度尼泊爾"), ("印度餐廳", "印度尼泊爾"),
     # 台灣
     ("台式", "台灣"), ("taiwan", "台灣"), ("滷肉", "台灣"), ("鹹酥雞", "台灣"),
 ]
@@ -160,6 +171,52 @@ KEYWORD_RULES: list[tuple[str, str]] = [
 # Sort rules longest-keyword first so the most specific wins when a name has
 # multiple matches (e.g. "日式拉麵" → "拉麵／烏冬" beats "日式").
 KEYWORD_RULES_SORTED = sorted(KEYWORD_RULES, key=lambda kv: (-len(kv[0]), kv[0]))
+
+# English-only keywords that must match on a word boundary in name_en
+# (so "cafeteria" doesn't become 咖啡, "embark" doesn't become 酒吧).
+# These are checked separately in _classify (pass 2) and merged with the
+# substring hits. 咖啡 en-keywords are listed here; zh-keywords ("咖啡"/
+# "珈琲"/"啡室"/"啡") are still substring-matched in KEYWORD_RULES.
+EN_WORD_BOUNDARY_RULES: list[tuple[str, str]] = [
+    ("cafe", "咖啡"),
+    ("café", "咖啡"),
+    ("coffee", "咖啡"),
+    ("espresso", "咖啡"),
+    ("roastery", "咖啡"),
+    ("coffeehouse", "咖啡"),
+    # Real coffee brands / types — keep them on word boundary so "bistro"
+    # or random en names don't false-positive.
+    ("arabica", "咖啡"),       # %ARABICA
+    ("starbucks", "咖啡"),
+    ("barista", "咖啡"),       # Barista Jam / Barista Coffee
+    ("roaster", "咖啡"),       # "the roaster" / "Mountain Roaster"
+    ("latte", "咖啡"),
+    ("brew", "咖啡"),          # "Tap Brew", "Slow Brew"
+    ("brewery", "咖啡"),       # not really coffee but rare
+    ("bar", "酒吧"),
+    ("pub", "酒吧"),
+    ("lounge", "酒吧"),
+    ("taproom", "酒吧"),
+    ("whisky", "酒吧"),
+    ("beer", "酒吧"),          # "Beer Garden"
+    # 泰越星馬 — word-boundary so "pho" doesn't trigger on "syphon"/
+    # "phooey". Specific compound en keys already substring-matched:
+    # thai / viet / vietnamese.
+    ("pho", "泰越星馬"),
+]
+EN_WORD_BOUNDARY_RULES_SORTED = sorted(
+    EN_WORD_BOUNDARY_RULES, key=lambda kv: (-len(kv[0]), kv[0])
+)
+
+# Categories that are concrete enough to "drown out" 咖啡 / 酒吧.
+# If a name hits any of these plus 咖啡 / 酒吧, we strip the 咖啡 / 酒吧
+# (unless the zh name itself contains a coffee/bar sentinel).
+DOMINANT_CATEGORIES: set[str] = {
+    "茶餐廳", "泰越星馬", "中菜", "中式地方菜", "西餐", "日式", "韓式",
+    "點心", "海鮮", "粉麵", "台灣", "印度尼泊爾", "港式燒味",
+    "粥品", "港式大排檔", "串燒燒烤", "素食", "甜品／烘焙",
+    "壽司／刺身", "拉麵／烏冬", "日式燒肉", "法式", "火鍋",
+}
 
 # Generic / ambiguous terms that we will SKIP even if a category keyword
 # happens to appear. e.g. "素" alone is too generic, "齋" alone is too generic.
@@ -249,16 +306,46 @@ def _is_ambiguous(name_zh: str, name_en: str) -> bool:
 
 
 def _classify(name_zh: str, name_en: str) -> list[str]:
-    """Return up to 2 category names (zh) ordered by specificity."""
-    combined = f"{_strip_punct(name_zh)} {_norm_name(name_en)}".lower()
-    if not combined.strip():
+    """Return up to 2 category names (zh) ordered by specificity.
+
+    Two passes:
+      1. Substring match over `name_zh + " " + name_en` (lowercased) for all
+         keyword rules — zh keywords (咖啡/咖喱/酒樓/... ) are CJK substrings
+         which never accidentally appear mid-word.
+      2. Word-boundary match on `name_en` alone for english keywords that
+         easily false-positive as substrings (e.g. "cafe" inside "cafeteria",
+         "bar" inside "embark", "coffee" inside "coffeehouse" is fine, but
+         we want to be strict).
+      Hits from pass 1 and pass 2 are merged.
+
+    After collecting hits, a "dominance" pass strips 咖啡 / 酒吧 if the
+    name also matches any 壓倒性類別 (a more concrete cuisine than coffee or
+    bar) — unless the name itself contains a coffee/bar sentinel on the
+    zh side, in which case we keep both (e.g. "Beyond Coffee & Bar / 度"
+    legitimately is 咖啡+酒吧).
+    """
+    zh_norm = _strip_punct(name_zh).strip()
+    en_norm = _norm_name(name_en)
+    combined = f"{zh_norm} {en_norm}".lower().strip()
+    if not combined:
         return []
+
     hits: list[tuple[int, str, str]] = []  # (kw_len, kw, category)
+
+    # Pass 1: substring match over combined (works for zh & english keywords)
     for kw, cat in KEYWORD_RULES_SORTED:
         if kw.lower() in combined:
             hits.append((len(kw), kw, cat))
+
+    # Pass 2: word-boundary match on en side for english coffee-keywords
+    # (so "cafeteria" does not become 咖啡).
+    for kw, cat in EN_WORD_BOUNDARY_RULES_SORTED:
+        if _en_word_boundary_hit(kw, en_norm):
+            hits.append((len(kw), kw, cat))
+
     if not hits:
         return []
+
     # Sort: longest keyword first, then earliest occurrence in combined as
     # tiebreaker (gives stable, sensible order).
     hits.sort(key=lambda h: (-h[0], combined.find(h[1].lower())))
@@ -266,9 +353,48 @@ def _classify(name_zh: str, name_en: str) -> list[str]:
     for _, _, cat in hits:
         if cat and cat not in cats:
             cats.append(cat)
-        if len(cats) >= 2:
-            break
-    return cats
+
+    # Dominance pass — strip 咖啡 / 酒吧 when a more specific cuisine hits,
+    # UNLESS the zh name itself contains a sentinel word that means
+    # "yes this is genuinely a coffee shop / bar".
+    dominance = {c for c in cats if c in DOMINANT_CATEGORIES}
+    if dominance:
+        if "咖啡" in cats and not _zh_has_coffee_sentinel(zh_norm):
+            cats.remove("咖啡")
+        if "酒吧" in cats and not _zh_has_bar_sentinel(zh_norm):
+            cats.remove("酒吧")
+
+    # Re-cap at 2 after stripping.
+    return cats[:2]
+
+
+def _en_word_boundary_hit(kw: str, en_norm: str) -> bool:
+    """True iff kw appears in en_norm as a whole word (case-insensitive).
+
+    Whole-word = not adjacent to [a-z0-9] (CJK chars don't count as adjacent,
+    so "Café Locomotive" still hits "cafe").
+    """
+    if not en_norm:
+        return False
+    en_l = en_norm.lower()
+    kw_l = kw.lower()
+    n = len(kw_l)
+    for i in range(0, len(en_l) - n + 1):
+        if en_l[i:i + n] != kw_l:
+            continue
+        left_ok = (i == 0) or (not en_l[i - 1].isalnum())
+        right_ok = (i + n == len(en_l)) or (not en_l[i + n].isalnum())
+        if left_ok and right_ok:
+            return True
+    return False
+
+
+def _zh_has_coffee_sentinel(zh_norm: str) -> bool:
+    return any(s in zh_norm for s in ("咖啡", "珈琲", "啡室", "啡"))
+
+
+def _zh_has_bar_sentinel(zh_norm: str) -> bool:
+    return any(s in zh_norm for s in ("酒吧", "酒窖", "啤酒"))
 
 
 # ---------------------------------------------------------------------------
