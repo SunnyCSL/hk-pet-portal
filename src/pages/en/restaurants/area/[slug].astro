@@ -21,6 +21,39 @@ import coords from '../../../../data/restaurant-coords.json';
 import areas from '../../../../data/area-centres.json';
 import areaSlugs from '../../../../data/area-slugs.json';
 import areaNames from '../../../../data/area-names.json';
+import restaurantTypes from '../../../../data/restaurant-types.json';
+
+// feat/restaurant-types: zh category → en display name. Mirrors the table in
+// /tmp/cuisine_rules.md. Records absent from restaurantTypes have no inferred
+// cuisine and so no chip is rendered for them.
+const CUISINE_EN_MAP: Record<string, string> = {
+  '咖啡': 'Coffee',
+  '酒吧': 'Bar',
+  '茶飲': 'Bubble tea',
+  '茶餐廳': 'Cha chaan teng',
+  '港式大排檔': 'Dai pai dong',
+  '港式燒味': 'Cantonese roast',
+  '火鍋': 'Hot pot',
+  '點心': 'Dim sum',
+  '壽司／刺身': 'Sushi & sashimi',
+  '拉麵／烏冬': 'Ramen & udon',
+  '日式': 'Japanese',
+  '日式燒肉': 'Yakiniku',
+  '韓式': 'Korean',
+  '泰越星馬': 'Thai / Viet / SEA',
+  '西餐': 'Western',
+  '法式': 'French',
+  '中菜': 'Chinese',
+  '中式地方菜': 'Regional Chinese',
+  '粉麵': 'Noodles',
+  '粥品': 'Congee',
+  '海鮮': 'Seafood',
+  '串燒燒烤': 'Skewers & BBQ',
+  '素食': 'Vegetarian',
+  '甜品／烘焙': 'Dessert & bakery',
+  '印度尼泊爾': 'Indian & Nepali',
+  '台灣': 'Taiwanese',
+};
 
 // English display name for each Chinese area-centre key. Sourced from
 // src/data/area-names.json (single source of truth shared with the /en search
@@ -436,6 +469,17 @@ function walkingMinutes(d: number): number | null {
                     <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
                       {r.name}
                     </h3>
+                    {(() => {
+                      const t = restaurantTypes[String(r.id)];
+                      if (!t || !t.types || t.types.length === 0) return null;
+                      const labels = t.types.map((z: string) => CUISINE_EN_MAP[z] || z).join(' / ');
+                      const tip = t.source === 'osm' ? 'Source: OpenStreetMap' : 'Inferred from the shop name';
+                      return (
+                        <p class="text-[10px] mt-0.5 truncate flex items-center gap-1">
+                          <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title={tip}>{labels}</span>
+                        </p>
+                      );
+                    })()}
                     <p class="text-xs text-gray-500 mt-0.5 truncate">
                       <span class="text-gray-300">📍</span> {r.district}
                       <span class="mx-1.5 text-gray-200">·</span>
@@ -512,6 +556,8 @@ function walkingMinutes(d: number): number | null {
 
   <!-- Island rows: full list (sorted: precise first, then area-prec) -->
   <script type="application/json" id="nearby-island" set:html={JSON.stringify({ rows: islandRows })} />
+  <!-- feat/restaurant-types: cuisine types map for JS-rendered "show all" cards. -->
+  <script type="application/json" id="restaurant-types" set:html={JSON.stringify(restaurantTypes)} />
 
   <script is:inline>
   // ---- Area map ----
@@ -584,6 +630,33 @@ function walkingMinutes(d: number): number | null {
       raw = JSON.parse(document.getElementById('nearby-island').textContent || '{}').rows || [];
     } catch (e) { raw = []; }
 
+    // feat/restaurant-types: id → {types:[zh,...]} map + EN display lookup.
+    var RESTAURANT_TYPES_ZH = {};
+    try {
+      var rawRt = JSON.parse(document.getElementById('restaurant-types').textContent || '{}') || {};
+      Object.keys(rawRt).forEach(function (k) { RESTAURANT_TYPES_ZH[k] = rawRt[k]; });
+    } catch (e) { RESTAURANT_TYPES_ZH = {}; }
+    var CUISINE_EN_MAP = {
+      '咖啡': 'Coffee', '酒吧': 'Bar', '茶飲': 'Bubble tea',
+      '茶餐廳': 'Cha chaan teng', '港式大排檔': 'Dai pai dong',
+      '港式燒味': 'Cantonese roast', '火鍋': 'Hot pot', '點心': 'Dim sum',
+      '壽司／刺身': 'Sushi & sashimi', '拉麵／烏冬': 'Ramen & udon',
+      '日式': 'Japanese', '日式燒肉': 'Yakiniku', '韓式': 'Korean',
+      '泰越星馬': 'Thai / Viet / SEA', '西餐': 'Western', '法式': 'French',
+      '中菜': 'Chinese', '中式地方菜': 'Regional Chinese', '粉麵': 'Noodles',
+      '粥品': 'Congee', '海鮮': 'Seafood', '串燒燒烤': 'Skewers & BBQ',
+      '素食': 'Vegetarian', '甜品／烘焙': 'Dessert & bakery',
+      '印度尼泊爾': 'Indian & Nepali', '台灣': 'Taiwanese'
+    };
+    function cuisineChipHtmlEn(id) {
+      var t = RESTAURANT_TYPES_ZH[String(id)];
+      if (!t || !t.types || t.types.length === 0) return '';
+      var labels = t.types.map(function (z) { return CUISINE_EN_MAP[z] || z; }).join(' / ');
+      return '<p class="text-[10px] mt-0.5 truncate flex items-center gap-1">'
+        + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="Inferred from the shop name">'
+        + escapeHtml(labels) + '</span></p>';
+    }
+
     function escapeHtml(s) {
       return String(s == null ? '' : s)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -629,6 +702,7 @@ function walkingMinutes(d: number): number | null {
           + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
           + '<div class="min-w-0 flex-1">'
           + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(name) + '</h3>'
+          + cuisineChipHtmlEn(id)
           + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
           + '<span class="text-gray-300">📍</span> ' + escapeHtml(distName)
           + '<span class="mx-1.5 text-gray-200">·</span>'

@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import restaurants from '../../data/restaurants.json';
 import coords from '../../data/restaurant-coords.json';
+import restaurantTypes from '../../data/restaurant-types.json';
 
 export async function getStaticPaths() {
   return restaurants.map((r: { id: number }) => ({
@@ -143,6 +144,24 @@ const restLng = restCoords?.lng || 114.1694;
         🔗 食環署官方名單 ↗
       </a>
     </div>
+
+    {/* feat/restaurant-types: cuisine line. Label + tooltip both reflect the
+        actual source.  OSM-sourced records show "資料來源：OpenStreetMap"
+        (truthful advertising — OSM cuisine tag, not name inference).
+        Name-inferred records keep the old "由店名推斷，或有誤" tooltip. */}
+
+    {(() => {
+      const t = restaurantTypes[String(restaurant.id)];
+      if (!t || !t.types || t.types.length === 0) return null;
+      const isOsm = t.source === 'osm';
+      const label = isOsm ? '類型（資料來源：OpenStreetMap）' : '類型（由店名推斷）';
+      const tip = isOsm ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤';
+      return (
+        <p class="text-xs text-gray-500 mb-6" title={tip}>
+          <span class="font-medium text-gray-700">{label}</span>：{t.types.join(' / ')}
+        </p>
+      );
+    })()}
 
     <!-- Related restaurants -->
     {related.length > 0 && (

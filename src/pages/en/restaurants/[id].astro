@@ -2,6 +2,21 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import restaurants from '../../../data/restaurants.json';
 import coords from '../../../data/restaurant-coords.json';
+import restaurantTypes from '../../../data/restaurant-types.json';
+
+// feat/restaurant-types: zh category → en display name (mirrors /tmp/cuisine_rules.md).
+const CUISINE_EN_MAP: Record<string, string> = {
+  '咖啡': 'Coffee', '酒吧': 'Bar', '茶飲': 'Bubble tea',
+  '茶餐廳': 'Cha chaan teng', '港式大排檔': 'Dai pai dong',
+  '港式燒味': 'Cantonese roast', '火鍋': 'Hot pot', '點心': 'Dim sum',
+  '壽司／刺身': 'Sushi & sashimi', '拉麵／烏冬': 'Ramen & udon',
+  '日式': 'Japanese', '日式燒肉': 'Yakiniku', '韓式': 'Korean',
+  '泰越星馬': 'Thai / Viet / SEA', '西餐': 'Western', '法式': 'French',
+  '中菜': 'Chinese', '中式地方菜': 'Regional Chinese', '粉麵': 'Noodles',
+  '粥品': 'Congee', '海鮮': 'Seafood', '串燒燒烤': 'Skewers & BBQ',
+  '素食': 'Vegetarian', '甜品／烘焙': 'Dessert & bakery',
+  '印度尼泊爾': 'Indian & Nepali', '台灣': 'Taiwanese'
+};
 
 export async function getStaticPaths() {
   return restaurants.map((r: { id: number }) => ({
@@ -145,6 +160,21 @@ const restLng = restCoords?.lng || 114.1694;
         🔗 FEHD official list ↗
       </a>
     </div>
+
+    {/* feat/restaurant-types: cuisine line, label + tooltip reflect actual source. */}
+    {(() => {
+      const t = restaurantTypes[String(restaurant.id)];
+      if (!t || !t.types || t.types.length === 0) return null;
+      const isOsm = t.source === 'osm';
+      const label = isOsm ? 'Type (source: OpenStreetMap)' : 'Type (inferred from name)';
+      const tip = isOsm ? 'Source: OpenStreetMap' : 'Inferred from the shop name';
+      const labels = t.types.map((z: string) => CUISINE_EN_MAP[z] || z).join(' / ');
+      return (
+        <p class="text-xs text-gray-500 mb-6" title={tip}>
+          <span class="font-medium text-gray-700">{label}</span>: {labels}
+        </p>
+      );
+    })()}
 
     <!-- Related restaurants -->
     {related.length > 0 && (

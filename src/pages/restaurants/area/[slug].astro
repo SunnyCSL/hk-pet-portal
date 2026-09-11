@@ -28,6 +28,7 @@ import restaurants from '../../../data/restaurants.json';
 import coords from '../../../data/restaurant-coords.json';
 import areas from '../../../data/area-centres.json';
 import areaSlugs from '../../../data/area-slugs.json';
+import restaurantTypes from '../../../data/restaurant-types.json';
 
 // Sub-area names + alias groups — same list as /restaurants so candidate-set
 // logic matches exactly. Mirrors the search page's "address hit OR alias hit"
@@ -429,6 +430,15 @@ function walkingMinutes(d: number): number | null {
                     <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
                       {r.name}
                     </h3>
+                    {(() => {
+                      const t = restaurantTypes[String(r.id)];
+                      if (!t || !t.types || t.types.length === 0) return null;
+                      return (
+                        <p class="text-[10px] mt-0.5 truncate flex items-center gap-1">
+                          <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title={t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤'}>{t.types.join(' / ')}</span>
+                        </p>
+                      );
+                    })()}
                     <p class="text-xs text-gray-500 mt-0.5 truncate">
                       <span class="text-gray-300">📍</span> {r.district}
                       <span class="mx-1.5 text-gray-200">·</span>
@@ -505,6 +515,8 @@ function walkingMinutes(d: number): number | null {
 
   <!-- Island rows: full list (sorted: precise first, then area-prec) -->
   <script type="application/json" id="nearby-island" set:html={JSON.stringify({ rows: islandRows })} />
+  <!-- feat/restaurant-types: cuisine types map for JS-rendered "show all" cards. -->
+  <script type="application/json" id="restaurant-types" set:html={JSON.stringify(restaurantTypes)} />
 
   <script is:inline>
   // ---- Area map: render centre + nearby markers from the SSR list ----
@@ -579,6 +591,21 @@ function walkingMinutes(d: number): number | null {
       raw = JSON.parse(document.getElementById('nearby-island').textContent || '{}').rows || [];
     } catch (e) { raw = []; }
 
+    // feat/restaurant-types: id (string) → {types:[zh,...]} map for chips.
+    var RESTAURANT_TYPES_ZH = {};
+    try {
+      var rawRt = JSON.parse(document.getElementById('restaurant-types').textContent || '{}') || {};
+      Object.keys(rawRt).forEach(function (k) { RESTAURANT_TYPES_ZH[k] = rawRt[k]; });
+    } catch (e) { RESTAURANT_TYPES_ZH = {}; }
+    function cuisineChipHtmlZh(id) {
+      var t = RESTAURANT_TYPES_ZH[String(id)];
+      if (!t || !t.types || t.types.length === 0) return '';
+      var tip = t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤';
+      return '<p class="text-[10px] mt-0.5 truncate flex items-center gap-1">'
+        + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="' + escapeHtml(tip) + '">'
+        + escapeHtml(t.types.join(' / ')) + '</span></p>';
+    }
+
     function escapeHtml(s) {
       return String(s == null ? '' : s)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -624,6 +651,7 @@ function walkingMinutes(d: number): number | null {
           + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
           + '<div class="min-w-0 flex-1">'
           + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(name) + '</h3>'
+          + cuisineChipHtmlZh(id)
           + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
           + '<span class="text-gray-300">📍</span> ' + escapeHtml(distName)
           + '<span class="mx-1.5 text-gray-200">·</span>'

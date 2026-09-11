@@ -6,6 +6,7 @@ import areaCentres from '../data/area-centres.json';
 import areaSlugs from '../data/area-slugs.json';
 import areaNames from '../data/area-names.json';
 import restaurantCoords from '../data/restaurant-coords.json';
+import restaurantTypes from '../data/restaurant-types.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
@@ -238,6 +239,17 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
                 {r.name_zh || r.name_en || `${r.district}狗友善餐廳`}
               </h3>
+              {/* feat/restaurant-types: chip with source-aware tooltip. */}
+              {(() => {
+                const t = restaurantTypes[String(r.id)];
+                if (!t || !t.types || t.types.length === 0) return null;
+                const tip = t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤';
+                return (
+                  <p class="text-[10px] mt-0.5 truncate flex items-center gap-1">
+                    <span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title={tip}>{t.types.join(' / ')}</span>
+                  </p>
+                );
+              })()}
               <p class="text-xs text-gray-500 mt-0.5 truncate">
                 <span class="inline-flex items-center gap-1">
                   <span class="text-gray-300">📍</span> <span class="sub-area-label" data-addr={r.address} data-name={r.name_zh||''}>{r.district}</span>
@@ -286,6 +298,10 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
        by client JS so users typing English area names (or abbreviations like
        tst/tko/cwb) on the zh page still trigger area-mode search. -->
   <script type="application/json" id="area-names-en" set:html={JSON.stringify(AREA_NAME_EN_REVERSE)} />
+  <!-- feat/restaurant-types: id → {types:[zh,...]} map (only records with
+       at least one inferred cuisine). Read by client JS so JS-rendered cards
+       (pagination island) show the same chip as SSR cards. -->
+  <script type="application/json" id="restaurant-types" set:html={JSON.stringify(restaurantTypes)} />
 
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with the SSR
@@ -416,6 +432,15 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     Object.keys(rawAn).forEach(function (en) { AREA_NAME_EN_REVERSE[en.toLowerCase()] = rawAn[en]; });
   } catch (e) { AREA_NAME_EN_REVERSE = {}; }
   var AREA_NAME_EN_SORTED = Object.keys(AREA_NAME_EN_REVERSE).sort(function (a, b) { return b.length - a.length; });
+
+  // feat/restaurant-types: id (string) → {types:[zh,...]} map. Records with no
+  // inferred cuisine are absent from the map. Used to render a small gray chip
+  // under the restaurant name on JS-generated cards.
+  var RESTAURANT_TYPES_ZH = {};
+  try {
+    var rawRt = JSON.parse(document.getElementById('restaurant-types').textContent || '{}') || {};
+    Object.keys(rawRt).forEach(function (k) { RESTAURANT_TYPES_ZH[k] = rawRt[k]; });
+  } catch (e) { RESTAURANT_TYPES_ZH = {}; }
 
   // ---- Tokenizer ----
   // Split on spaces/punctuation, lowercased. Inserts a boundary at CJK↔alnum
@@ -686,6 +711,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
       + '<div class="min-w-0 flex-1">'
       + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(nameZh) + '</h3>'
+      + cuisineChipHtmlZh(e.id)
       + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
       + '<span class="inline-flex items-center gap-1">'
       + '<span class="text-gray-300">📍</span> '
@@ -697,6 +723,17 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '<span class="text-gray-300 group-hover:text-brand transition-colors"><span class="text-xs">→</span></span>'
       + '</div>'
       + '</div></a>';
+  }
+  // feat/restaurant-types: small gray chip between title and address.
+  // Tooltip reflects actual source: 資料來源：OpenStreetMap / 由店名推斷，或有誤.
+  function cuisineChipHtmlZh(id) {
+    var t = RESTAURANT_TYPES_ZH[String(id)];
+    if (!t || !t.types || t.types.length === 0) return '';
+    var tip = t.source === 'osm' ? '資料來源：OpenStreetMap' : '由店名推斷，或有誤';
+    return '<p class="text-[10px] mt-0.5 truncate flex items-center gap-1">'
+      + '<span class="inline-flex items-center bg-gray-50 text-gray-500 px-2 py-0.5 rounded-full font-medium whitespace-nowrap" title="' + escapeHtml(tip) + '">'
+      + escapeHtml(t.types.join(' / '))
+      + '</span></p>';
   }
 
   // Group-header labels (zh). Bucket key 0/1/2/3/4.

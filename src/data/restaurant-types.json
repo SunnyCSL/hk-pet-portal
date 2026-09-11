@@ -1,0 +1,2316 @@
+{
+  "1": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "10": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "100": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "105": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "109": {
+    "source": "name-infer",
+    "types": [
+      "點心"
+    ]
+  },
+  "111": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "114": {
+    "source": "name-infer",
+    "types": [
+      "粥品"
+    ]
+  },
+  "116": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "117": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "122": {
+    "source": "name-infer",
+    "types": [
+      "韓式"
+    ]
+  },
+  "124": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "130": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "131": {
+    "opening_hours": "Mo-Su 11:30-21:30",
+    "source": "osm",
+    "types": [
+      "茶飲"
+    ],
+    "website": "https://www.abouteahk.com/"
+  },
+  "132": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "133": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "135": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "137": {
+    "source": "name-infer",
+    "types": [
+      "日式"
+    ]
+  },
+  "139": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "143": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "145": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "147": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "150": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "151": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "161": {
+    "source": "name-infer",
+    "types": [
+      "拉麵／烏冬",
+      "泰越星馬"
+    ]
+  },
+  "164": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "169": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "170": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "171": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "172": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "173": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "174": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "175": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "176": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "177": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "178": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "179": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "18": {
+    "source": "name-infer",
+    "types": [
+      "港式大排檔"
+    ]
+  },
+  "180": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "181": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "182": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "183": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "184": {
+    "opening_hours": "Mo-Su 11:00-22:00",
+    "source": "osm",
+    "types": [
+      "中式地方菜"
+    ]
+  },
+  "185": {
+    "opening_hours": "Mo-Su 11:00-22:00",
+    "source": "osm",
+    "types": [
+      "中式地方菜"
+    ]
+  },
+  "186": {
+    "opening_hours": "Mo-Su 11:00-22:00",
+    "source": "osm",
+    "types": [
+      "中式地方菜"
+    ]
+  },
+  "187": {
+    "opening_hours": "Mo-Su 11:00-22:00",
+    "source": "osm",
+    "types": [
+      "中式地方菜"
+    ]
+  },
+  "188": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "189": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "19": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "194": {
+    "source": "name-infer",
+    "types": [
+      "咖啡",
+      "酒吧"
+    ]
+  },
+  "197": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "200": {
+    "source": "name-infer",
+    "types": [
+      "咖啡",
+      "酒吧"
+    ]
+  },
+  "203": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "205": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "206": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "207": {
+    "opening_hours": "Mo-Su 10:00-18:30",
+    "source": "osm",
+    "types": [
+      "咖啡"
+    ],
+    "website": "https://www.bonestudio.store/"
+  },
+  "211": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "217": {
+    "source": "name-infer",
+    "types": [
+      "印度尼泊爾"
+    ]
+  },
+  "220": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "221": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "222": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "223": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "224": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "225": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "226": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "227": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "228": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "23": {
+    "source": "osm",
+    "types": [
+      "中菜"
+    ]
+  },
+  "230": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "231": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "232": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "233": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "234": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "235": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "236": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "237": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "238": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "239": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "24": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "240": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "246": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "248": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "252": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "256": {
+    "source": "name-infer",
+    "types": [
+      "法式"
+    ]
+  },
+  "258": {
+    "source": "name-infer",
+    "types": [
+      "點心"
+    ]
+  },
+  "259": {
+    "source": "name-infer",
+    "types": [
+      "點心"
+    ]
+  },
+  "262": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "266": {
+    "source": "name-infer",
+    "types": [
+      "中式地方菜"
+    ]
+  },
+  "269": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "27": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "271": {
+    "source": "osm",
+    "types": [
+      "串燒燒烤"
+    ]
+  },
+  "272": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "273": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "274": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "276": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "28": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "283": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "284": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "286": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "288": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "298": {
+    "source": "name-infer",
+    "types": [
+      "印度尼泊爾"
+    ]
+  },
+  "302": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "303": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "312": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "318": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "319": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "32": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳",
+      "港式燒味"
+    ]
+  },
+  "331": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "332": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "333": {
+    "source": "osm",
+    "types": [
+      "西餐"
+    ]
+  },
+  "34": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "343": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "346": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "350": {
+    "source": "osm",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "351": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "352": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "353": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "355": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "36": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "368": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "37": {
+    "source": "name-infer",
+    "types": [
+      "咖啡",
+      "粉麵"
+    ]
+  },
+  "370": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "377": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "381": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "382": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "384": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "39": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "396": {
+    "source": "osm",
+    "types": [
+      "日式"
+    ]
+  },
+  "399": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "402": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "407": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "408": {
+    "source": "name-infer",
+    "types": [
+      "台灣",
+      "粉麵"
+    ]
+  },
+  "409": {
+    "source": "osm",
+    "types": [
+      "西餐"
+    ]
+  },
+  "410": {
+    "source": "osm",
+    "types": [
+      "西餐"
+    ]
+  },
+  "411": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "412": {
+    "opening_hours": "Mo-Su 07:00-22:00",
+    "source": "osm",
+    "types": [
+      "西餐"
+    ],
+    "website": "https://www.tasteofasia.com.hk/"
+  },
+  "413": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "414": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "415": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "416": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "418": {
+    "opening_hours": "0900 - 2230",
+    "source": "osm",
+    "types": [
+      "西餐"
+    ]
+  },
+  "419": {
+    "opening_hours": "Mo-Su 07:00-22:00",
+    "source": "osm",
+    "types": [
+      "西餐"
+    ],
+    "website": "https://www.tasteofasia.com.hk/"
+  },
+  "420": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "427": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "428": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "430": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "431": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "432": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "435": {
+    "source": "name-infer",
+    "types": [
+      "素食"
+    ]
+  },
+  "436": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "438": {
+    "source": "name-infer",
+    "types": [
+      "日式"
+    ]
+  },
+  "445": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "446": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "448": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "450": {
+    "source": "name-infer",
+    "types": [
+      "日式"
+    ]
+  },
+  "458": {
+    "source": "name-infer",
+    "types": [
+      "港式燒味"
+    ]
+  },
+  "460": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "461": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "462": {
+    "source": "name-infer",
+    "types": [
+      "酒吧",
+      "咖啡"
+    ]
+  },
+  "465": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "466": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "472": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "473": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "474": {
+    "source": "name-infer",
+    "types": [
+      "中式地方菜",
+      "中菜"
+    ]
+  },
+  "478": {
+    "opening_hours": "Mo-Fr 18:00-02:30; Sa 18:00-24:00; Su 18:00-02:30",
+    "source": "osm",
+    "types": [
+      "法式"
+    ],
+    "website": "https://lavache.com.hk/"
+  },
+  "480": {
+    "opening_hours": "Mo-Fr 18:00-02:30; Sa 18:00-24:00; Su 18:00-02:30",
+    "source": "osm",
+    "types": [
+      "法式"
+    ],
+    "website": "https://lavache.com.hk/"
+  },
+  "481": {
+    "opening_hours": "Mo-Fr 18:00-02:30; Sa 18:00-24:00; Su 18:00-02:30",
+    "source": "osm",
+    "types": [
+      "法式"
+    ],
+    "website": "https://lavache.com.hk/"
+  },
+  "483": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "486": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "487": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "488": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "49": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "494": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "496": {
+    "source": "name-infer",
+    "types": [
+      "海鮮"
+    ]
+  },
+  "498": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "5": {
+    "source": "name-infer",
+    "types": [
+      "咖啡",
+      "酒吧"
+    ]
+  },
+  "502": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "503": {
+    "source": "osm",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "504": {
+    "opening_hours": "Mo-Su 12:00-21:00",
+    "source": "osm",
+    "types": [
+      "法式"
+    ],
+    "website": "https://www.maison-es.com"
+  },
+  "505": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "512": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "515": {
+    "source": "name-infer",
+    "types": [
+      "台灣"
+    ]
+  },
+  "522": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "524": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "525": {
+    "source": "osm",
+    "types": [
+      "甜品／烘焙"
+    ],
+    "website": "https://www.gelatomessina.com.hk"
+  },
+  "526": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "528": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "531": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "532": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "533": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "534": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "535": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "536": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "537": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "538": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "539": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "54": {
+    "source": "name-infer",
+    "types": [
+      "中式地方菜",
+      "中菜"
+    ]
+  },
+  "540": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "541": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "542": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "543": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "551": {
+    "source": "name-infer",
+    "types": [
+      "韓式"
+    ]
+  },
+  "552": {
+    "source": "name-infer",
+    "types": [
+      "韓式"
+    ]
+  },
+  "553": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "557": {
+    "source": "name-infer",
+    "types": [
+      "串燒燒烤"
+    ]
+  },
+  "562": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "569": {
+    "source": "name-infer",
+    "types": [
+      "串燒燒烤",
+      "壽司／刺身"
+    ]
+  },
+  "57": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "572": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "573": {
+    "source": "osm",
+    "types": [
+      "中菜"
+    ]
+  },
+  "579": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "58": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "583": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "586": {
+    "source": "osm",
+    "types": [
+      "中菜"
+    ]
+  },
+  "600": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "607": {
+    "source": "osm",
+    "types": [
+      "中菜"
+    ]
+  },
+  "611": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "613": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "617": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "618": {
+    "source": "name-infer",
+    "types": [
+      "中式地方菜"
+    ]
+  },
+  "62": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "624": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "625": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "626": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "627": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "628": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "629": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "630": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "631": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "632": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "633": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "635": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "636": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "637": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "638": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "639": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "640": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "641": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "642": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "643": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "647": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "656": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "661": {
+    "source": "name-infer",
+    "types": [
+      "拉麵／烏冬"
+    ]
+  },
+  "662": {
+    "source": "name-infer",
+    "types": [
+      "拉麵／烏冬"
+    ]
+  },
+  "663": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "666": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "67": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "673": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "675": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "678": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "679": {
+    "source": "osm",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "689": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "69": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "692": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "694": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "695": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "696": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "697": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "699": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "7": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "70": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "700": {
+    "opening_hours": "Mo-Th 08:00-20:00; Fr-Su,PH 08:00-21:00",
+    "source": "osm",
+    "types": [
+      "咖啡"
+    ],
+    "website": "https://www.sensoryzero.com/"
+  },
+  "701": {
+    "opening_hours": "Mo-Th 08:00-20:00; Fr-Su,PH 08:00-21:00",
+    "source": "osm",
+    "types": [
+      "咖啡"
+    ],
+    "website": "https://www.sensoryzero.com/"
+  },
+  "702": {
+    "opening_hours": "Mo-Th 08:00-20:00; Fr-Su,PH 08:00-21:00",
+    "source": "osm",
+    "types": [
+      "咖啡"
+    ],
+    "website": "https://www.sensoryzero.com/"
+  },
+  "703": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "705": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "706": {
+    "source": "name-infer",
+    "types": [
+      "日式"
+    ]
+  },
+  "710": {
+    "source": "name-infer",
+    "types": [
+      "海鮮",
+      "中菜"
+    ]
+  },
+  "723": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "724": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "725": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "729": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "732": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "733": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "734": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "735": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "736": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "737": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "738": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "739": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "744": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "745": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "749": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "751": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "752": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "753": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "754": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "756": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "761": {
+    "source": "osm",
+    "types": [
+      "日式"
+    ]
+  },
+  "762": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "763": {
+    "source": "name-infer",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "766": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "767": {
+    "source": "osm",
+    "types": [
+      "甜品／烘焙"
+    ]
+  },
+  "774": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "775": {
+    "source": "name-infer",
+    "types": [
+      "西餐",
+      "泰越星馬"
+    ]
+  },
+  "776": {
+    "source": "name-infer",
+    "types": [
+      "西餐",
+      "泰越星馬"
+    ]
+  },
+  "777": {
+    "source": "name-infer",
+    "types": [
+      "西餐",
+      "泰越星馬"
+    ]
+  },
+  "778": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "78": {
+    "source": "osm",
+    "types": [
+      "串燒燒烤"
+    ]
+  },
+  "780": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "781": {
+    "source": "name-infer",
+    "types": [
+      "西餐",
+      "泰越星馬"
+    ]
+  },
+  "782": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "783": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "784": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "786": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "787": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "797": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "803": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "805": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "81": {
+    "source": "osm",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "810": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "813": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "814": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "816": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "818": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "821": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "823": {
+    "source": "osm",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "825": {
+    "source": "osm",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "826": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "83": {
+    "source": "name-infer",
+    "types": [
+      "港式燒味"
+    ]
+  },
+  "833": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "84": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳",
+      "粥品"
+    ]
+  },
+  "843": {
+    "source": "name-infer",
+    "types": [
+      "印度尼泊爾"
+    ]
+  },
+  "844": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "847": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "849": {
+    "source": "name-infer",
+    "types": [
+      "日式"
+    ]
+  },
+  "853": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "854": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "86": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "87": {
+    "source": "name-infer",
+    "types": [
+      "港式大排檔"
+    ]
+  },
+  "874": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "875": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "878": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "88": {
+    "source": "osm",
+    "types": [
+      "中菜"
+    ]
+  },
+  "882": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "883": {
+    "source": "name-infer",
+    "types": [
+      "韓式"
+    ]
+  },
+  "884": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "888": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "89": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "894": {
+    "source": "name-infer",
+    "types": [
+      "粉麵"
+    ]
+  },
+  "895": {
+    "source": "name-infer",
+    "types": [
+      "海鮮"
+    ]
+  },
+  "897": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "90": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "900": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "901": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "902": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "903": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "904": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "905": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "906": {
+    "source": "osm",
+    "types": [
+      "法式"
+    ]
+  },
+  "908": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "911": {
+    "source": "osm",
+    "types": [
+      "西餐"
+    ]
+  },
+  "913": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "915": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "918": {
+    "opening_hours": "Mo-Fr 08:00-18:00",
+    "source": "osm",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "921": {
+    "source": "name-infer",
+    "types": [
+      "泰越星馬"
+    ]
+  },
+  "922": {
+    "source": "name-infer",
+    "types": [
+      "壽司／刺身"
+    ]
+  },
+  "925": {
+    "source": "name-infer",
+    "types": [
+      "串燒燒烤"
+    ]
+  },
+  "926": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "928": {
+    "source": "name-infer",
+    "types": [
+      "拉麵／烏冬"
+    ]
+  },
+  "929": {
+    "source": "name-infer",
+    "types": [
+      "串燒燒烤",
+      "壽司／刺身"
+    ]
+  },
+  "930": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "933": {
+    "source": "name-infer",
+    "types": [
+      "咖啡",
+      "素食"
+    ]
+  },
+  "935": {
+    "source": "name-infer",
+    "types": [
+      "中式地方菜",
+      "粉麵"
+    ]
+  },
+  "936": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "937": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "940": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "952": {
+    "source": "name-infer",
+    "types": [
+      "中菜"
+    ]
+  },
+  "961": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "962": {
+    "source": "name-infer",
+    "types": [
+      "酒吧"
+    ]
+  },
+  "963": {
+    "source": "osm",
+    "types": [
+      "中菜"
+    ]
+  },
+  "964": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "965": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "967": {
+    "source": "name-infer",
+    "types": [
+      "西餐"
+    ]
+  },
+  "97": {
+    "source": "osm",
+    "types": [
+      "甜品／烘焙"
+    ],
+    "website": "https://sweetdd.com.hk/"
+  },
+  "970": {
+    "source": "name-infer",
+    "types": [
+      "茶餐廳"
+    ]
+  },
+  "98": {
+    "source": "name-infer",
+    "types": [
+      "中式地方菜"
+    ]
+  }
+}
