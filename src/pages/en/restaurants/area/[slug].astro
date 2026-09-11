@@ -258,17 +258,25 @@ function formatDistance(d: number): string {
 }
 
 // ---- Stats ----
-const within2km = precise.filter(x => x.distance <= DEFAULT_RADIUS).length;
+// All four radius cards use the SAME definition: every record whose centre
+// falls inside the radius, including `prec='area'` (which only carries the
+// area-centre coord). Mixing definitions across cards (e.g. 2 km = union,
+// 500 m = precise-only) made the smaller numbers look misleadingly low.
+//
+// The candidate set is still the same union (radius + name/address hit), so a
+// long-tail area like Clear Water Bay still gets a non-zero count when
+// applicable.
 const totalNearby = sortedAll.length;
-const within500 = precise.filter(x => x.distance <= 500).length;
-const within1km = precise.filter(x => x.distance <= 1000).length;
+const within500 = sortedAll.filter(x => x.distance <= 500).length;
+const within1km = sortedAll.filter(x => x.distance <= 1000).length;
+const within2km = sortedAll.filter(x => x.distance <= DEFAULT_RADIUS).length;
 const stats = {
   total: totalNearby,
   radiusLabel: 'Within 2 km',
   within500,
   within1km,
   within2km,
-  totalArea: precise.length,
+  totalArea: sortedAll.length,
 };
 
 // noindex if fewer than 3 restaurants — same threshold as the zh page.
@@ -454,10 +462,27 @@ function walkingMinutes(d: number): number | null {
     <section class="mb-5" aria-label={`Restaurants near ${areaNameEn}`}>
       <div class="flex items-baseline justify-between mb-3">
         <h2 class="text-lg md:text-xl font-bold text-near-black">Restaurants near {areaNameEn} (Nearest first)</h2>
-        <span class="text-xs text-gray-500" id="nearby-count">{nearestList.length} venues</span>
+        <span class="text-xs text-gray-500" id="nearby-count">{nearestList.length > 0 ? `${nearestList.length} venues` : 'No venues yet'}</span>
       </div>
 
       <div id="nearby-list" class="flex flex-col gap-2">
+        {nearestList.length === 0 && (
+          <div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-6 text-center">
+            <p class="text-sm text-gray-600 mb-3">
+              No FEHD-licensed dog-friendly restaurants in this area yet. Try one of the nearby neighbourhoods:
+            </p>
+            <div class="flex flex-wrap justify-center gap-2">
+              {neighbours.map((n) => (
+                <a
+                  href={`/en/restaurants/area/${n.slug}`}
+                  class="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs text-near-black hover:border-brand/40 hover:text-brand transition-colors no-underline"
+                >
+                  <span aria-hidden="true">📍</span> {n.name_en}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
         {nearestList.map((r, idx) => {
           const mins = walkingMinutes(r.distance);
           const isAreaPrec = r.prec === 'area';
