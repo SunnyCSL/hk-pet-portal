@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import restaurants from '../../data/restaurants.json';
 import stats from '../../data/restaurant-stats.json';
 import areaCentres from '../../data/area-centres.json';
+import areaSlugs from '../../data/area-slugs.json';
 import restaurantCoords from '../../data/restaurant-coords.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
@@ -271,6 +272,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         <span class="text-xs text-gray-500" id="area-header-meta">—</span>
       </div>
       <div class="flex gap-1.5 flex-wrap" id="area-radius-chips">
+        <a href="#" onclick="setRadius(-1); return false;"
+          class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"
+          data-radius="-1">Whole area (default)</a>
         <a href="#" onclick="setRadius(500); return false;"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="500">500 m</a>
@@ -284,6 +288,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="0">All</a>
       </div>
+      <p class="text-xs text-gray-400 mt-1 leading-relaxed" id="area-radius-legend">Whole area = address hits within the area or within 1 km; radius chips = strict distance only</p>
+      <a href="#" id="area-page-link" class="hidden text-xs text-brand hover:underline mt-0.5">View this area page →</a>
     </div>
 
     <!-- Results list — first 50 are server-rendered for SEO; rest are JS-rendered into this same wrapper -->
@@ -344,6 +350,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
 
   <!-- Area centre table — mirrors zh -->
   <script type="application/json" id="area-centres" set:html={JSON.stringify(areaCentres)} />
+  <!-- fix/radius-chips-honest: zh-name → english-slug map for area-page links. -->
+  <script type="application/json" id="area-slugs" set:html={JSON.stringify(areaSlugs)} />
 
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with SSR).
@@ -542,6 +550,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   try { AREA_CENTRES = JSON.parse(document.getElementById('area-centres').textContent || '{}') || {}; } catch (e) { AREA_CENTRES = {}; }
   // Sort keys by length DESC so longest match wins (e.g. '西九龍' before '九龍').
   var AREA_KEYS_SORTED = Object.keys(AREA_CENTRES).sort(function (a, b) { return b.length - a.length; });
+  // fix/radius-chips-honest: zh-name → english-slug map for area-page links.
+  var AREA_SLUGS = {};
+  try { AREA_SLUGS = JSON.parse(document.getElementById('area-slugs').textContent || '{}') || {}; } catch (e) { AREA_SLUGS = {}; }
 
   // ---- Tokenizer ----
   // Split on spaces/punctuation, lowercased. Inserts a boundary at CJK↔alnum
@@ -626,35 +637,55 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         distById[ef.id] = distOfEntry(ef);
       }
     } else {
-      // Pure area query: union of token-matched (against the FULL query tokens,
-      // which is just the area-key substring) + records within current radius.
-      for (var mi = 0; mi < INDEX.length; mi++) {
-        var em = INDEX[mi];
-        if (!matchDistrict(districtActive, em)) continue;
-        if (tokens.length > 0 && !matchKey(em.key, tokens)) continue;
-        byId[em.id] = true;
-        distById[em.id] = distOfEntry(em);
-      }
-      if (radius > 0) {
+      // Pure area query (e.g. "尖沙咀"). fix/radius-chips-honest: the "Whole
+      // area" chip (radius === -1) preserves the legacy union behaviour — every
+      // token-matched record ∪ every record within 1 km of the area centre,
+      // i.e. the previous default semantics and counts. The 500 m / 1 km /
+      // 2 km chips are STRICT: address hits outside the radius are dropped.
+      // radius === 0 (All) keeps every record as before.
+      var radiusChip = radius;
+      if (radiusChip === -1) {
+        // Whole area — name hits ∪ within 1 km (current default behaviour).
+        for (var mi = 0; mi < INDEX.length; mi++) {
+          var em = INDEX[mi];
+          if (!matchDistrict(districtActive, em)) continue;
+          if (tokens.length > 0 && !matchKey(em.key, tokens)) continue;
+          byId[em.id] = true;
+          distById[em.id] = distOfEntry(em);
+        }
+        var unionRadius = 1000;
         for (var ki = 0; ki < INDEX.length; ki++) {
           var e2 = INDEX[ki];
           if (byId[e2.id]) continue;
           if (!matchDistrict(districtActive, e2)) continue;
           if (e2.lat == null || e2.lng == null) continue;
           var d2 = haversine(clat, clng, e2.lat, e2.lng);
-          if (d2 <= radius) {
+          if (d2 <= unionRadius) {
             byId[e2.id] = true;
             distById[e2.id] = d2;
           }
         }
-      } else {
+      } else if (radiusChip === 0) {
         // "All" radius: include every record (even no-coord).
         for (var ni = 0; ni < INDEX.length; ni++) {
           var en = INDEX[ni];
-          if (byId[en.id]) continue;
           if (!matchDistrict(districtActive, en)) continue;
           byId[en.id] = true;
           distById[en.id] = null;
+        }
+      } else {
+        // Strict radius chip (500 / 1000 / 2000): only records whose real
+        // Haversine distance to the area centre is ≤ radius. Name hits beyond
+        // the radius are excluded — that's the whole point of the chip.
+        for (var si = 0; si < INDEX.length; si++) {
+          var es = INDEX[si];
+          if (!matchDistrict(districtActive, es)) continue;
+          if (es.lat == null || es.lng == null) continue;
+          var ds = haversine(clat, clng, es.lat, es.lng);
+          if (ds <= radiusChip) {
+            byId[es.id] = true;
+            distById[es.id] = ds;
+          }
         }
       }
     }
@@ -788,7 +819,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   }
 
   // ---- Pagination / state ----
-  var state = { page: 1, radius: 1000 };
+  // fix/radius-chips-honest: state.radius === -1 means "Whole area" (legacy
+  // union semantics). 500/1000/2000 are STRICT distance filters. 0 = All.
+  var state = { page: 1, radius: -1 };
 
   function currentMatches() {
     var q = document.getElementById('search-input').value || '';
@@ -801,6 +834,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var labelEl = document.getElementById('area-header-label');
     var metaEl = document.getElementById('area-header-meta');
     var chipsEl = document.getElementById('area-radius-chips');
+    var legendEl = document.getElementById('area-radius-legend');
+    var linkEl = document.getElementById('area-page-link');
     if (!header) return;
     if (!areaName) { header.classList.add('hidden'); return; }
     header.classList.remove('hidden');
@@ -808,7 +843,18 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var displayName = (AREA_NAME_EN && AREA_NAME_EN[areaName]) || areaName;
     labelEl.textContent = displayName;
     metaEl.textContent = total + ' venues (nearest first)';
+    // Show radius chips + legend only when filterTokens are empty (pure area query).
     if (chipsEl) chipsEl.style.display = showChips ? '' : 'none';
+    if (legendEl) legendEl.style.display = showChips ? '' : 'none';
+    // Area-page link: pure area query only. href = /en/restaurants/area/<slug>
+    if (linkEl) {
+      if (showChips && AREA_SLUGS && AREA_SLUGS[areaName]) {
+        linkEl.href = '/en/restaurants/area/' + AREA_SLUGS[areaName];
+        linkEl.classList.remove('hidden');
+      } else {
+        linkEl.classList.add('hidden');
+      }
+    }
     var chips = header.querySelectorAll('.radius-chip');
     for (var i = 0; i < chips.length; i++) {
       var c = chips[i];
@@ -822,6 +868,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   }
 
   function radiusLabelEn(r) {
+    if (r === -1) return 'Whole area';
     if (!r || r === 0) return 'All';
     if (r === 500) return '500 m';
     if (r === 1000) return '1 km';
@@ -985,7 +1032,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
 
   function resetFilter() {
     document.getElementById('search-input').value = '';
-    state.radius = 1000;
+    // fix/radius-chips-honest: default radius chip is "Whole area" (-1).
+    state.radius = -1;
     setDistrict('');
   }
 
