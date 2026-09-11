@@ -20,96 +20,14 @@ import restaurants from '../../../../data/restaurants.json';
 import coords from '../../../../data/restaurant-coords.json';
 import areas from '../../../../data/area-centres.json';
 import areaSlugs from '../../../../data/area-slugs.json';
+import areaNames from '../../../../data/area-names.json';
 
-// English display name for each Chinese area-centre key. Mirrors AREA_NAME_EN
-// in src/pages/en/restaurants.astro (the /en search page). Fallback is the
-// raw CJK key when no mapping exists — same approach as the search page.
-const AREA_NAME_EN: Record<string, string> = {
-  '奧運': 'Olympic',
-  '旺角': 'Mong Kok',
-  '旺角東': 'Mong Kok East',
-  '太子': 'Prince Edward',
-  '大角咀': 'Tai Kok Tsui',
-  '西九龍': 'West Kowloon',
-  '圓方': 'Elements',
-  '尖沙咀': 'Tsim Sha Tsui',
-  '尖東': 'Tsim Sha Tsui East',
-  '佐敦': 'Jordan',
-  '油麻地': 'Yau Ma Tei',
-  '中環': 'Central',
-  '上環': 'Sheung Wan',
-  '西營盤': 'Sai Ying Pun',
-  '堅尼地城': 'Kennedy Town',
-  '石塘咀': 'Shek Tong Tsui',
-  '半山': 'Mid-Levels',
-  '山頂': 'The Peak',
-  '金鐘': 'Admiralty',
-  '銅鑼灣': 'Causeway Bay',
-  '跑馬地': 'Happy Valley',
-  '大坑': 'Tai Hang',
-  '天后': 'Tin Hau',
-  '北角': 'North Point',
-  '鰂魚涌': 'Quarry Bay',
-  '太古': 'Taikoo',
-  '西灣河': 'Sai Wan Ho',
-  '筲箕灣': 'Shau Kei Wan',
-  '柴灣': 'Chai Wan',
-  '香港仔': 'Aberdeen',
-  '黃竹坑': 'Wong Chuk Hang',
-  '海洋公園': 'Ocean Park',
-  '淺水灣': 'Repulse Bay',
-  '赤柱': 'Stanley',
-  '薄扶林': 'Pok Fu Lam',
-  '數碼港': 'Cyberport',
-  '鴨脷洲': 'Ap Lei Chau',
-  '長沙灣': 'Cheung Sha Wan',
-  '荔枝角': 'Lai Chi Kok',
-  '美孚': 'Mei Foo',
-  '土瓜灣': 'To Kwa Wan',
-  '紅磡': 'Hung Hom',
-  '何文田': 'Ho Man Tin',
-  '啟德': 'Kai Tak',
-  '九龍灣': 'Kowloon Bay',
-  '觀塘': 'Kwun Tong',
-  '牛頭角': 'Ngau Tau Kok',
-  '藍田': 'Lam Tin',
-  '油塘': 'Yau Tong',
-  '深井': 'Sham Tseng',
-  '馬灣': 'Ma Wan',
-  '荃灣': 'Tsuen Wan',
-  '屯門': 'Tuen Mun',
-  '黃金海岸': 'Gold Coast',
-  '元朗': 'Yuen Long',
-  '天水圍': 'Tin Shui Wai',
-  '錦田': 'Kam Tin',
-  '上水': 'Sheung Shui',
-  '粉嶺': 'Fanling',
-  '大埔': 'Tai Po',
-  '沙田': 'Sha Tin',
-  '大圍': 'Tai Wai',
-  '火炭': 'Fo Tan',
-  '西貢': 'Sai Kung',
-  '將軍澳': 'Tseung Kwan O',
-  '坑口': 'Hang Hau',
-  '寶琳': 'Po Lam',
-  '調景嶺': 'Tiu Keng Leng',
-  '康城': 'LOHAS Park',
-  '清水灣': 'Clear Water Bay',
-  '葵涌': 'Kwai Chung',
-  '葵芳': 'Kwai Fong',
-  '青衣': 'Tsing Yi',
-  '東涌': 'Tung Chung',
-  '愉景灣': 'Discovery Bay',
-  '迪士尼': 'Hong Kong Disneyland',
-  '機場': 'Airport',
-  '大澳': 'Tai O',
-  '長洲': 'Cheung Chau',
-  '南丫島': 'Lamma Island',
-  '坪洲': 'Peng Chau',
-  '馬鞍山': 'Ma On Shan',
-  '科學園': 'Science Park',
-  '白石角': 'Pak Shek Kok',
-};
+// English display name for each Chinese area-centre key. Sourced from
+// src/data/area-names.json (single source of truth shared with the /en search
+// page). Fallback to the raw CJK key when no mapping exists.
+const AREA_NAME_EN: Record<string, string> = Object.fromEntries(
+  Object.entries(areaNames as Record<string, { en: string }>).map(([zh, v]) => [zh, v.en])
+);
 
 // Sub-area names + alias groups — same list as /restaurants (zh) and the EN
 // search page. We add English-name keys to ALIAS_GROUPS so e.g. "Olympic"
@@ -266,13 +184,16 @@ function formatDistance(d: number): string {
 // The candidate set is still the same union (radius + name/address hit), so a
 // long-tail area like Clear Water Bay still gets a non-zero count when
 // applicable.
+//
+// Card #1 ("Whole area") uses the union total (radius ∪ name/address hit),
+// NOT a strict 2 km count — that's what cards 2/3/4 (strict distance) measure.
+// The union preserves legacy default behaviour and a long-tail-friendly count.
 const totalNearby = sortedAll.length;
 const within500 = sortedAll.filter(x => x.distance <= 500).length;
 const within1km = sortedAll.filter(x => x.distance <= 1000).length;
 const within2km = sortedAll.filter(x => x.distance <= DEFAULT_RADIUS).length;
 const stats = {
   total: totalNearby,
-  radiusLabel: 'Within 2 km',
   within500,
   within1km,
   within2km,
@@ -345,7 +266,7 @@ const neighbours: Neighbour[] = Object.entries(areas)
 const pageTitle = `${areaNameEn} Dog-Friendly Restaurants`;
 function nearestDistanceLabel(): string {
   const firstPrecise = precise[0];
-  if (!firstPrecise) return totalNearby > 0 ? `Within ${stats.radiusLabel.replace('Within ','')}` : 'Within 2 km';
+  if (!firstPrecise) return 'within 2 km';
   const d = firstPrecise.distance;
   if (d < 50) return 'within 1-min walk';
   if (d < 1000) return `${Math.round(d)} m`;
@@ -354,7 +275,7 @@ function nearestDistanceLabel(): string {
 const nearestLabel = nearestDistanceLabel();
 const nearestClause = precise.length > 0 && precise[0].distance >= 50
   ? `closest ${nearestLabel}`
-  : 'within 2 km';
+  : 'whole area';
 const pageDesc = `${totalNearby} dog-friendly restaurants near ${areaNameEn} (Hong Kong FEHD-licensed), nearest first. ${nearestClause}. Interactive map and live official registry.`;
 const canonicalPath = `/en/restaurants/area/${slug}`;
 
@@ -427,9 +348,13 @@ function walkingMinutes(d: number): number | null {
     </header>
 
     <!-- Stats grid -->
+    <!-- Card #1 = "Whole area" (union: address hits ∪ within 1 km). Card #2/3/4
+         = strict radius from the area centre. Tooltip on Card #1 explains. -->
     <section aria-label="Area stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5">Within 2 km</div>
+        <div class="text-xs text-gray-500 mb-0.5" title="Address hits in the area or within 1 km of the area centre">
+          Whole area
+        </div>
         <div class="text-2xl font-bold text-near-black">{stats.total}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
       </div>
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">

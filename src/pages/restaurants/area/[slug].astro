@@ -184,13 +184,15 @@ function formatDistance(d: number): string {
 //
 // The candidate set is still the same union (radius + name/address hit), so a
 // long-tail area like 清水灣 still gets a non-zero count when applicable.
+//
+// Card #1 ("全區") uses the union total (radius ∪ name/address hit), NOT a
+// strict 2 km count — that's what cards 2/3/4 (strict distance) measure.
 const totalNearby = sortedAll.length;
 const within500 = sortedAll.filter(x => x.distance <= 500).length;
 const within1km = sortedAll.filter(x => x.distance <= 1000).length;
 const within2km = sortedAll.filter(x => x.distance <= DEFAULT_RADIUS).length;
 const stats = {
   total: totalNearby,
-  radiusLabel: formatDistance(DEFAULT_RADIUS),
   within500,
   within1km,
   within2km,
@@ -258,10 +260,10 @@ const neighbours: Neighbour[] = Object.entries(areas)
 // ---- SEO metadata ----
 const pageTitle = `${areaName}狗友善餐廳`;
 // Description: prefer the nearest precise record's distance; fall back to
-// "X 公里內" when the nearest is area-prec or there's nothing precise.
+// "2 公里內" when the nearest is area-prec or there's nothing precise.
 function nearestDistanceLabel(): string {
   const firstPrecise = precise[0];
-  if (!firstPrecise) return totalNearby > 0 ? `${stats.radiusLabel}範圍內` : `${formatDistance(DEFAULT_RADIUS)}範圍內`;
+  if (!firstPrecise) return '2 公里內';
   const d = firstPrecise.distance;
   if (d < 50) return '步行 1 分鐘內';
   if (d < 1000) return `${Math.round(d)} 米`;
@@ -270,7 +272,7 @@ function nearestDistanceLabel(): string {
 const nearestLabel = nearestDistanceLabel();
 const nearestClause = precise.length > 0 && precise[0].distance >= 50
   ? `最近 ${nearestLabel}`
-  : `${formatDistance(DEFAULT_RADIUS)}範圍內`;
+  : '全區';
 const pageDesc = `${areaName}附近${totalNearby}間食環署核准嘅狗友善餐廳（依距離排序），${nearestClause}。互動地圖＋即時官方名單更新。`;
 const canonicalPath = `/restaurants/area/${slug}`;
 
@@ -344,9 +346,13 @@ function walkingMinutes(d: number): number | null {
     </header>
 
     <!-- Stats grid -->
+    <!-- Card #1 = 「全區」（地址命中 ∪ 1 公里內）— 同 /restaurants 全區 chip 一致
+         Card #2/3/4 = 嚴格半徑距離。Card #1 帶 tooltip 說明計算方式。 -->
     <section aria-label="地區統計" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5">{stats.radiusLabel} 內</div>
+        <div class="text-xs text-gray-500 mb-0.5" title="區內地址命中或 1 公里內">
+          全區
+        </div>
         <div class="text-2xl font-bold text-near-black">{stats.total}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
       </div>
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">

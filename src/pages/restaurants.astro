@@ -4,6 +4,7 @@ import restaurants from '../data/restaurants.json';
 import stats from '../data/restaurant-stats.json';
 import areaCentres from '../data/area-centres.json';
 import areaSlugs from '../data/area-slugs.json';
+import areaNames from '../data/area-names.json';
 import restaurantCoords from '../data/restaurant-coords.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
@@ -95,6 +96,21 @@ function buildSearchKey(r: any): string {
   }
   return base + ' ' + merged.join(' ');
 }
+
+// fix/area-labels-en-names: build a reverse EN-name → zh-key map from
+// area-names.json. Used by the client JS so a zh-page user who types an
+// English area name (e.g. "Tai Koo" or "tst") still gets the right area.
+// Includes explicit abbreviations (tst → 尖沙咀, tko → 將軍澳, cwb → 銅鑼灣).
+const AREA_NAME_EN_REVERSE: Record<string, string> = (() => {
+  const out: Record<string, string> = {};
+  for (const [zh, v] of Object.entries(areaNames as Record<string, { en: string }>)) {
+    if (v && v.en) out[v.en.toLowerCase()] = zh;
+  }
+  out['tst'] = '尖沙咀';
+  out['tko'] = '將軍澳';
+  out['cwb'] = '銅鑼灣';
+  return out;
+})();
 
 // Coords lookup: prefer the building-level CSDI coords; fall back to null
 // if the record has no usable lat/lng (e.g. parsed from an unusual address).
@@ -266,6 +282,10 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   <!-- fix/radius-chips-honest: zh-name → english-slug map for area-page links
        (only the 84 areas with a /restaurants/area/<slug> page are linked). -->
   <script type="application/json" id="area-slugs" set:html={JSON.stringify(areaSlugs)} />
+  <!-- fix/area-labels-en-names: lowercase EN-name → zh-key reverse map. Read
+       by client JS so users typing English area names (or abbreviations like
+       tst/tko/cwb) on the zh page still trigger area-mode search. -->
+  <script type="application/json" id="area-names-en" set:html={JSON.stringify(AREA_NAME_EN_REVERSE)} />
 
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with the SSR
@@ -387,6 +407,15 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   // that have a /restaurants/area/<slug> page).
   var AREA_SLUGS = {};
   try { AREA_SLUGS = JSON.parse(document.getElementById('area-slugs').textContent || '{}') || {}; } catch (e) { AREA_SLUGS = {}; }
+  // fix/area-labels-en-names: EN-name → zh-key reverse map. Used to detect
+  // activeArea when the user types an English name (e.g. "Tai Koo" or
+  // abbreviation "tst") instead of a Chinese area key.
+  var AREA_NAME_EN_REVERSE = {};
+  try {
+    var rawAn = JSON.parse(document.getElementById('area-names-en').textContent || '{}') || {};
+    Object.keys(rawAn).forEach(function (en) { AREA_NAME_EN_REVERSE[en.toLowerCase()] = rawAn[en]; });
+  } catch (e) { AREA_NAME_EN_REVERSE = {}; }
+  var AREA_NAME_EN_SORTED = Object.keys(AREA_NAME_EN_REVERSE).sort(function (a, b) { return b.length - a.length; });
 
   // ---- Tokenizer ----
   // Split on spaces/punctuation, lowercased. Inserts a boundary at CJK↔alnum
@@ -429,13 +458,39 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   //        union); same bucketed sort; radius chips hidden.
   function runFilter(query, districtActive) {
     var tokens = tokenize(query);
-    // Detect activeArea: longest area-centre key fully contained in query.
+    // Detect activeArea: try zh-centre-key first (substring match, longest
+    // first). Then try English name + abbreviations (whole-word match, so
+    // "tai koo" hits "Tai Koo" but "taikoo" alone doesn't false-match).
     var activeArea = null;
+    var matchedEnAlias = null;
     if (query && query.trim()) {
       var qLower = query.toLowerCase().trim();
+      // 1) zh-centre-key: substring match (longest first).
       for (var ai = 0; ai < AREA_KEYS_SORTED.length; ai++) {
         var k = AREA_KEYS_SORTED[ai];
         if (k && qLower.indexOf(k) !== -1) { activeArea = k; break; }
+      }
+      // 2) EN-name / abbreviation: whole-word regex match (longest first).
+      //    For full names we skip aliases shorter than 4 chars so e.g. "tai"
+      //    alone doesn't match "Tai Koo". Abbreviations (tst/tko/cwb) are
+      //    always considered.
+      if (!activeArea && AREA_NAME_EN_SORTED && AREA_NAME_EN_SORTED.length) {
+        var ABBREVS = { tst: 1, tko: 1, cwb: 1 };
+        for (var ei = 0; ei < AREA_NAME_EN_SORTED.length; ei++) {
+          var en = AREA_NAME_EN_SORTED[ei];
+          if (!en) continue;
+          if (en.length < 4 && !ABBREVS[en]) continue;
+          var escaped = en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          var re = new RegExp('(^|[^A-Za-z0-9])' + escaped + '($|[^A-Za-z0-9])', 'i');
+          if (re.test(qLower)) {
+            var zhKey = AREA_NAME_EN_REVERSE[en];
+            if (zhKey && AREA_CENTRES[zhKey]) {
+              activeArea = zhKey;
+              matchedEnAlias = en;
+              break;
+            }
+          }
+        }
       }
     }
     if (!activeArea) {
@@ -449,10 +504,19 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       }
       return { ids: out0, areaMode: false, areaName: null, showChips: false, dist: {} };
     }
-    // Area-mode. Split query into activeArea + filterTokens (rest after removing
-    // the area-key substring once).
+    // Area-mode. Split query into activeArea + filterTokens. Remove BOTH the
+    // zh-centre-key AND the matched EN alias (if any) so e.g. query "Tai Koo
+    // cafe" produces activeArea=太古, filterTokens=["cafe"].
     var qLower2 = query.toLowerCase().trim();
     var rest = qLower2.replace(activeArea.toLowerCase(), ' ', 1);
+    if (matchedEnAlias) {
+      var escAlias = matchedEnAlias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      var aliasRe = new RegExp('(^|[^A-Za-z0-9])' + escAlias + '($|[^A-Za-z0-9])', 'i');
+      var m = rest.match(aliasRe);
+      if (m) {
+        rest = rest.slice(0, m.index) + ' ' + rest.slice(m.index + m[0].length);
+      }
+    }
     var filterTokens = tokenize(rest);
     var centre = AREA_CENTRES[activeArea];
     var clat = centre.lat, clng = centre.lng;
