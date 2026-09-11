@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import restaurants from '../data/restaurants.json';
 import stats from '../data/restaurant-stats.json';
+import areaCentres from '../data/area-centres.json';
+import restaurantCoords from '../data/restaurant-coords.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
@@ -93,17 +95,33 @@ function buildSearchKey(r: any): string {
   return base + ' ' + merged.join(' ');
 }
 
-type StaticCard = { id: number; name_zh: string; name_en: string; district: string; address: string; key: string };
-type IslandRow = [number, string, string, string, string, string];
+// Coords lookup: prefer the building-level CSDI coords; fall back to null
+// if the record has no usable lat/lng (e.g. parsed from an unusual address).
+function coordsFor(id: number | string): { lat: number; lng: number; prec: string } | null {
+  const c = restaurantCoords[String(id)] as { lat?: number; lng?: number; prec?: string } | undefined;
+  if (!c || c.lat == null || c.lng == null) return null;
+  return { lat: c.lat, lng: c.lng, prec: c.prec || 'building' };
+}
 
-const firstPage: StaticCard[] = (restaurants as any[]).slice(0, STATIC_COUNT).map((r: any) => ({
-  id: r.id,
-  name_zh: r.name_zh || r.name_en || '',
-  name_en: r.name_en || r.name_zh || '',
-  district: r.district || '',
-  address: r.address || '',
-  key: buildSearchKey(r),
-}));
+type StaticCard = { id: number; name_zh: string; name_en: string; district: string; address: string; key: string; lat: number | null; lng: number | null; prec: string | null };
+// Island row: [id, name_zh, name_en, district, address, extras, lat, lng, prec]
+// lat/lng are null when no usable coords; prec is 'building'|'street'|'area'|null.
+type IslandRow = [number, string, string, string, string, string, number | null, number | null, string | null];
+
+const firstPage: StaticCard[] = (restaurants as any[]).slice(0, STATIC_COUNT).map((r: any) => {
+  const c = coordsFor(r.id);
+  return {
+    id: r.id,
+    name_zh: r.name_zh || r.name_en || '',
+    name_en: r.name_en || r.name_zh || '',
+    district: r.district || '',
+    address: r.address || '',
+    key: buildSearchKey(r),
+    lat: c ? c.lat : null,
+    lng: c ? c.lng : null,
+    prec: c ? c.prec : null,
+  };
+});
 
 const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r: any) => {
   const base = [r.name_zh || '', r.name_en || '', r.address || '', r.district || ''].join(' ').toLowerCase();
@@ -113,7 +131,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   for (const x of extras) {
     if (!seen.has(x)) { seen.add(x); merged.push(x); }
   }
-  return [r.id, r.name_zh || r.name_en || '', r.name_en || r.name_zh || '', r.district || '', r.address || '', merged.join(' ')];
+  const c = coordsFor(r.id);
+  return [r.id, r.name_zh || r.name_en || '', r.name_en || r.name_zh || '', r.district || '', r.address || '', merged.join(' '), c ? c.lat : null, c ? c.lng : null, c ? c.prec : null];
 });
 ---
 
@@ -153,6 +172,31 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       </div>
     </div>
 
+    <!-- Area-aware "nearest first" header. Hidden by default; client toggles
+         visibility when the query matches an area-centre key. -->
+    <div id="area-header" class="hidden mb-3 flex flex-col gap-2">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="inline-flex items-center gap-1.5 bg-brand/10 text-brand px-2.5 py-1 rounded-full text-xs font-medium">
+          <span>📍</span><span id="area-header-label">—</span>
+        </span>
+        <span class="text-xs text-gray-500" id="area-header-meta">—</span>
+      </div>
+      <div class="flex gap-1.5 flex-wrap" id="area-radius-chips">
+        <a href="#" onclick="setRadius(500); return false;"
+          class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
+          data-radius="500">500 米</a>
+        <a href="#" onclick="setRadius(1000); return false;"
+          class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
+          data-radius="1000">1 公里</a>
+        <a href="#" onclick="setRadius(2000); return false;"
+          class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
+          data-radius="2000">2 公里</a>
+        <a href="#" onclick="setRadius(0); return false;"
+          class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
+          data-radius="0">全部</a>
+      </div>
+    </div>
+
     <!-- Results list — first 50 are server-rendered for SEO; rest are JS-rendered into this same wrapper -->
     <div id="restaurant-list" class="flex flex-col gap-2">
       {firstPage.map((r: StaticCard) => (
@@ -162,6 +206,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           data-district={r.district}
           data-addr={(r.address || '').toLowerCase()}
           data-key={r.key}
+          data-lat={r.lat ?? ''}
+          data-lng={r.lng ?? ''}
+          data-prec={r.prec ?? ''}
         >
           <div class="flex items-center gap-3">
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
@@ -177,8 +224,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
                 <span class="text-gray-300">{r.address}</span>
               </p>
             </div>
-            <div class="text-gray-300 group-hover:text-brand transition-colors shrink-0">
-              <span class="text-xs">→</span>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="dist-badge text-xs text-gray-400 hidden whitespace-nowrap"></span>
+              <span class="text-gray-300 group-hover:text-brand transition-colors">
+                <span class="text-xs">→</span>
+              </span>
             </div>
           </div>
         </a>
@@ -204,6 +254,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
        [id, name_zh, name_en, district, address, extras] so the index stays small
        while making address + sub-area labels searchable from the client. -->
   <script type="application/json" id="rest-data" set:html={JSON.stringify({ restaurants: restData })} />
+  <!-- Area-centre lookup table (84 entries) — read by client JS to detect
+       when the query targets a place name and to compute Haversine distance. -->
+  <script type="application/json" id="area-centres" set:html={JSON.stringify(areaCentres)} />
 
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with the SSR
@@ -274,10 +327,23 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       // Fallback (shouldn't trigger in practice): rebuild from DOM values.
       sKey = buildKey(sName, '', sAddr, sDist, '');
     }
-    INDEX.push({ id: sid, key: sKey, district: sDist, name_zh: sName, name_en: '', address: sAddr });
+    var sLat = el.getAttribute('data-lat');
+    var sLng = el.getAttribute('data-lng');
+    var sPrec = el.getAttribute('data-prec');
+    INDEX.push({
+      id: sid,
+      key: sKey,
+      district: sDist,
+      name_zh: sName,
+      name_en: '',
+      address: sAddr,
+      lat: sLat === '' || sLat == null ? null : Number(sLat),
+      lng: sLng === '' || sLng == null ? null : Number(sLng),
+      prec: sPrec === '' || sPrec == null ? null : sPrec,
+    });
   }
 
-  // 2) Read island entries (51..906). Format: [id, name_zh, name_en, district, address, extras].
+  // 2) Read island entries (51..906). Format: [id, name_zh, name_en, district, address, extras, lat, lng, prec].
   var rawIsland = [];
   try { rawIsland = JSON.parse(document.getElementById('rest-data').textContent || '{}').restaurants || []; } catch (e) { rawIsland = []; }
   // Dedupe: same id should not appear twice (static first 50 + island 51..906
@@ -289,8 +355,24 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var id = r[0], nzh = r[1] || '', nen = r[2] || '', dist = r[3] || '', addr = r[4] || '', extras = r[5] || '';
     if (seenIds[id]) continue;
     seenIds[id] = true;
-    INDEX.push({ id: id, key: buildKey(nzh, nen, addr, dist, extras), district: dist, name_zh: nzh, name_en: nen, address: addr });
+    INDEX.push({
+      id: id,
+      key: buildKey(nzh, nen, addr, dist, extras),
+      district: dist,
+      name_zh: nzh,
+      name_en: nen,
+      address: addr,
+      lat: r[6] == null ? null : Number(r[6]),
+      lng: r[7] == null ? null : Number(r[7]),
+      prec: r[8] || null,
+    });
   }
+
+  // 3) Area-centre table (84 places). Read once on script init.
+  var AREA_CENTRES = {};
+  try { AREA_CENTRES = JSON.parse(document.getElementById('area-centres').textContent || '{}') || {}; } catch (e) { AREA_CENTRES = {}; }
+  // Sort keys by length DESC so longest match wins (e.g. '西九龍' before '九龍').
+  var AREA_KEYS_SORTED = Object.keys(AREA_CENTRES).sort(function (a, b) { return b.length - a.length; });
 
   // ---- Tokenizer ----
   // Split on spaces/punctuation, lowercased. Inserts a boundary at CJK↔alnum
@@ -320,26 +402,176 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     return entry.district === districtActive;
   }
 
+  // New algorithm (area-nearby-search v2):
+  //   1. tokenize(query) and detect activeArea (longest area-centre key found in
+  //      the lowercased query).
+  //   2. No activeArea → legacy token-AND filter, dataset order, no chips.
+  //   3. activeArea + filterTokens empty (pure area query):
+  //        results = token-matched ∪ records within current radius of centre;
+  //        bucketed sort: precise (prec≠'area') cards first by raw dist;
+  //        area-prec cards last by raw dist; null-dist last. radius chips visible.
+  //   4. activeArea + filterTokens non-empty (e.g. "奧運 Outback"):
+  //        results = INDEX records whose key contains ALL filterTokens (no radius
+  //        union); same bucketed sort; radius chips hidden.
   function runFilter(query, districtActive) {
     var tokens = tokenize(query);
-    var out = [];
-    for (var i = 0; i < INDEX.length; i++) {
-      var e = INDEX[i];
-      if (!matchDistrict(districtActive, e)) continue;
-      if (tokens.length > 0 && !matchKey(e.key, tokens)) continue;
-      out.push(e.id);
+    // Detect activeArea: longest area-centre key fully contained in query.
+    var activeArea = null;
+    if (query && query.trim()) {
+      var qLower = query.toLowerCase().trim();
+      for (var ai = 0; ai < AREA_KEYS_SORTED.length; ai++) {
+        var k = AREA_KEYS_SORTED[ai];
+        if (k && qLower.indexOf(k) !== -1) { activeArea = k; break; }
+      }
     }
-    return out;
+    if (!activeArea) {
+      // Non-area mode — legacy behaviour: token-AND filter, dataset order.
+      var out0 = [];
+      for (var i = 0; i < INDEX.length; i++) {
+        var e0 = INDEX[i];
+        if (!matchDistrict(districtActive, e0)) continue;
+        if (tokens.length > 0 && !matchKey(e0.key, tokens)) continue;
+        out0.push(e0.id);
+      }
+      return { ids: out0, areaMode: false, areaName: null, showChips: false, dist: {} };
+    }
+    // Area-mode. Split query into activeArea + filterTokens (rest after removing
+    // the area-key substring once).
+    var qLower2 = query.toLowerCase().trim();
+    var rest = qLower2.replace(activeArea.toLowerCase(), ' ', 1);
+    var filterTokens = tokenize(rest);
+    var centre = AREA_CENTRES[activeArea];
+    var clat = centre.lat, clng = centre.lng;
+    var radius = (state.radius == null) ? 1000 : state.radius;
+    var byId = {};
+    var distById = {};
+    function distOfEntry(em) {
+      return (em.lat != null && em.lng != null) ? haversine(clat, clng, em.lat, em.lng) : null;
+    }
+    if (filterTokens.length > 0) {
+      // Pure keyword filter (no radius expansion). Still compute distance for
+      // sorting + display, and skip records with no district match.
+      for (var fi = 0; fi < INDEX.length; fi++) {
+        var ef = INDEX[fi];
+        if (!matchDistrict(districtActive, ef)) continue;
+        if (!matchKey(ef.key, filterTokens)) continue;
+        byId[ef.id] = true;
+        distById[ef.id] = distOfEntry(ef);
+      }
+    } else {
+      // Pure area query: union of token-matched (against the FULL query tokens,
+      // which is just the area-key substring) + records within current radius.
+      for (var mi = 0; mi < INDEX.length; mi++) {
+        var em = INDEX[mi];
+        if (!matchDistrict(districtActive, em)) continue;
+        if (tokens.length > 0 && !matchKey(em.key, tokens)) continue;
+        byId[em.id] = true;
+        distById[em.id] = distOfEntry(em);
+      }
+      if (radius > 0) {
+        for (var ki = 0; ki < INDEX.length; ki++) {
+          var e2 = INDEX[ki];
+          if (byId[e2.id]) continue;
+          if (!matchDistrict(districtActive, e2)) continue;
+          if (e2.lat == null || e2.lng == null) continue;
+          var d2 = haversine(clat, clng, e2.lat, e2.lng);
+          if (d2 <= radius) {
+            byId[e2.id] = true;
+            distById[e2.id] = d2;
+          }
+        }
+      } else {
+        // "全部" radius: include every record (even no-coord).
+        for (var ni = 0; ni < INDEX.length; ni++) {
+          var en = INDEX[ni];
+          if (byId[en.id]) continue;
+          if (!matchDistrict(districtActive, en)) continue;
+          byId[en.id] = true;
+          distById[en.id] = null;
+        }
+      }
+    }
+    // Sort: precise records first (asc by dist); then area-prec records last
+    // (also asc by dist). Null dist last overall. No fake-distance penalty —
+    // area-prec records visually group into the '位置約略' bucket and we want
+    // them physically separated from precise records with real numbers.
+    var entries = [];
+    for (var id in byId) {
+      var ent = null;
+      for (var lj = 0; lj < INDEX.length; lj++) { if (INDEX[lj].id === Number(id)) { ent = INDEX[lj]; break; } }
+      entries.push({ id: Number(id), dist: distById[id], prec: ent ? ent.prec : null });
+    }
+    entries.sort(function (a, b) {
+      var aArea = a.prec === 'area' ? 1 : 0;
+      var bArea = b.prec === 'area' ? 1 : 0;
+      if (aArea !== bArea) return aArea - bArea;
+      if (a.dist == null && b.dist == null) return 0;
+      if (a.dist == null) return 1;
+      if (b.dist == null) return -1;
+      return a.dist - b.dist;
+    });
+    var ids = [];
+    for (var si = 0; si < entries.length; si++) ids.push(entries[si].id);
+    return {
+      ids: ids,
+      areaMode: true,
+      areaName: activeArea,
+      showChips: filterTokens.length === 0,
+      dist: distById,
+    };
+  }
+
+  // Haversine in metres. Pure JS — no Math.asin2.
+  function haversine(lat1, lng1, lat2, lng2) {
+    var R = 6371000.0;
+    var toRad = function (x) { return x * Math.PI / 180; };
+    var dLat = toRad(lat2 - lat1);
+    var dLng = toRad(lng2 - lng1);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  // Format metres → "320 米" or "1.2 公里". Returns null when distance is null.
+  function formatDistanceZh(d) {
+    if (d == null) return null;
+    if (d < 1000) return Math.round(d) + ' 米';
+    return (d / 1000).toFixed(1) + ' 公里';
+  }
+  // Walking minutes from metres (80 m/min). Round to nearest integer, minimum 1,
+  // and only show when ≤ 1200m to avoid noisy 30-min labels.
+  function walkingMinutes(d) {
+    if (d == null || d > 1200) return null;
+    return Math.max(1, Math.round(d / 80));
   }
 
   // ---- Render helpers ----
-  function makeCardFromEntry(e) {
+  function makeCardFromEntry(e, dist) {
     var nameZh = e.name_zh || e.name_en || (e.district || '') + '狗友善餐廳';
     var sub = detectSubArea(e.address || '', e.name_zh || '');
     var subLabel = sub || e.district || '';
     var addrHtml = e.address
       ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300">' + escapeHtml(e.address) + '</span>'
       : '';
+    var distHtml = '';
+    if (dist != null) {
+      var entry = findIndexEntry(e.id);
+      // Area-prec records only carry the area-centre coordinate, not a real
+      // door address — showing "~0 米" or "920 米" would lie about the actual
+      // distance. Surface the limitation honestly: badge says "位置約略" only.
+      if (entry && entry.prec === 'area') {
+        distHtml = '<span class="dist-badge text-xs text-gray-400 whitespace-nowrap">位置約略</span>';
+      } else {
+        var dStr = formatDistanceZh(dist);
+        var mins = walkingMinutes(dist);
+        var walk = mins != null ? ' · 步行 ' + mins + ' 分鐘' : '';
+        distHtml = '<span class="dist-badge text-xs text-gray-400 whitespace-nowrap">' + escapeHtml(dStr + walk) + '</span>';
+      }
+    } else {
+      distHtml = '<span class="dist-badge text-xs text-gray-400 hidden whitespace-nowrap"></span>';
+    }
     return '<a href="/restaurants/' + e.id + '"'
       + ' class="restaurant-item group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"'
       + ' data-name="' + escapeHtml((e.name_zh || e.name_en || '').toLowerCase()) + '"'
@@ -356,8 +588,32 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '<span class="sub-area-label">' + escapeHtml(subLabel) + '</span>'
       + '</span>' + addrHtml + '</p>'
       + '</div>'
-      + '<div class="text-gray-300 group-hover:text-brand transition-colors shrink-0"><span class="text-xs">→</span></div>'
+      + '<div class="flex items-center gap-2 shrink-0">'
+      + distHtml
+      + '<span class="text-gray-300 group-hover:text-brand transition-colors"><span class="text-xs">→</span></span>'
+      + '</div>'
       + '</div></a>';
+  }
+
+  // Group-header labels (zh). Bucket key 0/1/2/3/4.
+  var GROUP_LABELS_ZH = [
+    '步行 5 分鐘內（400 米內）',
+    '步行 15 分鐘內（1.2 公里內）',
+    '車程範圍（3 公里內）',
+    '較遠',
+    '位置約略',
+  ];
+  function bucketFor(d, isAreaPrec) {
+    // 0..3: distance buckets for precise (building/street) records.
+    // 4: '位置約略' — any record with area-prec (no real door address).
+    // -1: no coords at all (very rare); such rows carry no group header on
+    // purpose — they are sparse outliers, not a meaningful user-facing bucket.
+    if (isAreaPrec) return 4;
+    if (d == null) return -1;
+    if (d <= 400) return 0;
+    if (d <= 1200) return 1;
+    if (d <= 3000) return 2;
+    return 3;
   }
 
   function findIndexEntry(id) {
@@ -368,7 +624,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   }
 
   // ---- Pagination / state ----
-  var state = { page: 1 };
+  var state = { page: 1, radius: 1000 };
 
   function currentMatches() {
     var q = document.getElementById('search-input').value || '';
@@ -376,10 +632,55 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     return runFilter(q, d);
   }
 
+  function renderAreaHeader(areaName, total, showChips) {
+    var header = document.getElementById('area-header');
+    var labelEl = document.getElementById('area-header-label');
+    var metaEl = document.getElementById('area-header-meta');
+    var chipsEl = document.getElementById('area-radius-chips');
+    if (!header) return;
+    if (!areaName) { header.classList.add('hidden'); return; }
+    header.classList.remove('hidden');
+    // Header format: "<areaName> · <count> 間（最近優先）"
+    labelEl.textContent = areaName;
+    metaEl.textContent = total + ' 間（最近優先）';
+    // Show radius chips only when filterTokens are empty (pure area query).
+    if (chipsEl) chipsEl.style.display = showChips ? '' : 'none';
+    // Highlight active chip
+    var chips = header.querySelectorAll('.radius-chip');
+    for (var i = 0; i < chips.length; i++) {
+      var c = chips[i];
+      var r = Number(c.getAttribute('data-radius'));
+      if (r === state.radius) {
+        c.className = c.className.replace(/bg-gray-50 text-gray-500 hover:bg-gray-100/g, 'bg-brand text-white');
+      } else {
+        c.className = c.className.replace(/bg-brand text-white/g, 'bg-gray-50 text-gray-500 hover:bg-gray-100');
+      }
+    }
+  }
+
+  function radiusLabel(r) {
+    if (!r || r === 0) return '全部';
+    if (r === 500) return '500 米';
+    if (r === 1000) return '1 公里';
+    if (r === 2000) return '2 公里';
+    return (r < 1000 ? r + ' 米' : (r / 1000).toFixed(1) + ' 公里');
+  }
+
+  // Group-header chip element (used when area-mode + we want bucketed sections).
+  function groupHeaderEl(label) {
+    var div = document.createElement('div');
+    div.className = 'area-group-header bg-gray-50 text-xs text-gray-500 px-3 py-1.5 rounded-full self-start mt-2 mb-0';
+    div.textContent = label;
+    div.setAttribute('data-area-group', '1');
+    return div;
+  }
+
   function rebuildPage() {
     var list = document.getElementById('restaurant-list');
     if (!list) return;
-    var ids = currentMatches();
+    var res = currentMatches();
+    var ids = res.ids;
+    var distMap = res.dist || {};
     var total = ids.length;
     var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     if (state.page > totalPages) state.page = totalPages;
@@ -390,6 +691,33 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var visibleSet = {};
     for (var vi = 0; vi < visibleIds.length; vi++) visibleSet[visibleIds[vi]] = true;
 
+    // Update distance badges on static SSR cards.
+    Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item:not([data-island-card="1"])'), function (el) {
+      var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
+      var id = idMatch ? parseInt(idMatch[1], 10) : null;
+      var badge = el.querySelector('.dist-badge');
+      var d = id != null ? distMap[id] : null;
+      if (badge) {
+        if (d != null) {
+          var entry = findIndexEntry(id);
+          // area-prec → show "位置約略" instead of a (fake) numeric distance.
+          if (entry && entry.prec === 'area') {
+            badge.textContent = '位置約略';
+            badge.classList.remove('hidden');
+          } else {
+            var dStr = formatDistanceZh(d);
+            var mins = walkingMinutes(d);
+            var walk = mins != null ? ' · 步行 ' + mins + ' 分鐘' : '';
+            badge.textContent = dStr + walk;
+            badge.classList.remove('hidden');
+          }
+        } else {
+          badge.textContent = '';
+          badge.classList.add('hidden');
+        }
+      }
+    });
+
     // Hide/show static SSR cards by id.
     Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item'), function (el) {
       var idMatch = (el.getAttribute('href') || '').match(/\/restaurants\/(\d+)/);
@@ -398,21 +726,51 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       el.style.display = visibleSet[id] ? '' : 'none';
     });
 
-    // Strip previously-injected island cards.
+    // Strip previously-injected island cards AND area group headers.
     var extras = list.querySelectorAll('[data-island-card="1"]');
     for (var xi = 0; xi < extras.length; xi++) {
       var ex = extras[xi];
       if (ex.parentNode) ex.parentNode.removeChild(ex);
     }
-    // Render any visible id that doesn't already have a static card on the page.
+    var groups = list.querySelectorAll('[data-area-group="1"]');
+    for (var gi = 0; gi < groups.length; gi++) {
+      var g = groups[gi];
+      if (g.parentNode) g.parentNode.removeChild(g);
+    }
+
+    // In area-mode the sorted order can disagree with the SSR DOM order (which
+    // is by id), so we hide ALL static SSR cards and render everything from the
+    // island. The result list then reflects the sorted `visibleIds` exactly.
+    // For non-area-mode we keep the SSR optimisation (hide/show by id).
+    if (res.areaMode) {
+      Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item:not([data-island-card="1"])'), function (el) {
+        el.style.display = 'none';
+      });
+    }
+
+    // Render visible ids (in the sorted order from runFilter).
+    var lastBucket = -2;
     for (var idi = 0; idi < visibleIds.length; idi++) {
       var id = visibleIds[idi];
-      var staticCard = list.querySelector('#restaurant-list .restaurant-item[data-key][href$="/restaurants/' + id + '"]:not([data-island-card="1"])');
+      // Insert group header when bucket changes (only in area-mode).
+      if (res.areaMode) {
+        var entry2 = findIndexEntry(id);
+        var d = distMap[id] != null ? distMap[id] : null;
+        var prec = entry2 ? entry2.prec : null;
+        var b = bucketFor(d, prec === 'area');
+        if (b !== lastBucket) {
+          if (b >= 0 && b < GROUP_LABELS_ZH.length) {
+            list.appendChild(groupHeaderEl(GROUP_LABELS_ZH[b]));
+          }
+          lastBucket = b;
+        }
+      }
+      var staticCard = res.areaMode ? null : list.querySelector('#restaurant-list .restaurant-item[data-key][href$="/restaurants/' + id + '"]:not([data-island-card="1"])');
       if (staticCard && staticCard.offsetParent !== null) continue; // already visible via SSR
       var entry = findIndexEntry(id);
       if (!entry) continue;
       var tmp = document.createElement('div');
-      tmp.innerHTML = makeCardFromEntry(entry);
+      tmp.innerHTML = makeCardFromEntry(entry, distMap[id] != null ? distMap[id] : null);
       var node = tmp.firstChild;
       if (node) {
         node.setAttribute('data-island-card', '1');
@@ -440,6 +798,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
 
     var pager = document.getElementById('pager');
     if (pager) pager.style.display = total > PAGE_SIZE ? '' : 'none';
+
+    // Area-mode header (toggle visibility + label).
+    renderAreaHeader(res.areaMode ? res.areaName : null, total, !!res.showChips);
   }
 
   function filterList() {
@@ -465,7 +826,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
 
   function resetFilter() {
     document.getElementById('search-input').value = '';
+    state.radius = 1000;
     setDistrict('');
+  }
+
+  function setRadius(r) {
+    state.radius = r;
+    state.page = 1;
+    rebuildPage();
   }
 
   // ---- Pager wiring ----
