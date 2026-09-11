@@ -403,11 +403,18 @@ def _classify(name_zh: str, name_en: str) -> list[str]:
     # a generic "eating-place" suffix (餐廳/飯店/食堂/酒樓/酒家/餐室) tells us
     # the place is a generic old-style café/eatery, not specifically a
     # coffee shop / bar / bubble-tea shop.  Strip those categories when the
-    # zh name has the suffix AND no zh coffee/bar sentinel.  This catches
-    # "皇后飯店 / Queen's Cafe" and "YMCA 餐廳 / CENTRE CAFE" without
-    # needing to tag them as anything else.  寧缺勿錯.
+    # zh name has the suffix AND no zh coffee/bar sentinel AND the en name
+    # has no coffee keyword (cafe/coffee/espresso/roastery/coffeehouse).
+    # When the en name itself declares "cafe" / "coffee" / etc. as a whole
+    # word, the strip does NOT apply — the en side overrides the generic
+    # venue suffix.  寧缺勿錯 but honour explicit en naming.
+    en_has_coffee_word = any(
+        _en_word_boundary_hit(kw, en_norm)
+        for kw in ("cafe", "café", "coffee", "espresso", "roastery", "coffeehouse")
+    )
     if _zh_has_venue_suffix(zh_norm) and not _zh_has_coffee_sentinel(zh_norm) \
-            and not _zh_has_bar_sentinel(zh_norm):
+            and not _zh_has_bar_sentinel(zh_norm) \
+            and not en_has_coffee_word:
         for c in list(cats):
             if c in SHOULD_NOT_BE_COFFEE_CATS:
                 cats.remove(c)

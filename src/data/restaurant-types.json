@@ -358,7 +358,49 @@
       "茶餐廳"
     ]
   },
+  "221": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "222": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "223": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "224": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "225": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
   "226": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "227": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "228": {
     "source": "name-infer",
     "types": [
       "咖啡"
@@ -476,6 +518,12 @@
     "source": "name-infer",
     "types": [
       "點心"
+    ]
+  },
+  "262": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
     ]
   },
   "266": {
@@ -783,31 +831,27 @@
     "website": "https://www.tasteofasia.com.hk/"
   },
   "413": {
-    "opening_hours": "0900 - 2230",
-    "source": "osm",
+    "source": "name-infer",
     "types": [
-      "西餐"
+      "咖啡"
     ]
   },
   "414": {
-    "opening_hours": "0900 - 2230",
-    "source": "osm",
+    "source": "name-infer",
     "types": [
-      "西餐"
+      "咖啡"
     ]
   },
   "415": {
-    "opening_hours": "0900 - 2230",
-    "source": "osm",
+    "source": "name-infer",
     "types": [
-      "西餐"
+      "咖啡"
     ]
   },
   "416": {
-    "opening_hours": "0900 - 2230",
-    "source": "osm",
+    "source": "name-infer",
     "types": [
-      "西餐"
+      "咖啡"
     ]
   },
   "418": {
