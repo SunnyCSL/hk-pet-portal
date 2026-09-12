@@ -13,16 +13,16 @@
   },
   "complaint_findings": [
     {
-      "title": "讓狗隻處於食物業處所的准許",
-      "url": "https://www.fehd.gov.hk/tc_chi/licensing/dog_restaurants/index.html",
-      "type": "general_info",
-      "note": "FEHD 官方頁面 — 一般政策資訊，唔係個別餐廳投訴"
+      "title": "獲准許狗隻進入的食肆名單",
+      "url": "https://www.fehd.gov.hk/tc_chi/licensing/dog_restaurants/dog_restaurants_list.html",
+      "type": "official_list",
+      "note": "FEHD 官方名單頁 — 互動地圖 + 篩選"
     },
     {
-      "title": "讓狗隻處於食物業處所的准許 - fehd.gov.hk",
-      "url": "https://www.fehd.gov.hk/tc_chi/licensing/dog_restaurants/index.html",
-      "type": "general_info",
-      "note": "同一 FEHD 頁面重複出現 — 搜尋假陽性"
+      "title": "獲准許狗隻進入的食肆名單 - fehd.gov.hk",
+      "url": "https://www.fehd.gov.hk/tc_chi/licensing/dog_restaurants/dog_restaurants_list.html",
+      "type": "official_list",
+      "note": "同一 FEHD 官方名單頁重複出現 — 搜尋假陽性"
     },
     {
       "title": "香港寵物友善餐廳完整指南 2026 | A-Pets 寵物食品專門店",
