@@ -257,7 +257,14 @@ const allLd = [...baseLdBlocks, ...extraLd];
               {isZh ? '快速連結' : 'Quick Links'}
             </h4>
             <div class="flex flex-col gap-2 text-sm text-gray-500">
-              <a href="https://www.fehd.gov.hk/tc_chi/licensing/license_general_restaurant_dog.html" target="_blank" class="hover:text-brand transition-colors no-underline">
+              <a
+                href={isZh
+                  ? 'https://www.fehd.gov.hk/tc_chi/licensing/dog_restaurants/dog_restaurants_list.html'
+                  : 'https://www.fehd.gov.hk/english/licensing/dog_restaurants/dog_restaurants_list.html'}
+                target="_blank"
+                rel="noopener"
+                class="hover:text-brand transition-colors no-underline"
+              >
                 {isZh ? '食環署官方名單 ↗' : 'FEHD Official List ↗'}
               </a>
               <a href={isZh ? '/about' : '/en/about'} class="hover:text-brand transition-colors no-underline">
