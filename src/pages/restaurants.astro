@@ -822,7 +822,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     header.classList.remove('hidden');
     // Header format: "<areaName> · <count> 間（最近優先，距離由區中心計）"
     labelEl.textContent = areaName;
-    metaEl.textContent = total + ' 間 · 最近優先（距離由「' + areaName + ' 中心」計）';
+    metaEl.textContent = total + ' 間 · 最近優先（距離由「' + areaName + '中心」計）';
     // Show radius chips + legend only when filterTokens are empty (pure area query).
     if (chipsEl) chipsEl.style.display = showChips ? '' : 'none';
     if (legendEl) legendEl.style.display = showChips ? '' : 'none';
@@ -965,11 +965,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var useSections = !!(res.areaMode && res.showChips && res.groups && state.radius === -1);
     if (res.areaMode && res.showChips) {
       if (state.radius === -1) {
-        topNotice = modeNoticeEl('清單分兩段（每段最近優先）：① ' + res.areaName + ' 區內命中 → ② 自動加入區中心 1 公里內嘅其他餐廳。所有距離由「' + res.areaName + ' 中心」計。', 'info');
+        topNotice = modeNoticeEl('清單分兩段（每段最近優先）：① ' + res.areaName + '區內命中 → ② 自動加入區中心 1 公里內嘅其他餐廳。所有距離由「' + res.areaName + '中心」計。', 'info');
       } else if (state.radius === 0) {
         topNotice = modeNoticeEl('📋 唔限範圍：列出全港 ' + total + ' 間獲准餐廳（冇按距離或地區篩選，順序係資料庫次序）', 'info');
       } else {
-        topNotice = modeNoticeEl('📏 嚴格距離：只列距 ' + res.areaName + ' 中心 ' + radiusLabel(state.radius) + ' 內嘅餐廳（區內命中但超出距離已剔除）', 'info');
+        topNotice = modeNoticeEl('📏 嚴格距離：只列距 ' + res.areaName + '中心 ' + radiusLabel(state.radius) + '內嘅餐廳（區內命中但超出距離已剔除）', 'info');
       }
     }
     if (topNotice) list.appendChild(topNotice);
@@ -984,7 +984,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           if (sec === 0) {
             list.appendChild(groupHeaderEl('📍 ' + res.areaName + ' 區內命中（' + res.hitCount + ' 間）'));
           } else {
-            list.appendChild(groupHeaderEl('🚶 自動加入：距 ' + res.areaName + ' 中心 1 公里內（' + res.nearCount + ' 間，唔一定喺' + res.areaName + '）'));
+            list.appendChild(groupHeaderEl('🚶 自動加入：區中心 1 公里內（' + res.nearCount + ' 間，唔一定喺' + res.areaName + '）'));
           }
           lastSection = sec;
         }
