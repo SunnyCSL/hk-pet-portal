@@ -58,7 +58,7 @@ const restLng = restCoords?.lng || 114.1694;
 
     <!-- Header -->
     <div class="mb-6">
-      <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight">{displayName}</h1>
+      <h1 class="text-2xl md:text-3xl font-bold text-near-black leading-tight font-display">{displayName}</h1>
       {fallbackZhName && (
         <p class="text-sm text-gray-500 mt-1">{fallbackZhName}</p>
       )}
@@ -78,7 +78,7 @@ const restLng = restCoords?.lng || 114.1694;
     <!-- Address + Interactive Map -->
     <div class="bg-white rounded-xl border border-gray-100 overflow-hidden mb-4">
       <div class="p-4 md:p-5">
-        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Address</h2>
+        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 font-eyebrow">Address</h2>
         <p class="text-sm md:text-base text-near-black">{restaurant.address}</p>
       </div>
       <!-- Leaflet Map -->
@@ -147,8 +147,8 @@ const restLng = restCoords?.lng || 114.1694;
     </script>
 
     <!-- FEHD License info -->
-    <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6">
-      <h2 class="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">License</h2>
+    <div class="bg-emerald-50 border border-amber-100 rounded-xl p-4 mb-6">
+      <h2 class="text-xs font-semibold text-emerald-800 uppercase tracking-wide mb-1">License</h2>
       <p class="text-xs text-amber-600 leading-relaxed">
         This restaurant is licensed by the Hong Kong Food and Environmental Hygiene Department (FEHD) to allow dogs on premises.<br />
         License number: <strong>{restaurant.license_no}</strong>

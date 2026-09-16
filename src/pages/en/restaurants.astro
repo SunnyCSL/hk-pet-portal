@@ -295,7 +295,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           <div class="flex items-center gap-3">
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
             <div class="min-w-0 flex-1">
-              <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">{r.name_en || r.name_zh}</h3>
+              <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">{r.name_en || r.name_zh}</h3>
               {(() => {
                 const t = restaurantTypes[String(r.id)];
                 if (!t || !t.types || t.types.length === 0) return null;
@@ -905,7 +905,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '<div class="flex items-center gap-3">'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
       + '<div class="min-w-0 flex-1">'
-      + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(nameEn) + '</h3>'
+      + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">' + escapeHtml(nameEn) + '</h3>'
       + cuisineChipHtmlEn(e.id)
       + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
       + '<span class="inline-flex items-center gap-1">'

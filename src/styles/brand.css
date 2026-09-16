@@ -1,0 +1,76 @@
+/* ============================================================
+   HK Pet Portal — 品牌字體與可讀性 v1.0（2026-09-16）
+   三套字分工（有趣・實心・多元化）：
+     · Noto Sans HK 900        → 主標／標題（實心、香港字齊）
+     · LXGW WenKai TC 700      → 副標／引文（楷體，人情味）
+     · Baloo 2 800             → 數字／英文（圓潤趣味）
+   原則：字唔可以細過 13.5px、字重唔低過 500；紫只做 accent。
+   本檔係 unlayered CSS，會蓋過 Tailwind utilities（v4 用 @layer）。
+   ============================================================ */
+
+/* ---------- 1. 基本字階（原本 9–12px 太細） ---------- */
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Noto Sans HK', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16.5px;
+  line-height: 1.7;
+  /* macOS / iOS：antialiased 會令中文字更薄，唔要 */
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: optimizeLegibility;
+}
+.text-\[9px\], .text-\[10px\], .text-\[11px\] { font-size: 13.5px; font-weight: 600; line-height: 1.5; }
+.text-xs { font-size: 14.5px; font-weight: 500; line-height: 1.6; }
+.text-sm { font-size: 15.5px; font-weight: 500; line-height: 1.65; }
+.text-base { font-size: 16.5px; }
+
+h1, h2, h3, h4 { color: var(--color-near-black); font-weight: 800; letter-spacing: -.01em; }
+h1 { font-size: clamp(30px, 7.2vw, 40px); font-weight: 900; line-height: 1.2; }
+h2 { font-size: clamp(22px, 4.8vw, 27px); font-weight: 800; line-height: 1.35; }
+h3 { font-size: 19.5px; line-height: 1.45; }
+b, strong { font-weight: 800; }
+::selection { background: var(--color-brand); color: #fff; }
+
+/* ---------- 2. 三種字體角色（多元化） ---------- */
+.font-display { font-family: 'Noto Sans HK', system-ui, sans-serif; font-weight: 900; letter-spacing: -.015em; }
+.font-hand    { font-family: 'LXGW WenKai TC', 'Noto Sans HK', serif; font-weight: 700; letter-spacing: .01em; }
+.font-num     { font-family: 'Baloo 2', 'Noto Sans HK', system-ui, sans-serif; font-weight: 800; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+.font-eyebrow { font-family: 'Baloo 2', 'Noto Sans HK', system-ui, sans-serif; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 13.5px; }
+
+/* 數字用 Baloo 2 之後，行高會浮：統一修正 */
+.font-num, .font-eyebrow { line-height: 1.25; }
+
+/* ---------- 3. 手感細節（有趣） ---------- */
+.title-underline { position: relative; display: inline-block; }
+.title-underline::after {
+  content: ''; position: absolute; left: -1%; right: -1%; bottom: -.14em; height: .24em;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'><path d='M2 8 C 60 2, 120 12, 180 6 S 280 2, 298 7' fill='none' stroke='%238B5CF6' stroke-width='4.5' stroke-linecap='round'/></svg>") no-repeat center / 100% 100%;
+  pointer-events: none;
+}
+/* 狗狗友善標籤：貼紙感（hover 微傾） */
+.badge-sticker { transition: transform 160ms cubic-bezier(.2, .8, .2, 1); }
+.badge-sticker:hover { transform: rotate(-1.8deg) translateY(-1px); }
+
+/* 卡片：柔和紫影（唔用重陰影） */
+.card-soft {
+  border: 1px solid rgba(139, 92, 246, .18);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(30, 27, 46, .05), 0 8px 22px -14px rgba(139, 92, 246, .28);
+}
+
+/* 觸控：可點元素最少 44pt（原本好多 30-40px） */
+@media (pointer: coarse) {
+  a[href], button, [role="button"], input[type="submit"] { min-height: 44px; }
+}
+
+/* 內文連結：唔靠淺灰 */
+.prose-body a, article a { color: var(--color-brand); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* 地圖彈窗（Leaflet）內文：跟品牌最低字級 */
+.leaflet-popup-content { font-family: 'Noto Sans HK', system-ui, sans-serif; font-size: 13.5px !important; line-height: 1.5; }
+.leaflet-popup-content a { color: var(--color-brand); font-weight: 700; }
+
+/* 分頁：字級同觸控都跟品牌下限 */
+#pager button, #pager a { font-size: 14.5px; font-weight: 700; min-height: 46px; padding-inline: 16px; }
+#pager span { font-size: 14.5px; color: var(--color-gray-500); }
