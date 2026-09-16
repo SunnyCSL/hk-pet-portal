@@ -171,6 +171,26 @@ def main() -> None:
     )
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
+    # machine-readable summary for the weekly cron / sync wrapper
+    report_path = Path(os.environ.get("FEHD_SYNC_REPORT", "") or
+                       Path.home() / ".hermes" / "data" / "restaurant-sync-last.json")
+    try:
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps({
+            "ran_at": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
+            "fehd_total": len(fehd),
+            "site_rows_before": len(site),
+            "site_rows_after": len(out),
+            "added": len(added), "removed": len(removed),
+            "renamed": len(renamed), "address_refreshed": len(readdr),
+            "manual_kept": len(kept_manual), "manual_dropped": len(superseded),
+            "added_list": [{"id": i, "name": n} for i, n in added],
+            "removed_list": [{"id": i, "name": n} for i, n in removed],
+        }, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(f"Report → {report_path}")
+    except OSError as e:
+        print(f"  (report 寫唔到: {e})")
+
     districts = sorted({r["district"] for r in out if r.get("district")})
     STATS.write_text(
         json.dumps(
