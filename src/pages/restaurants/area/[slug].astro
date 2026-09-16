@@ -350,23 +350,26 @@ function walkingMinutes(d: number): number | null {
          Card #2/3/4 = 嚴格半徑距離。Card #1 帶 tooltip 說明計算方式。 -->
     <section aria-label="地區統計" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5" title="區內地址命中或 1 公里內">
-          全區
+        <div class="text-xs text-gray-500 mb-0.5" title="默認口徑：區內命中 + 自動加入區中心 1 公里內（同搜尋頁『默認』一致，範圍會擴大）">
+          默認<span class="hidden md:inline">（區內＋1 公里）</span>
         </div>
         <div class="text-2xl font-bold text-near-black">{stats.total}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
       </div>
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5">500 米內</div>
+        <div class="text-xs text-gray-500 mb-0.5" title="嚴格距離：距區中心 500 米內">500 米內</div>
         <div class="text-2xl font-bold text-near-black">{stats.within500}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
       </div>
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5">1 公里內</div>
+        <div class="text-xs text-gray-500 mb-0.5" title="嚴格距離：距區中心 1 公里內">1 公里內</div>
         <div class="text-2xl font-bold text-near-black">{stats.within1km}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
       </div>
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5">2 公里內</div>
+        <div class="text-xs text-gray-500 mb-0.5" title="嚴格距離：距區中心 2 公里內">2 公里內</div>
         <div class="text-2xl font-bold text-near-black">{stats.within2km}<span class="text-sm text-gray-500 font-normal ml-1">間</span></div>
       </div>
+      <p class="col-span-2 md:col-span-4 text-xs text-gray-400 leading-relaxed">
+        📏 所有距離都由 <b>{areaName} 中心</b>計（唔係你嘅位置）。<b>默認</b>＝區內命中 ＋ 自動加入中心 1 公里內嘅其他餐廳；後面三個數字係嚴格按實際距離。
+      </p>
     </section>
 
     <!-- Mini interactive map -->

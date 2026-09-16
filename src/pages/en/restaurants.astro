@@ -253,22 +253,29 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       </div>
       <div class="flex gap-1.5 flex-wrap" id="area-radius-chips">
         <a href="#" onclick="setRadius(-1); return false;"
+          title="Default: area matches first, then auto-adds everything within 1 km of the area centre (scope expands)"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"
-          data-radius="-1">Whole area (default)</a>
+          data-radius="-1">Default (area + 1 km)</a>
         <a href="#" onclick="setRadius(500); return false;"
+          title="Strict: only venues within 500 m of the area centre"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="500">500 m</a>
         <a href="#" onclick="setRadius(1000); return false;"
+          title="Strict: only venues within 1 km of the area centre"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="1000">1 km</a>
         <a href="#" onclick="setRadius(2000); return false;"
+          title="Strict: only venues within 2 km of the area centre"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="2000">2 km</a>
         <a href="#" onclick="setRadius(0); return false;"
+          title="No scope limit: every licensed venue in Hong Kong (no distance or district filter)"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
-          data-radius="0">All</a>
+          data-radius="0">All HK</a>
       </div>
-      <p class="text-xs text-gray-400 mt-1 leading-relaxed" id="area-radius-legend">Whole area = address hits within the area or within 1 km; radius chips = strict distance only</p>
+      <p class="text-xs text-gray-400 mt-1 leading-relaxed" id="area-radius-legend">
+        📏 All distances are measured from the <b>area centre</b> (not your location). <b>Default</b> = area matches <b>+ everything within 1 km of the centre</b> (so you will see venues outside the area; a divider in the list marks where the auto-added part starts). Pick 500 m / 1 km / 2 km for strict distance only.
+      </p>
       <a href="#" id="area-page-link" class="hidden text-xs text-brand hover:underline mt-0.5">View this area page →</a>
     </div>
 
@@ -704,6 +711,13 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var radius = (state.radius == null) ? 1000 : state.radius;
     var byId = {};
     var distById = {};
+    // clarify-radius-mode: remember which rows are genuine area hits so the
+    // list can draw an explicit "below = auto-added nearby" divider.
+    var hitById = {};
+    var expansionRadius = null;
+    // default ("Whole area"/Default) mode renders two sections: area matches
+    // first, then auto-added nearby venues.
+    var hitGroupMode = false;
     function distOfEntry(em) {
       return (em.lat != null && em.lng != null) ? haversine(clat, clng, em.lat, em.lng) : null;
     }
@@ -743,10 +757,13 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           var ek = em.key || '';
           if (ek.indexOf(hitKey) !== -1 || (hitEn && ek.indexOf(hitEn) !== -1)) {
             byId[em.id] = true;
+            hitById[em.id] = true;
             distById[em.id] = distOfEntry(em);
           }
         }
         var unionRadius = 1000;
+        expansionRadius = unionRadius;
+        hitGroupMode = true;
         for (var ki = 0; ki < INDEX.length; ki++) {
           var e2 = INDEX[ki];
           if (byId[e2.id]) continue;
@@ -788,9 +805,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     for (var id in byId) {
       var ent = null;
       for (var lj = 0; lj < INDEX.length; lj++) { if (INDEX[lj].id === Number(id)) { ent = INDEX[lj]; break; } }
-      entries.push({ id: Number(id), dist: distById[id], prec: ent ? ent.prec : null });
+      var numId = Number(id);
+      entries.push({ id: numId, dist: distById[id], prec: ent ? ent.prec : null,
+                     grp: hitById[numId] ? 0 : 1 });
     }
     entries.sort(function (a, b) {
+      // clarify-radius-mode: default mode groups area matches before auto-added
+      // nearby venues; each section stays nearest-first.
+      if (hitGroupMode && a.grp !== b.grp) return a.grp - b.grp;
       var aArea = a.prec === 'area' ? 1 : 0;
       var bArea = b.prec === 'area' ? 1 : 0;
       if (aArea !== bArea) return aArea - bArea;
@@ -800,13 +822,26 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       return a.dist - b.dist;
     });
     var ids = [];
-    for (var si = 0; si < entries.length; si++) ids.push(entries[si].id);
+    var groupMap = {};
+    var hitCount = 0, nearCount = 0;
+    for (var si = 0; si < entries.length; si++) {
+      ids.push(entries[si].id);
+      if (hitGroupMode) {
+        groupMap[entries[si].id] = entries[si].grp;
+        if (entries[si].grp === 0) hitCount++; else nearCount++;
+      }
+    }
     return {
       ids: ids,
       areaMode: true,
       areaName: activeArea,
       showChips: filterTokens.length === 0,
       dist: distById,
+      hits: hitById,
+      groups: hitGroupMode ? groupMap : null,
+      hitCount: hitCount,
+      nearCount: nearCount,
+      expansionRadius: expansionRadius,
     };
   }
 
@@ -936,7 +971,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     // Header format: "<English area name> · <count> venues (nearest first)"
     var displayName = (AREA_NAME_EN && AREA_NAME_EN[areaName]) || areaName;
     labelEl.textContent = displayName;
-    metaEl.textContent = total + ' venues (nearest first)';
+    var areaLabel = areaDisplayName(areaName);
+    labelEl.textContent = areaLabel;
+    metaEl.textContent = total + ' venues · nearest first (distance from the ' + areaLabel + ' centre)';
     // Show radius chips + legend only when filterTokens are empty (pure area query).
     if (chipsEl) chipsEl.style.display = showChips ? '' : 'none';
     if (legendEl) legendEl.style.display = showChips ? '' : 'none';
@@ -975,6 +1012,29 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     div.className = 'area-group-header bg-gray-50 text-xs text-gray-500 px-3 py-1.5 rounded-full self-start mt-2 mb-0';
     div.textContent = label;
     div.setAttribute('data-area-group', '1');
+    return div;
+  }
+
+  // clarify-radius-mode: display the area in English (slug → Title Case) so the
+  // explanation text doesn't mix English copy with Chinese place names.
+  function areaDisplayName(zh) {
+    var slug = (AREA_SLUGS && AREA_SLUGS[zh]) || '';
+    if (!slug) return zh;
+    return slug.split('-').map(function (w) {
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    }).join(' ');
+  }
+
+  // clarify-radius-mode: scope notice banner. tone 'expand' = the auto-added
+  // section divider (amber), 'info' = current scope rule (grey).
+  function modeNoticeEl(label, tone) {
+    var div = document.createElement('div');
+    div.className = 'area-mode-notice text-xs leading-relaxed px-3 py-2 rounded-xl mt-2 mb-1 border '
+      + (tone === 'expand'
+        ? 'text-amber-800 bg-amber-50 border-amber-100'
+        : 'text-gray-600 bg-gray-50 border-gray-100');
+    div.setAttribute('data-area-notice', '1');
+    div.textContent = label;
     return div;
   }
 
@@ -1034,6 +1094,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       var ex = extras[xi];
       if (ex.parentNode) ex.parentNode.removeChild(ex);
     }
+    var oldNotices = list.querySelectorAll('[data-area-notice="1"]');
+    for (var oi = 0; oi < oldNotices.length; oi++) {
+      var on = oldNotices[oi];
+      if (on.parentNode) on.parentNode.removeChild(on);
+    }
     var groups = list.querySelectorAll('[data-area-group="1"]');
     for (var gi = 0; gi < groups.length; gi++) {
       var g = groups[gi];
@@ -1050,10 +1115,39 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     }
 
     // Render visible ids (in the sorted order from runFilter).
+    // clarify-radius-mode: state the current scope, and in default mode draw a
+    // divider before the first non-area-match row (where auto-expansion starts).
+    var topNotice = null;
+    var areaLabel = res.areaName ? areaDisplayName(res.areaName) : '';
+    var useSections = !!(res.areaMode && res.showChips && res.groups && state.radius === -1);
+    if (res.areaMode && res.showChips) {
+      if (state.radius === -1) {
+        topNotice = modeNoticeEl('Two sections, each nearest-first: ① matches inside ' + areaLabel + ' → ② auto-added venues within 1 km of the ' + areaLabel + ' centre. All distances are measured from the ' + areaLabel + ' centre.', 'info');
+      } else if (state.radius === 0) {
+        topNotice = modeNoticeEl('📋 No scope limit: all ' + total + ' licensed venues in Hong Kong (no distance or district filter; database order)', 'info');
+      } else {
+        topNotice = modeNoticeEl('📏 Strict distance: only venues within ' + radiusLabelEn(state.radius) + ' of the ' + areaLabel + ' centre (area matches beyond that are excluded)', 'info');
+      }
+    }
+    if (topNotice) list.appendChild(topNotice);
     var lastBucket = -2;
+    var lastSection = -1;
     for (var idi = 0; idi < visibleIds.length; idi++) {
       var id = visibleIds[idi];
-      if (res.areaMode) {
+      // Default mode: two labelled sections so it is obvious where the scope
+      // expands beyond the area itself.
+      if (useSections) {
+        var sec = res.groups[id];
+        if (sec !== lastSection) {
+          if (sec === 0) {
+            list.appendChild(groupHeaderEl('📍 Inside ' + areaLabel + ' (' + res.hitCount + ')'));
+          } else {
+            list.appendChild(groupHeaderEl('🚶 Auto-added: within 1 km of the ' + areaLabel + ' centre (' + res.nearCount + ', not necessarily inside ' + areaLabel + ')'));
+          }
+          lastSection = sec;
+        }
+      }
+      if (res.areaMode && !useSections) {
         var entry2 = findIndexEntry(id);
         var d = distMap[id] != null ? distMap[id] : null;
         var prec = entry2 ? entry2.prec : null;
@@ -1162,6 +1256,12 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var params = new URLSearchParams(window.location.search);
     var q = params.get('q');
     var d = params.get('district');
+    // clarify-radius-mode: radius may come from the URL (shareable / testable),
+    // e.g. ?q=Kennedy Town&radius=500 / 0 (all) / -1 (default).
+    var rp = params.get('radius');
+    if (rp !== null && rp !== '' && ['-1', '0', '500', '1000', '2000'].indexOf(String(rp)) !== -1) {
+      state.radius = Number(rp);
+    }
     if (q) document.getElementById('search-input').value = q;
     if (d) setDistrict(d);
     rebuildPage();

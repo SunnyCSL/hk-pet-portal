@@ -389,7 +389,7 @@ function walkingMinutes(d: number): number | null {
          = strict radius from the area centre. Tooltip on Card #1 explains. -->
     <section aria-label="Area stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
       <div class="bg-white border border-gray-100 rounded-xl p-3.5">
-        <div class="text-xs text-gray-500 mb-0.5" title="Address hits in the area or within 1 km of the area centre">
+        <div class="text-xs text-gray-500 mb-0.5" title="Default scope: area matches + everything auto-added within 1 km of the area centre (same as the search page default)">
           Whole area
         </div>
         <div class="text-2xl font-bold text-near-black">{stats.total}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
@@ -406,6 +406,9 @@ function walkingMinutes(d: number): number | null {
         <div class="text-xs text-gray-500 mb-0.5">Within 2 km (radius)</div>
         <div class="text-2xl font-bold text-near-black">{stats.within2km}<span class="text-sm text-gray-500 font-normal ml-1">venues</span></div>
       </div>
+      <p class="col-span-2 md:col-span-4 text-xs text-gray-400 leading-relaxed">
+        📏 All distances are measured from the <b>{areaNameEn} centre</b> (not your location). <b>Default</b> = area matches + everything within 1 km of the centre; the other three numbers are strict distances.
+      </p>
     </section>
 
     <!-- Mini interactive map -->

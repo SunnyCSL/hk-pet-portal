@@ -201,22 +201,29 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       </div>
       <div class="flex gap-1.5 flex-wrap" id="area-radius-chips">
         <a href="#" onclick="setRadius(-1); return false;"
+          title="默認：先列區內命中，再自動加入區中心 1 公里內嘅其他餐廳（範圍會擴大）"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"
-          data-radius="-1">全區（默認）</a>
+          data-radius="-1">默認（區內＋1 公里）</a>
         <a href="#" onclick="setRadius(500); return false;"
+          title="嚴格：只計距區中心 500 米內（唔會用區內命中搭夠）"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="500">500 米</a>
         <a href="#" onclick="setRadius(1000); return false;"
+          title="嚴格：只計距區中心 1 公里內"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="1000">1 公里</a>
         <a href="#" onclick="setRadius(2000); return false;"
+          title="嚴格：只計距區中心 2 公里內"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
           data-radius="2000">2 公里</a>
         <a href="#" onclick="setRadius(0); return false;"
+          title="唔限範圍：列出全港所有獲准餐廳（冇按距離或地區篩選）"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
-          data-radius="0">全部</a>
+          data-radius="0">全港</a>
       </div>
-      <p class="text-xs text-gray-400 mt-1 leading-relaxed" id="area-radius-legend">全區 = 區內地址命中或 1 公里內；半徑 = 嚴格只計實際距離</p>
+      <p class="text-xs text-gray-400 mt-1 leading-relaxed" id="area-radius-legend">
+        📏 所有距離都由<b>區中心</b>計（唔係你嘅位置）。<b>默認</b>＝區內命中 <b>＋ 自動加入區中心 1 公里內</b>嘅其他餐廳（所以會見到唔喺本區嘅舖，清單中間會有一條分隔線標明由邊度開始）。想只睇實際距離就揀 500 米／1 公里／2 公里。
+      </p>
       <a href="#" id="area-page-link" class="hidden text-xs text-brand hover:underline mt-0.5">查看此地區專頁 →</a>
     </div>
 
@@ -548,6 +555,12 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var radius = (state.radius == null) ? 1000 : state.radius;
     var byId = {};
     var distById = {};
+    // clarify-radius-mode: 記住邊啲係「區內命中」，用嚟喺清單中間畫一條
+    // 「以下係自動加入」分隔線（Sunny 2026-09-16：唔知幾時開始擴大範圍）。
+    var hitById = {};
+    var expansionRadius = null;
+    // 全區（默認）模式會分兩段：區內命中 → 自動加入嘅附近餐廳。
+    var hitGroupMode = false;
     function distOfEntry(em) {
       return (em.lat != null && em.lng != null) ? haversine(clat, clng, em.lat, em.lng) : null;
     }
@@ -581,10 +594,13 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           var ek = em.key || '';
           if (ek.indexOf(hitKey) !== -1 || (hitEn && ek.indexOf(hitEn) !== -1)) {
             byId[em.id] = true;
+            hitById[em.id] = true;
             distById[em.id] = distOfEntry(em);
           }
         }
         var unionRadius = 1000;
+        expansionRadius = unionRadius;
+        hitGroupMode = true;
         for (var ki = 0; ki < INDEX.length; ki++) {
           var e2 = INDEX[ki];
           if (byId[e2.id]) continue;
@@ -628,9 +644,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     for (var id in byId) {
       var ent = null;
       for (var lj = 0; lj < INDEX.length; lj++) { if (INDEX[lj].id === Number(id)) { ent = INDEX[lj]; break; } }
-      entries.push({ id: Number(id), dist: distById[id], prec: ent ? ent.prec : null });
+      var numId = Number(id);
+      entries.push({ id: numId, dist: distById[id], prec: ent ? ent.prec : null,
+                     grp: hitById[numId] ? 0 : 1 });
     }
     entries.sort(function (a, b) {
+      // clarify-radius-mode: 全區模式先分「區內命中」同「自動加入」兩段，
+      // 每段內部再按距離（用戶先睇區內，再睇擴大範圍嗰啲）。
+      if (hitGroupMode && a.grp !== b.grp) return a.grp - b.grp;
       var aArea = a.prec === 'area' ? 1 : 0;
       var bArea = b.prec === 'area' ? 1 : 0;
       if (aArea !== bArea) return aArea - bArea;
@@ -640,13 +661,26 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       return a.dist - b.dist;
     });
     var ids = [];
-    for (var si = 0; si < entries.length; si++) ids.push(entries[si].id);
+    var groupMap = {};
+    var hitCount = 0, nearCount = 0;
+    for (var si = 0; si < entries.length; si++) {
+      ids.push(entries[si].id);
+      if (hitGroupMode) {
+        groupMap[entries[si].id] = entries[si].grp;
+        if (entries[si].grp === 0) hitCount++; else nearCount++;
+      }
+    }
     return {
       ids: ids,
       areaMode: true,
       areaName: activeArea,
       showChips: filterTokens.length === 0,
       dist: distById,
+      hits: hitById,
+      groups: hitGroupMode ? groupMap : null,
+      hitCount: hitCount,
+      nearCount: nearCount,
+      expansionRadius: expansionRadius,
     };
   }
 
@@ -786,9 +820,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     if (!header) return;
     if (!areaName) { header.classList.add('hidden'); return; }
     header.classList.remove('hidden');
-    // Header format: "<areaName> · <count> 間（最近優先）"
+    // Header format: "<areaName> · <count> 間（最近優先，距離由區中心計）"
     labelEl.textContent = areaName;
-    metaEl.textContent = total + ' 間（最近優先）';
+    metaEl.textContent = total + ' 間 · 最近優先（距離由「' + areaName + ' 中心」計）';
     // Show radius chips + legend only when filterTokens are empty (pure area query).
     if (chipsEl) chipsEl.style.display = showChips ? '' : 'none';
     if (legendEl) legendEl.style.display = showChips ? '' : 'none';
@@ -830,6 +864,19 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     div.className = 'area-group-header bg-gray-50 text-xs text-gray-500 px-3 py-1.5 rounded-full self-start mt-2 mb-0';
     div.textContent = label;
     div.setAttribute('data-area-group', '1');
+    return div;
+  }
+
+  // clarify-radius-mode: 範圍說明橫幅。tone 'expand' = 自動加入分隔線（琥珀色），
+  // 'info' = 目前口徑（灰）。
+  function modeNoticeEl(label, tone) {
+    var div = document.createElement('div');
+    div.className = 'area-mode-notice text-xs leading-relaxed px-3 py-2 rounded-xl mt-2 mb-1 border '
+      + (tone === 'expand'
+        ? 'text-amber-800 bg-amber-50 border-amber-100'
+        : 'text-gray-600 bg-gray-50 border-gray-100');
+    div.setAttribute('data-area-notice', '1');
+    div.textContent = label;
     return div;
   }
 
@@ -895,6 +942,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       var g = groups[gi];
       if (g.parentNode) g.parentNode.removeChild(g);
     }
+    var oldNotices = list.querySelectorAll('[data-area-notice="1"]');
+    for (var oi = 0; oi < oldNotices.length; oi++) {
+      var on = oldNotices[oi];
+      if (on.parentNode) on.parentNode.removeChild(on);
+    }
 
     // In area-mode the sorted order can disagree with the SSR DOM order (which
     // is by id), so we hide ALL static SSR cards and render everything from the
@@ -907,11 +959,38 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     }
 
     // Render visible ids (in the sorted order from runFilter).
+    // clarify-radius-mode: 先講清楚而家用緊邊種範圍口徑；全區模式另外喺
+    // 「第一個非命中記錄」前面插一條分隔線，講明由邊度開始係自動加入。
+    var topNotice = null;
+    var useSections = !!(res.areaMode && res.showChips && res.groups && state.radius === -1);
+    if (res.areaMode && res.showChips) {
+      if (state.radius === -1) {
+        topNotice = modeNoticeEl('清單分兩段（每段最近優先）：① ' + res.areaName + ' 區內命中 → ② 自動加入區中心 1 公里內嘅其他餐廳。所有距離由「' + res.areaName + ' 中心」計。', 'info');
+      } else if (state.radius === 0) {
+        topNotice = modeNoticeEl('📋 唔限範圍：列出全港 ' + total + ' 間獲准餐廳（冇按距離或地區篩選，順序係資料庫次序）', 'info');
+      } else {
+        topNotice = modeNoticeEl('📏 嚴格距離：只列距 ' + res.areaName + ' 中心 ' + radiusLabel(state.radius) + ' 內嘅餐廳（區內命中但超出距離已剔除）', 'info');
+      }
+    }
+    if (topNotice) list.appendChild(topNotice);
     var lastBucket = -2;
+    var lastSection = -1;
     for (var idi = 0; idi < visibleIds.length; idi++) {
       var id = visibleIds[idi];
+      // 全區模式：分兩段，每段一個明確標題（用戶一眼睇到邊度開始擴大範圍）。
+      if (useSections) {
+        var sec = res.groups[id];
+        if (sec !== lastSection) {
+          if (sec === 0) {
+            list.appendChild(groupHeaderEl('📍 ' + res.areaName + ' 區內命中（' + res.hitCount + ' 間）'));
+          } else {
+            list.appendChild(groupHeaderEl('🚶 自動加入：距 ' + res.areaName + ' 中心 1 公里內（' + res.nearCount + ' 間，唔一定喺' + res.areaName + '）'));
+          }
+          lastSection = sec;
+        }
+      }
       // Insert group header when bucket changes (only in area-mode).
-      if (res.areaMode) {
+      if (res.areaMode && !useSections) {
         var entry2 = findIndexEntry(id);
         var d = distMap[id] != null ? distMap[id] : null;
         var prec = entry2 ? entry2.prec : null;
@@ -1021,6 +1100,12 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var params = new URLSearchParams(window.location.search);
     var q = params.get('q');
     var d = params.get('district');
+    // clarify-radius-mode: radius 可以由 URL 指定（可分享 / 可測試），
+    // 例：?q=堅尼地城&radius=500（嚴格 500 米）、radius=0（全部）、radius=-1（默認）
+    var rp = params.get('radius');
+    if (rp !== null && rp !== '' && ['-1', '0', '500', '1000', '2000'].indexOf(String(rp)) !== -1) {
+      state.radius = Number(rp);
+    }
     if (q) document.getElementById('search-input').value = q;
     if (d) setDistrict(d);
     rebuildPage();
