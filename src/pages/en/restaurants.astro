@@ -229,7 +229,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
 
     <!-- District pills -->
     <div class="overflow-x-auto -mx-4 px-4 mb-5 scrollbar-hide">
-      <div class="flex gap-1.5 w-max md:w-auto md:flex-wrap">
+      <div class="flex gap-2.5 w-max md:w-auto md:flex-wrap">
         <a href="/en/restaurants" onclick="setDistrict(''); return false;"
           class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"
           id="pill-all">All</a>
@@ -251,7 +251,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         </span>
         <span class="text-xs text-gray-500" id="area-header-meta">—</span>
       </div>
-      <div class="flex gap-1.5 flex-wrap" id="area-radius-chips">
+      <div class="flex gap-2 flex-wrap" id="area-radius-chips">
         <a href="#" onclick="setRadius(-1); return false;"
           title="Default: area matches first, then auto-adds everything within 1 km of the area centre (scope expands)"
           class="radius-chip shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"

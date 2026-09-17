@@ -74,3 +74,22 @@ b, strong { font-weight: 800; }
 /* 分頁：字級同觸控都跟品牌下限 */
 #pager button, #pager a { font-size: 14.5px; font-weight: 700; min-height: 46px; padding-inline: 16px; }
 #pager span { font-size: 14.5px; color: var(--color-gray-500); }
+
+/* ---------- 4. Chip／pill 統一大細（2026-09-17） ----------
+   問題：只加 min-height:44px，遇上 box-sizing:content-box 就變 44+padding = 56px 高，
+   而字仍然 14.5px → 上下空一大截，大小比例怪。
+   統一：border-box + inline-flex 居中 + 一致高度，主／次 chip 只差字級同左右內距。 */
+[id^="pill-"], .radius-chip, .filter-chip, .species-chip, .type-chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+[id^="pill-"], .filter-chip, .species-chip {
+  min-height: 44px; padding: 0 18px; font-size: 16px; font-weight: 700;
+}
+.radius-chip, .type-chip {
+  min-height: 44px; padding: 0 15px; font-size: 14.5px; font-weight: 700;
+}
