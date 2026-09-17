@@ -15,3 +15,10 @@ scripts/.geocode_cache.json
 scripts/__pycache__/
 __pycache__/
 brand-drafts/
+
+# Sync / geocode byproducts — regenerable, keep out of the repo
+# (restaurants.json.bak-sync, restaurant-coords.before-rerun*.json, *.prev.json, *.bak-*)
+src/data/*.bak-*
+src/data/*.bak.json
+src/data/*.before-rerun*.json
+src/data/*.prev.json
