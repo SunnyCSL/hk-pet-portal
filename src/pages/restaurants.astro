@@ -243,7 +243,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           <div class="flex items-center gap-3">
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
             <div class="min-w-0 flex-1">
-              <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
+              <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">
                 {r.name_zh || r.name_en || `${r.district}狗友善餐廳`}
               </h3>
               {/* feat/restaurant-types: chip with source-aware tooltip. */}
@@ -744,7 +744,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '<div class="flex items-center gap-3">'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
       + '<div class="min-w-0 flex-1">'
-      + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(nameZh) + '</h3>'
+      + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">' + escapeHtml(nameZh) + '</h3>'
       + cuisineChipHtmlZh(e.id)
       + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
       + '<span class="inline-flex items-center gap-1">'

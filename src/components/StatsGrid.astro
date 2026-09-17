@@ -35,8 +35,8 @@ const cards: Stat[] = [
         class="group bg-white rounded-xl p-4 text-center border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
       >
         <div class="text-2xl mb-1">{card.emoji}</div>
-        <div class="text-xl font-bold text-near-black group-hover:text-brand transition-colors">{card.value}</div>
-        <div class="text-xs text-gray-500">{isZh ? card.label_zh : card.label_en}</div>
+        <div class="text-3xl font-bold text-near-black group-hover:text-brand transition-colors font-num">{card.value}</div>
+        <div class="text-xs text-gray-500 font-semibold">{isZh ? card.label_zh : card.label_en}</div>
       </a>
     ))}
   </div>
