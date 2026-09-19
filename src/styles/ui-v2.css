@@ -477,6 +477,9 @@ h1.text-xl + p, h1.text-2xl + p { font-size: 16.5px !important; color: var(--ink
 .tag-toggle:hover { background: var(--brand-tint); border-color: var(--brand-400); }
 .tag-toggle:active { transform: scale(.97); }
 
+/* 頁尾品牌連結：只有 40px 闊嘅 logo → 補到 44px 觸控下限 */
+.footer-brand { min-width: 44px; }
+
 /* --- 空狀態卡（Coming soon 類） --- */
 .empty-hero {
   padding: 44px 22px; border-radius: var(--r-card);
