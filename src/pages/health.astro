@@ -5,7 +5,22 @@ import articles from '../data/health-articles.json';
 // Derive short `desc` from the first paragraph of content_html when not stored.
 // content_html in health-articles.json is double-encoded (literal HTML
 // entities), so decode first then strip tags.
-function deriveDesc(html: string, maxLen = 50): string {
+// v2 (2026-09-19)：原本抽到嘅第一段有兩種垃圾 —— ① markdown 標題殘留（"# 標題 — 副題"，
+// 同卡片標題重複）② LLM 前言（"好的，沒問題。作為一位專業的寵物健康內容作家…"）。
+// 呢啲會令列表睇落好亂 → 逐段篩，揀第一段「真內容」。
+const JUNK_PREFIX = /^(好的|好的，|沒問題|作為一位|作為一個|以下是|以下係|這是一篇|這是一份|我已經|我已|希望|以上|根據您|根據你|明白)/;
+
+function cleanText(raw: string): string {
+  return raw
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&[a-z]+;/gi, ' ')
+    .replace(/^[\s#*>\-–—]+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function deriveDesc(html: string, title = '', maxLen = 78): string {
   const decoded = html
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
@@ -13,18 +28,22 @@ function deriveDesc(html: string, maxLen = 50): string {
     .replace(/&#39;/g, "'")
     .replace(/&amp;/g, '&')
     .replace(/&nbsp;/g, ' ');
-  const m = decoded.match(/<p[^>]*>([\s\S]*?)<\/p>/);
-  if (!m) return '';
-  const text = m[1]
-    .replace(/<[^>]+>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
+  const paras = Array.from(decoded.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)).map((m) => m[1]);
+  const titleKey = (title || '').replace(/\s+/g, '').slice(0, 8);
+  for (const raw of paras) {
+    const text = cleanText(raw);
+    if (text.length < 15) continue;                       // 太短／空段
+    if (/^[*#\-–—\s]*$/.test(text)) continue;             // 純符號
+    if (JUNK_PREFIX.test(text)) continue;                 // LLM 前言
+    if (titleKey && text.replace(/\s+/g, '').startsWith(titleKey)) continue; // 同標題重複
+    return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
+  }
+  return '';
 }
 
 const enriched = (articles as any[]).map((a) => ({
   ...a,
-  desc: a.desc ?? deriveDesc(a.content_html || ''),
+  desc: a.desc ?? deriveDesc(a.content_html || '', a.title || ''),
 }));
 
 const catFilter = Astro.url.searchParams.get('cat') || '';
@@ -45,10 +64,10 @@ const categories = [
     <p class="text-sm text-gray-500 mb-5">由專業寵物課程改編，經重新編寫加入原創內容與最新研究</p>
 
     <div class="flex gap-2 mb-5 flex-wrap">
-      <a href="/meals/" class="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium no-underline hover:bg-brand/90 transition">
+      <a href="/meals/" class="btn btn-primary no-underline">
         🥘 鮮食餐單庫
       </a>
-      <a href="/meals/recommend/" class="bg-brand-light text-brand/80 px-4 py-2 rounded-xl text-sm font-medium no-underline hover:bg-brand hover:text-white transition">
+      <a href="/meals/recommend/" class="btn btn-ghost no-underline">
         ✨ 即時餐單推薦
       </a>
     </div>
@@ -58,9 +77,7 @@ const categories = [
       <div class="flex gap-1.5 w-max md:w-auto">
         {categories.map((c: { id: string; name: string; count: number }) => (
           <a href={c.id ? `/health?cat=${c.id}` : '/health'}
-            class={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium no-underline whitespace-nowrap transition-all ${
-              catFilter === c.id ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-            }`}
+            class:list={['chip no-underline shrink-0', { 'is-active': catFilter === c.id }]}
           >{c.name} ({c.count})</a>
         ))}
       </div>
@@ -70,21 +87,19 @@ const categories = [
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       {filtered.map((a: { emoji: string; title: string; desc: string; cat: string; catName: string; date: string; slug: string }) => (
         <a href={`/health/${a.slug}`}
-          class="group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+          class="article-card group no-underline"
         >
-          <div class="flex items-start gap-3">
-            <div class="text-2xl shrink-0 mt-0.5">{a.emoji}</div>
-            <div class="min-w-0 flex-1">
-              <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors leading-tight">
-                {a.title}
-              </h2>
-              <p class="text-xs text-gray-500 mt-1">{a.desc}</p>
-              <div class="flex items-center gap-2 mt-2">
-                <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{a.catName}</span>
-                <span class="text-[10px] text-gray-300">{a.date}</span>
-              </div>
-            </div>
-            <div class="text-gray-300 group-hover:text-brand transition-colors shrink-0 text-xs mt-1">→</div>
+          <div class="flex items-center gap-3.5">
+            <span class="monogram shrink-0" style="font-size:26px" aria-hidden="true">{a.emoji}</span>
+            <h2 class="min-w-0 flex-1 group-hover:text-brand transition-colors">
+              {a.title}
+            </h2>
+            <span class="lc-arrow shrink-0" aria-hidden="true">→</span>
+          </div>
+          {a.desc && <p class="ac-desc">{a.desc}</p>}
+          <div class="flex items-center gap-2 mt-2.5">
+            <span class="badge">{a.catName}</span>
+            <span class="text-base text-gray-500 font-num">{a.date}</span>
           </div>
         </a>
       ))}

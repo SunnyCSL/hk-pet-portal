@@ -1,58 +1,209 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import stats from '../../data/restaurant-stats.json';
+import restaurants from '../../data/restaurants.json';
+import healthArticles from '../../data/health-articles.json';
+import mealPlans from '../../data/meal-plans.json';
+import areaNames from '../../data/area-names.json';
+
+const restaurantCount = stats.total;
+const districtCount = stats.districts;
+const healthCount = healthArticles.length;
+const mealCount = mealPlans.length;
+
+const districtCounts: Record<string, number> = {};
+restaurants.forEach((r: { district: string }) => {
+  districtCounts[r.district] = (districtCounts[r.district] || 0) + 1;
+});
+const sortedDistricts: [string, number][] = Object.entries(districtCounts).sort((a, b) => b[1] - a[1]);
+
+// EN label for a district: use area-names.json when available, else keep the zh name.
+const enName = (zh: string): string => {
+  const hit = (areaNames as Record<string, { en?: string }>)[zh];
+  return (hit && hit.en) || zh;
+};
+
+const latest = [...restaurants].sort((a: { id: number }, b: { id: number }) => b.id - a.id).slice(0, 6);
+
+const mono = (name: string): string => {
+  const m = (name || '').match(/[\u4e00-\u9fff0-9A-Za-z]/);
+  return m ? m[0].toUpperCase() : '🐾';
+};
+
+const statTiles = [
+  { ico: '🍽️', value: restaurantCount, label: 'Dog-friendly restaurants', href: '/en/restaurants' },
+  { ico: '📍', value: districtCount, label: 'Districts covered', href: '/en/restaurants' },
+  { ico: '📚', value: healthCount, label: 'Health guides', href: '/en/health' },
+  { ico: '🥘', value: mealCount, label: 'Fresh meal plans', href: '/en/meals' },
+];
+
+const catCount = (name: string) => healthArticles.filter((a: { catName: string }) => a.catName === name).length;
+const healthCats = [
+  { emoji: '🌿', title: 'TCM Wellness', desc: 'Body type · seasonal', count: catCount('中醫'), cls: 'cool' },
+  { emoji: '🥩', title: 'Nutrition', desc: 'Ratios · ingredients', count: catCount('營養'), cls: '' },
+  { emoji: '🐕', title: 'Behaviour', desc: 'Reading body language', count: catCount('行為'), cls: 'sun' },
+  { emoji: '💆', title: 'Care & First Aid', desc: 'Heatstroke · teeth', count: catCount('護理'), cls: 'warm' },
+];
+
+const featuredMeals = mealPlans.slice(0, 3);
 ---
 
 <BaseLayout title="HK Pet Portal" lang="en">
-  <section class="bg-gradient-to-b from-brand-light to-white pt-20 pb-16">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-near-black mb-4 font-display title-underline">
-        🐾 Dine Across HK<br /><span class="text-brand">With Your Pup</span>
-      </h1>
-      <p class="text-lg text-gray-500 mb-8">
-        <strong class="text-brand">{stats.total}</strong> dog-friendly restaurants across Hong Kong
-      </p>
-      <form action="/en/restaurants" method="GET" class="max-w-xl mx-auto">
-        <div class="flex gap-2 bg-white p-2 rounded-full shadow-sm border border-gray-100">
-          <input type="text" name="q" placeholder="Search restaurant, district or address..." 
-            class="flex-1 px-4 py-2 text-sm outline-none border-none bg-transparent" />
-          <button type="submit" class="bg-brand text-white px-6 py-2 rounded-full text-sm font-bold hover:bg-brand-dark transition-colors">
-            🔍 Search
-          </button>
+  <!-- ============ Hero ============ -->
+  <section class="hero-v2">
+    <div class="sec">
+      <div class="text-center">
+        <span class="hero-eyebrow anim-fade">🐾 Hong Kong dog-friendly dining guide</span>
+        <h1>
+          Dine across HK<br class="md:hidden" /><span class="title-underline">with your pup</span>
+        </h1>
+        <p class="hero-sub">
+          <b>{restaurantCount}</b> dog-friendly restaurants in <b>{districtCount}</b> districts —
+          <br class="hidden md:block" />one search finds your next meal out together.
+        </p>
+      </div>
+
+      <form action="/en/restaurants" method="GET" class="max-w-lg mx-auto mt-6">
+        <div class="search-v2">
+          <input type="search" name="q" placeholder="Search restaurant, district or address…" aria-label="Search restaurants" enterkeyhint="search" />
+          <button type="submit" aria-label="Search">🔍</button>
         </div>
       </form>
-    </div>
-  </section>
 
-  <section class="max-w-4xl mx-auto px-4 -mt-8">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
-        <div class="text-3xl mb-1">🍽️</div>
-        <div class="text-2xl font-bold text-near-black">{stats.total}</div>
-        <div class="text-xs text-gray-500">Dog-friendly Restaurants</div>
+      <div class="chip-row justify-start md:justify-center max-w-3xl mx-auto mt-4 -mx-[18px] px-[18px] md:mx-auto md:px-0">
+        {sortedDistricts.slice(0, 8).map(([name, count]) => (
+          <a href={`/en/restaurants?district=${encodeURIComponent(name)}`} class="chip shrink-0 no-underline">
+            {enName(name)} <span class="font-num text-brand ml-1">{count}</span>
+          </a>
+        ))}
+        <a href="/en/restaurants" class="chip chip-warm shrink-0 no-underline font-bold">All {districtCount} districts →</a>
       </div>
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
-        <div class="text-3xl mb-1">📍</div>
-        <div class="text-2xl font-bold text-near-black">{stats.districts}</div>
-        <div class="text-xs text-gray-500">Districts Covered</div>
-      </div>
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
-        <div class="text-3xl mb-1">📚</div>
-        <div class="text-2xl font-bold text-near-black">8</div>
-        <div class="text-xs text-gray-500">Health Articles</div>
-      </div>
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
-        <div class="text-3xl mb-1">🐾</div>
-        <div class="text-2xl font-bold text-near-black">18</div>
-        <div class="text-xs text-gray-500">District Guides</div>
+
+      <div class="hero-facts justify-center flex">
+        <span><i class="dot"></i>Synced with official FEHD data</span>
+        <span><i class="dot" style="background:var(--brand)"></i>Updated weekly</span>
+        <span><i class="dot" style="background:var(--sun)"></i>Bilingual</span>
       </div>
     </div>
   </section>
 
-  <section class="max-w-4xl mx-auto px-4 mt-16 mb-16">
-    <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 text-sm text-amber-800">
-      <strong>🚧 Site Under Construction</strong>
-      <p class="mt-2 text-amber-700">We're building a comprehensive pet-friendly HK guide. Restaurant search, health library, and pet news coming soon!</p>
+  <!-- ============ Stats ============ -->
+  <section class="sec" style="padding-block:32px">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {statTiles.map((t) => (
+        <a href={t.href} class="stat-tile no-underline" data-reveal>
+          <span class="st-ico">{t.ico}</span>
+          <span class="st-num">{t.value}</span>
+          <span class="st-lab">{t.label}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ Latest ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">JUST ADDED</span>
+        <h2>Latest restaurants</h2>
+      </div>
+      <a href="/en/restaurants" class="more">See all →</a>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3">
+      {latest.map((r: { id: number; name_zh: string; name_en: string; district: string }, i: number) => (
+        <a href={`/en/restaurants/${r.id}`} class="list-card" data-reveal>
+          <div class="flex items-center gap-3">
+            <span class:list={['monogram', { warm: i % 4 === 1, cool: i % 4 === 2, sun: i % 4 === 3 }]}>{mono(r.name_en || r.name_zh)}</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="lc-title">{r.name_en || r.name_zh}</h3>
+              <div class="lc-meta">
+                <span class="badge">📍 {enName(r.district)}</span>
+                <span class="badge badge-warm badge-sticker">🐾 Dog friendly</span>
+              </div>
+            </div>
+            <span class="lc-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ Health ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">HEALTH LIBRARY</span>
+        <h2>Vet-informed guides</h2>
+      </div>
+      <a href="/en/health" class="more">See all →</a>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {healthCats.map((c) => (
+        <a href="/en/health" class="card card-pad no-underline text-center health-tile" data-reveal>
+          <span class:list={['monogram mx-auto', c.cls]} style="width:56px;height:56px;font-size:26px">{c.emoji}</span>
+          <div class="text-lg mt-2.5 font-bold text-near-black">{c.title}</div>
+          <div class="text-sm text-gray-600 mt-0.5">{c.desc}</div>
+          <div class="text-sm font-num text-brand mt-1.5">{c.count} guides</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ Meals ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">FRESH FOOD</span>
+        <h2>Home-cooked meal plans</h2>
+      </div>
+      <a href="/en/meals" class="more">See all →</a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-3">
+      {featuredMeals.map((m: { id: number; name: string; name_en: string; description: string; prep_time: string; difficulty: string }) => (
+        <a href={`/meals/${m.id}`} class="card card-pad no-underline flex flex-col gap-2" data-reveal>
+          <span class="monogram warm">🥘</span>
+          <h3 class="lc-title">{m.name_en || m.name}</h3>
+          <p class="text-sm text-gray-600 m-0">{m.description}</p>
+          <div class="lc-meta mt-auto pt-1">
+            {m.prep_time ? <span class="badge badge-mint">⏱ {m.prep_time}</span> : null}
+            {m.difficulty ? <span class="badge">Level: {m.difficulty}</span> : null}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ Districts ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">BY DISTRICT</span>
+        <h2>Find places near you</h2>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+      {sortedDistricts.map(([name, count]) => (
+        <a href={`/en/restaurants?district=${encodeURIComponent(name)}`}
+           class="card px-4 py-3 no-underline flex items-center justify-between gap-2" data-reveal>
+          <span class="text-base font-bold text-near-black">{enName(name)}</span>
+          <span class="badge font-num">{count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="sec" style="padding-block:24px 8px">
+    <div class="rounded-3xl px-6 py-8 md:px-10 md:py-10 text-center text-white"
+         style="background:linear-gradient(135deg,#7C3AED 0%,#5B21B6 55%,#3B1180 100%);box-shadow:var(--sh3)">
+      <h2 class="text-white" style="margin:0">Take your dog out this week</h2>
+      <p class="text-base mt-2 mb-5" style="color:rgba(255,255,255,.85)">
+        All {restaurantCount} venues verified against the official FEHD licence list.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="/en/restaurants" class="btn btn-lg no-underline" style="background:#fff;color:var(--brand)">🍽️ Find restaurants</a>
+        <a href="/en/map" class="btn btn-lg no-underline" style="background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.35)">🗺️ Open the map</a>
+      </div>
     </div>
   </section>
 </BaseLayout>
