@@ -25,18 +25,20 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
       </button>
     </div>
 
-    <!-- Filters -->
-    <div class="flex gap-1.5 mb-3 flex-wrap overflow-x-auto scrollbar-hide" id="tagFilters">
-      <button data-tag="" class="filter-chip active px-3 py-1.5 rounded-full text-xs font-medium border transition bg-brand text-white border-brand">All</button>
+    <!-- Filters（v2: tag wall collapsed by default） -->
+    <div class="flex items-center justify-between mb-2">
+      <span class="eyebrow-label">🏷️ Health tags</span>
+      <button id="tagToggle" class="tag-toggle" type="button" aria-expanded="false" aria-controls="tagFilters">Show all ▾</button>
+    </div>
+    <div class="chip-wrap is-collapsed" id="tagFilters">
+      <button data-tag="" class="filter-chip active">All</button>
       {allTags.map(t => (
-        <button data-tag={t}
-          class="filter-chip px-3 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30"
-        >{t}</button>
+        <button data-tag={t} class="filter-chip">{t}</button>
       ))}
     </div>
 
     <!-- Species filter -->
-    <div class="flex gap-1.5 mb-4" id="speciesFilters">
+    <div class="flex gap-1.5 mb-4 flex-wrap" id="speciesFilters">
       <button data-species="" class="species-chip active px-4 py-1.5 rounded-full text-xs font-medium border transition bg-brand text-white border-brand">🐶🐱 All</button>
       <button data-species="dog" class="species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30">🐶 Dog ({mealPlans.filter(m=>m.species==='dog').length})</button>
       <button data-species="cat" class="species-chip px-4 py-1.5 rounded-full text-xs font-medium border transition bg-gray-50 text-gray-500 border-gray-200 hover:border-brand/30">🐱 Cat ({mealPlans.filter(m=>m.species==='cat').length})</button>
@@ -96,6 +98,22 @@ const allTypes = [...new Set(mealPlans.map(m => m.meal_type))];
       <p class="text-xs text-gray-300 text-center">Want to share your own recipe? Reach out to Sunny 😎</p>
     </div>
   </div>
+
+  <script>
+    // v2: tag wall collapse/expand (UI only — filter logic untouched)
+    (() => {
+      const tg = document.getElementById('tagToggle');
+      const tf = document.getElementById('tagFilters');
+      if (!tg || !tf) return;
+      tg.addEventListener('click', () => {
+        const open = tf.classList.toggle('is-open');
+        tf.classList.toggle('is-collapsed', !open);
+        tg.textContent = open ? 'Hide ▴' : 'Show all ▾';
+        tg.setAttribute('aria-expanded', String(open));
+        if (open) tg.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      });
+    })();
+  </script>
 
   <script>
     const cards = document.querySelectorAll('.meal-card');

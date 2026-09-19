@@ -2,132 +2,207 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import stats from '../data/restaurant-stats.json';
 import restaurants from '../data/restaurants.json';
+import healthArticles from '../data/health-articles.json';
+import mealPlans from '../data/meal-plans.json';
 
-// Calculate district data once
+// ---- 真實數字（唔可以寫死：健康文章 11 篇、鮮食餐單 32 個）----
+const restaurantCount = stats.total;
+const districtCount = stats.districts;
+const healthCount = healthArticles.length;
+const mealCount = mealPlans.length;
+
+// 分區（按餐廳數排）
 const districtCounts: Record<string, number> = {};
 restaurants.forEach((r: { district: string }) => {
   districtCounts[r.district] = (districtCounts[r.district] || 0) + 1;
 });
-const topDistricts: [string, number][] = Object.entries(districtCounts)
-  .sort((a, b) => b[1] - a[1])
-  .slice(0, 6);
+const sortedDistricts: [string, number][] = Object.entries(districtCounts).sort((a, b) => b[1] - a[1]);
+const topDistricts = sortedDistricts.slice(0, 8);
 
-const statCards = [
-  { emoji: '🍽️', value: stats.total, label: '狗友善餐廳', href: '/restaurants' },
-  { emoji: '📍', value: stats.districts, label: '覆蓋地區', href: '/restaurants' },
-  { emoji: '📚', value: 10, label: '健康文章', href: '/health' },
-  { emoji: '🥘', value: 32, label: '鮮食餐單', href: '/meals' },
-  { emoji: '🐕', value: 22, label: '狗餐單', href: '/meals' },
-  { emoji: '🐱', value: 10, label: '貓餐單', href: '/meals' },
-  { emoji: '🗺️', value: stats.districts, label: '分區指南', href: '/restaurants' },
+// 最新加入（id 最大）
+const latest = [...restaurants].sort((a: { id: number }, b: { id: number }) => b.id - a.id).slice(0, 6);
+
+// 首字圓章（代替冇相片嘅空白）— 中英文都夾得
+const mono = (name: string): string => {
+  const m = (name || '').match(/[\u4e00-\u9fff0-9A-Za-z]/);
+  return m ? m[0].toUpperCase() : '🐾';
+};
+
+const statTiles = [
+  { ico: '🍽️', value: restaurantCount, label: '狗友善餐廳', href: '/restaurants' },
+  { ico: '📍', value: districtCount, label: '覆蓋地區', href: '/restaurants' },
+  { ico: '📚', value: healthCount, label: '健康文章', href: '/health' },
+  { ico: '🥘', value: mealCount, label: '鮮食餐單', href: '/meals' },
 ];
 
-const healthCards = [
-  { emoji: '🌿', title: '中醫養生', desc: '體質・食療', href: '/health' },
-  { emoji: '🥩', title: '營養鮮食', desc: '比例・食譜', href: '/health' },
-  { emoji: '🐕', title: '行為訓練', desc: '肢體語言', href: '/health' },
-  { emoji: '💆', title: '護理急救', desc: '中暑・按摩', href: '/health' },
+// 健康四大類（數字由資料算，唔寫死）
+const catCount = (name: string) => healthArticles.filter((a: { catName: string }) => a.catName === name).length;
+const healthCats = [
+  { emoji: '🌿', title: '中醫養生', desc: '體質・季節食療', count: catCount('中醫'), cls: 'cool' },
+  { emoji: '🥩', title: '營養鮮食', desc: '比例・成份拆解', count: catCount('營養'), cls: '' },
+  { emoji: '🐕', title: '行為訓練', desc: '肢體語言解讀', count: catCount('行為'), cls: 'sun' },
+  { emoji: '💆', title: '護理急救', desc: '中暑・按摩・牙齒', count: catCount('護理'), cls: 'warm' },
 ];
+
+const featuredMeals = mealPlans.slice(0, 3);
 ---
 
 <BaseLayout title="HK Pet Portal" lang="zh">
-  <!-- Hero — Mobile-first compact -->
-  <section class="pt-12 pb-16 md:pt-16 md:pb-20 bg-gradient-to-b from-brand-light to-white">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h1 class="text-2xl md:text-4xl font-bold text-near-black leading-tight font-display title-underline">
-        🐾 帶毛孩<br class="md:hidden" />食盡香港
-      </h1>
-      <p class="text-sm md:text-base text-gray-500 mt-1.5 mb-5 font-hand">
-        全港 <strong class="text-brand font-semibold">{stats.total}</strong> 間狗友善餐廳
-      </p>
+  <!-- ============ Hero ============ -->
+  <section class="hero-v2">
+    <div class="sec">
+      <div class="text-center">
+        <span class="hero-eyebrow anim-fade">🐾 香港狗友善餐廳指南</span>
+        <h1>
+          帶毛孩<br class="md:hidden" /><span class="title-underline">食盡香港</span>
+        </h1>
+        <p class="hero-sub">
+          全港 <b>{restaurantCount}</b> 間狗友善餐廳、<b>{districtCount}</b> 個地區，
+          <br class="hidden md:block" />一個搜尋就搵到你同毛孩下一個飯堂。
+        </p>
+      </div>
 
-      <!-- Search bar — compact -->
-      <form action="/restaurants" method="GET" class="max-w-sm mx-auto">
-        <div class="flex bg-white rounded-full shadow-sm border border-gray-100 p-1">
-          <input type="text" name="q" placeholder="搜尋餐廳名、地區..."
-            class="flex-1 min-w-0 px-3.5 py-2 text-sm outline-none border-none bg-transparent"
-          />
-          <button type="submit" class="bg-brand text-white px-4 py-2 rounded-full text-sm font-bold hover:bg-brand-dark transition-colors shrink-0 flex items-center gap-1">
-            <span class="hidden md:inline">🔍 搜</span><span class="md:hidden">🔍</span>
-          </button>
+      <form action="/restaurants" method="GET" class="max-w-lg mx-auto mt-6">
+        <div class="search-v2">
+          <input type="search" name="q" placeholder="搜尋餐廳名、地區、菜式…" aria-label="搜尋餐廳" enterkeyhint="search" />
+          <button type="submit" aria-label="搜尋">🔍</button>
         </div>
       </form>
 
-      <!-- District pills — scrollable on mobile -->
-      <div class="mt-5 overflow-x-auto -mx-4 px-4 scrollbar-hide">
-        <div class="flex md:flex-wrap justify-start md:justify-center gap-2 w-max md:w-auto">
-          {topDistricts.map(([name, count]) => (
-            <a href={`/restaurants?district=${encodeURIComponent(name)}`}
-              class="shrink-0 px-3 py-1.5 bg-white border border-gray-100 rounded-full text-xs text-gray-500 hover:border-brand hover:text-brand hover:bg-brand-light transition-all no-underline font-medium whitespace-nowrap"
-            >{name} <span class="text-gray-300">{count}</span></a>
-          ))}
-          <a href="/restaurants"
-            class="shrink-0 px-3 py-1.5 bg-brand-light border border-brand/20 rounded-full text-xs text-brand font-medium hover:bg-brand hover:text-white transition-all no-underline whitespace-nowrap"
-          >全部 19 區 →</a>
-        </div>
+      <div class="chip-row justify-start md:justify-center max-w-3xl mx-auto mt-4 -mx-[18px] px-[18px] md:mx-auto md:px-0">
+        {topDistricts.map(([name, count]) => (
+          <a href={`/restaurants?district=${encodeURIComponent(name)}`} class="chip shrink-0 no-underline">
+            {name} <span class="font-num text-brand ml-1">{count}</span>
+          </a>
+        ))}
+        <a href="/restaurants" class="chip chip-warm shrink-0 no-underline font-bold">全部 {districtCount} 區 →</a>
+      </div>
+
+      <div class="hero-facts justify-center md:justify-center flex">
+        <span><i class="dot"></i>官方食環署名單同步</span>
+        <span><i class="dot" style="background:var(--brand)"></i>每週更新</span>
+        <span><i class="dot" style="background:var(--sun)"></i>中英雙語</span>
       </div>
     </div>
   </section>
 
-  <!-- Stats = Links! Compact on mobile -->
-  <section class="max-w-4xl mx-auto px-4 -mt-6">
-    <div class="grid grid-cols-4 gap-2 md:gap-3">
-      {statCards.map((card) => (
-        <a href={card.href}
-          class="bg-white rounded-xl py-3 md:py-4 text-center border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
-        >
-          <div class="text-xl md:text-2xl">{card.emoji}</div>
-          <div class="text-sm md:text-xl font-bold text-near-black mt-0.5">{card.value}</div>
-          <div class="text-[10px] md:text-xs text-gray-500 leading-tight mt-0.5">{card.label}</div>
+  <!-- ============ 統計磚（4 個真數字，唔重複） ============ -->
+  <section class="sec" style="padding-block:32px">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {statTiles.map((t) => (
+        <a href={t.href} class="stat-tile no-underline" data-reveal>
+          <span class="st-ico">{t.ico}</span>
+          <span class="st-num">{t.value}</span>
+          <span class="st-lab">{t.label}</span>
         </a>
       ))}
     </div>
   </section>
 
-  <!-- 最新筍盤 — Mobile card list -->
-  <section class="max-w-4xl mx-auto px-4 mt-8 md:mt-12">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-base md:text-lg font-bold text-near-black">⚡ 最新筍盤</h2>
-      <a href="/restaurants" class="text-xs md:text-sm text-brand font-medium no-underline">睇全部 →</a>
+  <!-- ============ 最新加入 ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">JUST ADDED</span>
+        <h2>最新加入嘅餐廳</h2>
+      </div>
+      <a href="/restaurants" class="more">睇全部 →</a>
     </div>
-    <div class="flex flex-col gap-2">
-      {restaurants.slice(0, 6).map((r: {id:number; name_zh:string; name_en:string; district:string; address:string}) => (
-        <a href={`/restaurants/${r.id}`}
-          class="group bg-white rounded-xl px-4 py-3 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline block"
-        >
-          <div class="flex items-center justify-between gap-2">
+    <div class="grid md:grid-cols-2 gap-3">
+      {latest.map((r: { id: number; name_zh: string; name_en: string; district: string }, i: number) => (
+        <a href={`/restaurants/${r.id}`} class="list-card" data-reveal>
+          <div class="flex items-center gap-3">
+            <span class:list={['monogram', { warm: i % 4 === 1, cool: i % 4 === 2, sun: i % 4 === 3 }]}>{mono(r.name_zh || r.name_en)}</span>
             <div class="min-w-0 flex-1">
-              <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
-                {r.name_zh || r.name_en}
-              </h3>
-              <p class="text-xs text-gray-500 mt-0.5 truncate">{r.district}</p>
+              <h3 class="lc-title">{r.name_zh || r.name_en}</h3>
+              <div class="lc-meta">
+                <span class="badge">📍 {r.district}</span>
+                <span class="badge badge-warm badge-sticker">🐾 狗友善</span>
+              </div>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <span class="text-[10px] md:text-xs text-gray-300 bg-gray-50 px-2 py-1 rounded-full">🐾 狗友</span>
-              <span class="text-gray-300 text-xs">→</span>
-            </div>
+            <span class="lc-arrow" aria-hidden="true">→</span>
           </div>
         </a>
       ))}
     </div>
   </section>
 
-  <!-- 健康指南 — 4 cards -->
-  <section class="max-w-4xl mx-auto px-4 mt-8 md:mt-12 mb-6">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-base md:text-lg font-bold text-near-black">📚 健康指南</h2>
-      <a href="/health" class="text-xs md:text-sm text-brand font-medium no-underline">睇全部 →</a>
+  <!-- ============ 健康指南 ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">HEALTH LIBRARY</span>
+        <h2>獸醫角度・健康指南</h2>
+      </div>
+      <a href="/health" class="more">睇全部 →</a>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-      {healthCards.map((cat) => (
-        <a href={cat.href}
-          class="bg-warm-white rounded-xl p-3 md:p-4 text-center hover:bg-brand-light hover:border-brand/20 border border-transparent transition-all no-underline"
-        >
-          <div class="text-xl md:text-2xl">{cat.emoji}</div>
-          <div class="text-xs md:text-sm font-medium text-gray-700 mt-1">{cat.title}</div>
-          <div class="text-[10px] md:text-xs text-gray-500 mt-0.5">{cat.desc}</div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {healthCats.map((c) => (
+        <a href="/health" class="card card-pad no-underline text-center health-tile" data-reveal>
+          <span class:list={['monogram mx-auto', c.cls]} style="width:56px;height:56px;font-size:26px">{c.emoji}</span>
+          <div class="text-lg mt-2.5 font-bold text-near-black">{c.title}</div>
+          <div class="text-sm text-gray-600 mt-0.5">{c.desc}</div>
+          <div class="text-sm font-num text-brand mt-1.5">{c.count} 篇</div>
         </a>
       ))}
+    </div>
+  </section>
+
+  <!-- ============ 鮮食餐單 ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">FRESH FOOD</span>
+        <h2>自家煮・鮮食餐單</h2>
+      </div>
+      <a href="/meals" class="more">睇全部 →</a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-3">
+      {featuredMeals.map((m: { id: number; name: string; description: string; prep_time: string; difficulty: string; health_tags?: string[] }) => (
+        <a href={`/meals/${m.id}`} class="card card-pad no-underline flex flex-col gap-2" data-reveal>
+          <span class="monogram warm">🥘</span>
+          <h3 class="lc-title">{m.name}</h3>
+          <p class="text-sm text-gray-600 m-0">{m.description}</p>
+          <div class="lc-meta mt-auto pt-1">
+            {m.prep_time ? <span class="badge badge-mint">⏱ {m.prep_time}</span> : null}
+            {m.difficulty ? <span class="badge">難度 {m.difficulty}</span> : null}
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ 分區探索 ============ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">BY DISTRICT</span>
+        <h2>跟住你住嘅區搵</h2>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+      {sortedDistricts.map(([name, count]) => (
+        <a href={`/restaurants?district=${encodeURIComponent(name)}`}
+           class="card px-4 py-3 no-underline flex items-center justify-between gap-2" data-reveal>
+          <span class="text-base font-bold text-near-black">{name}</span>
+          <span class="badge font-num">{count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="sec" style="padding-block:24px 8px">
+    <div class="rounded-3xl px-6 py-8 md:px-10 md:py-10 text-center text-white"
+         style="background:linear-gradient(135deg,#7C3AED 0%,#5B21B6 55%,#3B1180 100%);box-shadow:var(--sh3)">
+      <h2 class="text-white" style="margin:0">今日就帶毛孩出街食好西</h2>
+      <p class="text-base mt-2 mb-5" style="color:rgba(255,255,255,.85)">
+        {restaurantCount} 間餐廳已核對，全部嚟自食環署官方名單。
+      </p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="/restaurants" class="btn btn-lg no-underline" style="background:#fff;color:var(--brand)">🍽️ 搵餐廳</a>
+        <a href="/map" class="btn btn-lg no-underline" style="background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.35)">🗺️ 睇地圖</a>
+      </div>
     </div>
   </section>
 </BaseLayout>

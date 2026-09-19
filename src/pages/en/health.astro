@@ -65,9 +65,7 @@ const categories = [
       <div class="flex gap-1.5 w-max md:w-auto">
         {categories.map((c: { id: string; name: string; count: number }) => (
           <a href={c.id ? `/en/health?cat=${c.id}` : '/en/health'}
-            class={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium no-underline whitespace-nowrap transition-all ${
-              catFilter === c.id ? 'bg-brand text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-            }`}
+            class:list={['chip no-underline shrink-0', { 'is-active': catFilter === c.id }]}
           >{c.name} ({c.count})</a>
         ))}
       </div>
@@ -77,32 +75,22 @@ const categories = [
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       {filtered.map((a: { emoji: string; display_title: string; display_desc: string; cat: string; catName: string; date: string; slug: string; has_en: boolean; link: string }) => (
         <a href={a.link}
-          class="group bg-white rounded-xl p-4 border border-gray-100 hover:border-brand/30 hover:shadow-sm transition-all no-underline"
+          class="article-card group no-underline"
         >
-          <div class="flex items-start gap-3">
-            <div class="text-2xl shrink-0 mt-0.5">{a.emoji}</div>
-            <div class="min-w-0 flex-1">
-              <div class="flex items-start gap-1.5 mb-0.5">
-                <h2 class="text-sm md:text-base font-semibold text-near-black group-hover:text-brand transition-colors leading-tight">
-                  {a.display_title}
-                </h2>
-                {!a.has_en && (
-                  <span class="shrink-0 mt-0.5 text-[9px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium">🇨🇳 中文版 →</span>
-                )}
-                {a.has_en && (
-                  <span class="shrink-0 mt-0.5 text-[9px] bg-brand-light text-brand/80 px-1.5 py-0.5 rounded font-medium">EN</span>
-                )}
-              </div>
-              <p class="text-xs text-gray-500 mt-1 line-clamp-2">{a.display_desc}</p>
-              {!a.has_en && (
-                <p class="text-[10px] text-amber-600 mt-1.5">Translation coming soon</p>
-              )}
-              <div class="flex items-center gap-2 mt-2">
-                <span class="text-[10px] bg-brand-light text-brand/80 px-2 py-0.5 rounded-full font-medium">{a.catName_en || a.catName}</span>
-                <span class="text-[10px] text-gray-300">{a.date}</span>
-              </div>
-            </div>
-            <div class="text-gray-300 group-hover:text-brand transition-colors shrink-0 text-xs mt-1">→</div>
+          <div class="flex items-center gap-3.5">
+            <span class="monogram shrink-0" style="font-size:26px" aria-hidden="true">{a.emoji}</span>
+            <h2 class="min-w-0 flex-1 group-hover:text-brand transition-colors">
+              {a.display_title}
+            </h2>
+            <span class="lc-arrow shrink-0" aria-hidden="true">→</span>
+          </div>
+          {a.display_desc && <p class="ac-desc">{a.display_desc}</p>}
+          <div class="flex flex-wrap items-center gap-2 mt-2.5">
+            <span class="badge">{a.catName_en || a.catName}</span>
+            <span class="text-base text-gray-500 font-num">{a.date}</span>
+            {!a.has_en && (
+              <span class="badge badge-warm">🇨🇳 中文版 · EN soon</span>
+            )}
           </div>
         </a>
       ))}

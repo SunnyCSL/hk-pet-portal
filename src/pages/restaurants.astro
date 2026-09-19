@@ -10,6 +10,15 @@ import restaurantTypes from '../data/restaurant-types.json';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
+// v2 (2026-09-19)：列表卡地址唔好再重複行政區名（"元朗 · 新界元朗青山公路…"）。
+// 去掉「香港／九龍／新界」同重複嘅區名，只留街道＋門牌；完整地址留喺詳情頁。
+const shortAddr = (addr: string, district: string): string => {
+  let s = String(addr || '').replace(/^(香港|九龍|新界)\s*/, '');
+  const base = String(district || '').replace(/區$/, '');
+  if (base && s.startsWith(base)) s = s.slice(base.length).replace(/^\s+/, '');
+  return s;
+};
+
 // Phase 2 (fix/restaurant-search-v2): unified search index across all 906 records.
 // Build-time: each record gets a precomputed `search_key` = base + extras.
 // Extras include SUB_AREAS detected from address+name AND any alias group
@@ -171,7 +180,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         <input type="text" id="search-input" placeholder="搜尋餐廳、地區..."
           class="flex-1 min-w-0 px-3.5 py-2 text-sm border border-gray-100 rounded-lg outline-none focus:border-brand/50 bg-white"
         />
-        <button onclick="filterList()" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors shrink-0">🔍</button>
+        <button onclick="filterList()" class="bg-brand text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand/90 transition-colors shrink-0">🔍</button>
       </div>
     </div>
 
@@ -262,7 +271,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
                   <span class="text-gray-300">📍</span> <span class="sub-area-label" data-addr={r.address} data-name={r.name_zh||''}>{r.district}</span>
                 </span>
                 <span class="mx-1.5 text-gray-200">·</span>
-                <span class="text-gray-300">{r.address}</span>
+                <span class="text-gray-300 addr-text">{shortAddr(r.address, r.district)}</span>
               </p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
@@ -715,8 +724,10 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var nameZh = e.name_zh || e.name_en || (e.district || '') + '狗友善餐廳';
     var sub = detectSubArea(e.address || '', e.name_zh || '');
     var subLabel = sub || e.district || '';
+    var addrText = shortAddr(e.address, e.district);
+    if (subLabel) addrText = trimLabel(addrText, subLabel);
     var addrHtml = e.address
-      ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300">' + escapeHtml(e.address) + '</span>'
+      ? '<span class="mx-1.5 text-gray-200">·</span><span class="text-gray-300 addr-text">' + escapeHtml(addrText) + '</span>'
       : '';
     var distHtml = '';
     if (dist != null) {
@@ -760,6 +771,23 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   }
   // feat/restaurant-types: small gray chip between title and address.
   // Tooltip reflects actual source: 資料來源：OpenStreetMap / 由店名推斷，或有誤.
+  // v2：列表卡地址去掉重複行政區名（同 SSR 版 shortAddr 一致）
+  function shortAddr(a, d) {
+    var s = String(a || '').replace(/^(香港|九龍|新界)\s*/, '');
+    var base = String(d || '').replace(/區$/, '');
+    if (base && s.indexOf(base) === 0) s = s.slice(base.length).replace(/^\s+/, '');
+    return s;
+  }
+
+  // v2：地址去掉重複行政區名的同時，要避免誤剪街道名（「山頂」+「山頂道」）
+  function trimLabel(s, label) {
+    if (!label || s.indexOf(label) !== 0) return s;
+    var rest = s.slice(label.length);
+    if (rest.length < 5) return s;                 // 剪完太短 → 唔剪
+    if (/^[道路街里巷徑坊]/.test(rest)) return s;   // 「山頂道」「元朗路」係街名，唔係重複
+    return rest.replace(/^\s+/, '');
+  }
+
   function cuisineChipHtmlZh(id) {
     var t = RESTAURANT_TYPES_ZH[String(id)];
     if (!t || !t.types || t.types.length === 0) return '';
@@ -1093,6 +1121,17 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var name = el.getAttribute('data-name') || '';
     var sub = detectSubArea(addr, name);
     if (sub) el.textContent = sub;
+    // v2：地址開頭如果同地區標籤重複（"北角 · 北角渣華道…"）→ 剪走重複部分
+    var label = (el.textContent || '').trim();
+    var p = el.closest('p');
+    var addrSpan = p ? p.querySelector('.addr-text') : null;
+    if (addrSpan && label) {
+      var t = (addrSpan.textContent || '').trim();
+      if (t !== '·') {
+        var trimmed = trimLabel(t, label);
+        if (trimmed !== t) addrSpan.textContent = trimmed;
+      }
+    }
   });
 
   // ---- On load: apply URL params + initial render ----
