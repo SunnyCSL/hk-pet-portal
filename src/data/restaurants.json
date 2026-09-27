@@ -1872,14 +1872,6 @@
   "id": 264
  },
  {
-  "name_en": "CHIUCHOW GARDEN",
-  "name_zh": "潮江春",
-  "district": "北區",
-  "address": "新界上水石湖墟龍琛路48號上水匯6樓601室",
-  "license_no": "2296801448",
-  "id": 265
- },
- {
   "name_en": "Chiu Hing Chiu Chau Restaurant",
   "name_zh": "潮興正宗打冷小廚",
   "district": "深水埗區",
@@ -3672,14 +3664,6 @@
   "id": 515
  },
  {
-  "name_en": "Maxim's Palace",
-  "name_zh": "美心皇宮",
-  "district": "荃灣區",
-  "address": "新界荃灣蕙荃路22-26綠楊坊商場G27號舖",
-  "license_no": "2292001907",
-  "id": 517
- },
- {
   "name_en": "McDonald's",
   "name_zh": "McDonald's",
   "district": "西貢區",
@@ -5112,14 +5096,6 @@
   "id": 723
  },
  {
-  "name_en": "SPAGHETTI HOUSE",
-  "name_zh": "意粉屋",
-  "district": "油尖區",
-  "address": "九龍尖沙咀北京道57號1樓",
-  "license_no": "2261101946",
-  "id": 724
- },
- {
   "name_en": "Spasso Ristorante & Bar",
   "name_zh": "Spasso Ristorante & Bar",
   "district": "油尖區",
@@ -5774,14 +5750,6 @@
   "address": "香港銅鑼灣百德新街22-36號翡翠明珠廣場一樓3號舖",
   "license_no": "2212814941",
   "id": 813
- },
- {
-  "name_en": "The Spaghetti House",
-  "name_zh": "意粉屋",
-  "district": "沙田區",
-  "address": "新界沙田新城市廣埸第一期七樓710號鋪",
-  "license_no": "2297807045",
-  "id": 814
  },
  {
   "name_en": "The Square",
@@ -7950,5 +7918,21 @@
   "address": "香港赤柱赤柱大街90號地下2號舖及舖前的露天座位",
   "license_no": "2215801915",
   "id": 1102
+ },
+ {
+  "name_en": "COFFGANIC",
+  "name_zh": "COFFGANIC",
+  "district": "灣仔區",
+  "address": "香港灣仔堅尼地道15號 合和商場3樓336號鋪",
+  "license_no": "2212824474",
+  "id": 1103
+ },
+ {
+  "name_en": "HAAGEN DAZS",
+  "name_zh": "HAAGEN DAZS",
+  "district": "九龍城區",
+  "address": "九龍啟德協調道2號 AIRSIDE 1樓L118舖",
+  "license_no": "3152804047",
+  "id": 1104
  }
 ]
