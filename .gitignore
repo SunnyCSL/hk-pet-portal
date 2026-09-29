@@ -22,3 +22,9 @@ src/data/*.bak-*
 src/data/*.bak.json
 src/data/*.before-rerun*.json
 src/data/*.prev.json
+
+# Geocoder caches / backups (regenerable)
+scripts/.geocode_als_cache.json
+scripts/.geocode_refix_cache.json
+scripts/*.json.bak-*
+src/data/*.json.bak-*
