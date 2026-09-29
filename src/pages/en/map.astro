@@ -49,6 +49,10 @@ const markers = restaurants
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" is:inline></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.0/leaflet-maplibre-gl.js" is:inline></script>
+  <script src="/basemap.js" is:inline></script>
   <script is:inline>
   document.addEventListener('DOMContentLoaded', function() {
     var el = document.getElementById('all-restaurants-map');
@@ -78,10 +82,8 @@ const markers = restaurants
       scrollWheelZoom: true
     }).fitBounds(bounds, { padding: [30, 30] });
 
-    L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap',
-      maxZoom: 19
-    }).addTo(map);
+    // Basemap: OpenFreeMap positron vector (keyless) with Esri Light Gray raster fallback
+    NexiBasemap.add(map);
 
     // Color per district (same palette as zh version)
     var districtColors = {

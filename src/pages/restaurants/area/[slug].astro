@@ -515,6 +515,10 @@ function walkingMinutes(d: number): number | null {
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" is:inline></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.0/leaflet-maplibre-gl.js" is:inline></script>
+  <script src="/basemap.js" is:inline></script>
 
   <!-- Island rows: full list (sorted: precise first, then area-prec) -->
   <script type="application/json" id="nearby-island" set:html={JSON.stringify({ rows: islandRows })} />
@@ -537,10 +541,8 @@ function walkingMinutes(d: number): number | null {
       scrollWheelZoom: true,
     });
 
-    L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; CARTO &copy; OpenStreetMap',
-      maxZoom: 19,
-    }).addTo(map);
+    // Basemap: OpenFreeMap positron vector (keyless) with Esri Light Gray raster fallback
+    NexiBasemap.add(map);
 
     // Area centre marker (distinctive orange)
     var centreIcon = L.divIcon({
