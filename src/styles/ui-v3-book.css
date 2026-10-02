@@ -277,6 +277,32 @@ main > section:first-child { padding-top: 0; }
   .chip-row { flex-wrap: wrap; overflow: visible; justify-content: center; }
 }
 
+/* ─────────────── 8. 餐廳卡縮圖（地圖縮圖做卡面） ─────────────── */
+/* 縮圖由 scripts/gen_restaurant_thumbs.py 生成 → public/thumbs/<id>.jpg（800×533）。
+   未生成嘅店：img 加 data-failed → 縮圖消失，退返原本嘅 gingham 書脊。 */
+.restaurant-item .rc-thumb,
+.nearby-item .rc-thumb {
+  width: 84px; height: 84px; flex: none;
+  object-fit: cover; object-position: center;
+  border: 1.5px solid var(--ink); border-radius: 3px;
+  background: var(--paper-2);
+  box-shadow: 1px 2px 0 rgba(27, 24, 20, .18);
+}
+.restaurant-item .rc-spine, .nearby-item .rc-spine { display: none; }   /* 有縮圖 → 唔要書脊 */
+.restaurant-item .rc-thumb[data-failed], .nearby-item .rc-thumb[data-failed] { display: none; }
+.restaurant-item:has(.rc-thumb[data-failed]) .rc-spine,
+.nearby-item:has(.rc-thumb[data-failed]) .rc-spine { display: block; }
+@media (min-width: 768px) {
+  .restaurant-item .rc-thumb, .nearby-item .rc-thumb { width: 104px; height: 104px; }
+}
+/* 詳情頁大圖 */
+.rc-hero-thumb {
+  display: block; width: 100%; height: auto; aspect-ratio: 3 / 2;
+  object-fit: cover; border: 1.5px solid var(--ink); border-radius: 4px;
+  background: var(--paper-2); box-shadow: 3px 3px 0 rgba(27, 24, 20, .18);
+}
+.rc-hero-thumb[data-failed] { display: none; }
+
 /* ─────────────── 6. 卡片語言：牛奶盒 ─────────────── */
 .card, .card-soft, .stat-tile, .list-card,
 .restaurant-item, .meal-card, .article-card, .related-card, .empty-hero {
