@@ -467,7 +467,9 @@ function walkingMinutes(d: number): number | null {
                 data-lng={r.lng}
               >
                 <div class="flex items-center gap-3">
-                  <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>
+                  <img class="rc-thumb shrink-0" src={`/thumbs/${r.id}.jpg`} alt="" width="84" height="84"
+                                   loading="lazy" decoding="async" onerror="this.setAttribute('data-failed','1')" />
+                              <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>
                   <div class="min-w-0 flex-1">
                     <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
                       {r.name}
@@ -704,7 +706,9 @@ function walkingMinutes(d: number): number | null {
         a.setAttribute('data-lng', lng);
         a.innerHTML =
           '<div class="flex items-center gap-3">'
-          + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0"></div>'
+          + '<img class="rc-thumb shrink-0" src="/thumbs/' + e.id + '.jpg" alt="" width="84" height="84"'
+      + ' loading="lazy" decoding="async" onerror="this.setAttribute(\'data-failed\',\'1\') " />'
+      + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>'
           + '<div class="min-w-0 flex-1">'
           + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(name) + '</h3>'
           + cuisineChipHtmlEn(id)
