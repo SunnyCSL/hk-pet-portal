@@ -28,3 +28,6 @@ scripts/.geocode_als_cache.json
 scripts/.geocode_refix_cache.json
 scripts/*.json.bak-*
 src/data/*.json.bak-*
+
+# 插畫原檔（76MB PNG，只作再切／放大用；成品 JPEG 喺 public/illus/）
+assets/illus_src/

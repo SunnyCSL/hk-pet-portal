@@ -7,6 +7,8 @@ import areaSlugs from '../../data/area-slugs.json';
 import areaNames from '../../data/area-names.json';
 import restaurantCoords from '../../data/restaurant-coords.json';
 import restaurantTypes from '../../data/restaurant-types.json';
+import illusJson from '../../data/cuisine-illus.json';
+import { cardFace } from '../../lib/card-face';
 
 // feat/restaurant-types: zh category → en display name. Mirrors the table in
 // /tmp/cuisine_rules.md. Records absent from restaurantTypes have no inferred
@@ -293,8 +295,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           data-prec={r.prec == null ? '' : r.prec}
         >
           <div class="flex items-center gap-3">
-            <img class="rc-thumb shrink-0" src={`/thumbs/${r.id}.jpg`} alt="" width="84" height="84"
-                             loading="lazy" decoding="async" onerror="this.setAttribute('data-failed','1')" />
+            <img class="rc-thumb shrink-0" src={cardFace(r.id)} alt="" width="84" height="84"
+                             loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r='1';this.src=this.src;}else{this.setAttribute('data-failed','1')}" />
                         <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>
             <div class="min-w-0 flex-1">
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">{r.name_en || r.name_zh}</h3>
@@ -364,6 +366,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
        JS-rendered cards. The EN chip uses CUISINE_EN_MAP to translate. -->
   <script type="application/json" id="restaurant-types" set:html={JSON.stringify(restaurantTypes)} />
 
+  <script type="application/json" id="cuisine-illus" set:html={JSON.stringify(illusJson)} />
+  <script is:inline src="/card-face.js"></script>
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with SSR).
   var SUB_AREAS = [
@@ -905,8 +909,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + ' data-addr="' + escapeHtml((e.address || '').toLowerCase()) + '"'
       + ' data-key="' + escapeHtml(e.key || '') + '">'
       + '<div class="flex items-center gap-3">'
-      + '<img class="rc-thumb shrink-0" src="/thumbs/' + e.id + '.jpg" alt="" width="84" height="84"'
-      + ' loading="lazy" decoding="async" onerror="this.setAttribute(\'data-failed\',\'1\') " />'
+      + '<img class="rc-thumb shrink-0" src="' + cardFaceSrc(e.id) + '" alt="" width="84" height="84"'
+      + ' loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r=\'1\';this.src=this.src;}else{this.setAttribute(\'data-failed\',\'1\')} " />'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>'
       + '<div class="min-w-0 flex-1">'
       + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">' + escapeHtml(nameEn) + '</h3>'

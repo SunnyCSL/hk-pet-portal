@@ -22,6 +22,8 @@ import areas from '../../../../data/area-centres.json';
 import areaSlugs from '../../../../data/area-slugs.json';
 import areaNames from '../../../../data/area-names.json';
 import restaurantTypes from '../../../../data/restaurant-types.json';
+import illusJson from '../../../../data/cuisine-illus.json';
+import { cardFace } from '../../../../lib/card-face';
 
 // feat/restaurant-types: zh category → en display name. Mirrors the table in
 // /tmp/cuisine_rules.md. Records absent from restaurantTypes have no inferred
@@ -467,8 +469,8 @@ function walkingMinutes(d: number): number | null {
                 data-lng={r.lng}
               >
                 <div class="flex items-center gap-3">
-                  <img class="rc-thumb shrink-0" src={`/thumbs/${r.id}.jpg`} alt="" width="84" height="84"
-                                   loading="lazy" decoding="async" onerror="this.setAttribute('data-failed','1')" />
+                  <img class="rc-thumb shrink-0" src={cardFace(r.id)} alt="" width="84" height="84"
+                                   loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r='1';this.src=this.src;}else{this.setAttribute('data-failed','1')}" />
                               <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>
                   <div class="min-w-0 flex-1">
                     <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">
@@ -568,6 +570,8 @@ function walkingMinutes(d: number): number | null {
   <!-- feat/restaurant-types: cuisine types map for JS-rendered "show all" cards. -->
   <script type="application/json" id="restaurant-types" set:html={JSON.stringify(restaurantTypes)} />
 
+  <script type="application/json" id="cuisine-illus" set:html={JSON.stringify(illusJson)} />
+  <script is:inline src="/card-face.js"></script>
   <script is:inline>
   // ---- Area map ----
   (function () {
@@ -706,8 +710,8 @@ function walkingMinutes(d: number): number | null {
         a.setAttribute('data-lng', lng);
         a.innerHTML =
           '<div class="flex items-center gap-3">'
-          + '<img class="rc-thumb shrink-0" src="/thumbs/' + e.id + '.jpg" alt="" width="84" height="84"'
-      + ' loading="lazy" decoding="async" onerror="this.setAttribute(\'data-failed\',\'1\') " />'
+          + '<img class="rc-thumb shrink-0" src="' + cardFaceSrc(e.id) + '" alt="" width="84" height="84"'
+      + ' loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r=\'1\';this.src=this.src;}else{this.setAttribute(\'data-failed\',\'1\')} " />'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>'
           + '<div class="min-w-0 flex-1">'
           + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors truncate">' + escapeHtml(name) + '</h3>'
