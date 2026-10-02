@@ -1,0 +1,597 @@
+/* ============================================================================
+   HK Pet Portal — 視覺系統 v3「繪本牛奶盒」(2026-10-02)
+   ----------------------------------------------------------------------------
+   來源：CowPetStore 對外店 v5 視覺語言（Sunny 指定：「代購個網站睇落高級好多」）
+   世界觀：牛奶盒包裝 × 手繪繪本 × 韓系選物店
+   簽名元素：紙米白 grain 底／墨黑 1.5–2px 線框／煲呔紅 accent／奶油黃標籤／
+             紅白 gingham 膠紙／宋體大標＋手繪波浪線／方角紙貼（唔用玻璃感陰影）
+
+   🔴 鐵則
+   1. 只改視覺：class 名、DOM 結構、功能一律不變（只有極少量裝飾 hook 加 class）。
+   2. 本檔係 unlayered CSS，載入次序 brand.css → ui-v2.css → ui-v3-book.css，
+      所以本檔勝出（unlayered 蓋過 Tailwind @layer utilities）。
+   3. 細字色全部 ≥4.5:1（底：--paper #F4EEDF / --milk #FFFDF7 / --warm #FFF9E4 / #fff）。
+      --tomato 只准用喺大字（≥24px 或 ≥19px 粗體）、邊框、填色；細字紅用 --tomato-text。
+   4. 字級地板 15px；可點元素 ≥44px；focus ring 唔准消失。
+   ============================================================================ */
+
+/* ─────────────── 0. Token 重設 ─────────────── */
+:root {
+  /* 品牌色 */
+  --paper:     #F4EEDF;
+  --paper-2:   #EDE4CE;
+  --milk:      #FFFDF7;
+  --warm:      #FFF9E4;
+  --ink:       #1B1814;
+  --ink-2:     #4A433A;
+  --ink-3:     #5C544A;
+  --butter:    #F6D77A;
+  --tomato:    #D9432B;
+  --orange:    #E9822B;
+  --pink:      #F2B8B0;
+  --tomato-text: #C03818;
+  --amber-text:  #8A5A00;
+  --on-accent:   #1B1814;
+  --ok-text:     #15642F;
+  --line-soft:   #E0D6BE;
+  --line-strong: #C9BC9C;
+
+  /* v2 變數 → v3 對應（v2 全部組件都用呢組名，改呢度＝全站換色） */
+  --brand:       #C03818;   /* 細字安全紅（4.75:1 on milk）— 連結／accent 文字 */
+  --brand-dark:  #97290F;
+  --brand-mid:   #D9432B;
+  --brand-400:   #E9822B;
+  --brand-tint:  #FBEFD6;   /* 奶油底（選中／highlight） */
+  --coral:       #D9432B;
+  --sun:         #8A5A00;   /* 細字用深琥珀（唔再用 #F59E0B 落細字） */
+  --mint:        #15642F;
+  --cream:       #FFF9E4;
+
+  --bg:      var(--paper);
+  --surface: var(--milk);
+
+  --line:   #E0D6BE;                 /* 淺分隔線（表格／內文） */
+  --line-2: rgba(27, 24, 20, .14);
+  --hair:   2px solid var(--ink);    /* 簽名：墨黑線框 */
+  --hair-thin: 1.5px solid var(--ink);
+
+  /* 幾何：紙貼方角，唔要膠囊 */
+  --r-card:    4px;
+  --r-card-sm: 3px;
+  --r-btn:     3px;
+  --r-pill:    4px;
+
+  /* 陰影：只用手繪「硬邊貼紙」影，唔用玻璃感柔影 */
+  --sh1: 0 1px 0 rgba(27, 24, 20, .10);
+  --sh2: 0 3px 0 0 var(--ink);
+  --sh3: 0 4px 0 0 var(--ink);
+
+  /* 字體：標題＝宋體（繪本感），內文＝Noto Sans HK（資訊密度高要清） */
+  --serif: 'Noto Serif HK', 'Songti TC', 'Songti SC', 'Noto Serif TC', 'Source Han Serif TC', serif;
+  --sans:  'Noto Sans HK', system-ui, -apple-system, sans-serif;
+
+  /* SVG data-URI 紋理（跟 CowPetStore v5） */
+  --gingham: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect width='10' height='10' fill='%23FFFDF7'/%3E%3Crect width='5' height='10' fill='%23D9432B' fill-opacity='.55'/%3E%3Crect width='10' height='5' fill='%23D9432B' fill-opacity='.55'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .25 0 0 0 0 .15 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --squiggle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10' viewBox='0 0 40 10'%3E%3Cpath d='M0 6 C5 1 10 1 15 5 S25 9 30 5 S37 2 40 4' fill='none' stroke='%23D9432B' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Tailwind @theme 變數 → v3（令 .bg-gray-50 等 utility 自己跟色） */
+:root {
+  --color-brand: #C03818;
+  --color-brand-dark: #97290F;
+  --color-brand-light: #FBEFD6;
+  --color-brand-deep: #97290F;
+  --color-brand-coral: #D9432B;
+  --color-near-black: #1B1814;
+  --color-warm-white: #FFFDF7;
+  --color-gray-900: #1B1814;
+  --color-gray-700: #4A433A;
+  --color-gray-500: #4A433A;
+  --color-gray-300: #5C544A;
+  --color-gray-100: #EDE4CE;
+  --color-gray-50: #FBEFD6;
+  --color-paw-orange: #8A5A00;
+  --color-vet-blue: #1E4E8C;
+  --color-healthy-green: #15642F;
+  --color-closed-red: #C03818;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* 🔴 2026-10-02 實測發現：BaseLayout `<style>` 內嘅 `@import "tailwindcss"` 被 Astro
+   加了 component scope（preflight 變成 `a[data-astro-cid-…]{color:inherit}`），
+   即係 Tailwind preflight 實際上**冇生效** → 所有 <a> 用瀏覽器預設藍 #0000EE
+   （箭嘴、標籤、卡片全部變藍）。下面呢條放喺 @layer base，只補回 preflight 行為：
+   打贏 UA 預設，但輸俾任何 utility／自家 class（唔會蓋走 text-brand / text-white）。 */
+@layer base {
+  a { color: inherit; }
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--paper) var(--grain);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.75;
+  font-weight: 500;
+  overflow-wrap: break-word;
+  -webkit-tap-highlight-color: rgba(217, 67, 43, .14);
+}
+::selection { background: var(--tomato); color: var(--milk); }
+
+/* ─────────────── 1. 頂部 gingham 膠紙（簽名） ─────────────── */
+.tape-top {
+  height: 8px;
+  background: var(--gingham);
+  background-size: 10px 10px;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+/* ─────────────── 2. 字階（標題＝宋體、內文＝黑體） ─────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--serif);
+  color: var(--ink);
+  letter-spacing: .01em;
+}
+h1 { font-size: clamp(32px, 8.4vw, 50px); font-weight: 900; line-height: 1.18; }
+h2 { font-size: clamp(25px, 6vw, 34px); font-weight: 900; line-height: 1.3; }
+h3 { font-size: 21px; font-weight: 700; line-height: 1.45; }
+h4 { font-size: 18px; font-weight: 700; line-height: 1.5; }
+p { text-wrap: pretty; }
+
+.text-\[9px\], .text-\[10px\], .text-\[11px\], .text-\[12px\] { font-size: 15px; font-weight: 600; line-height: 1.5; }
+.text-xs { font-size: 15px; font-weight: 500; line-height: 1.6; }
+.text-sm { font-size: 16px; font-weight: 500; line-height: 1.7; }
+.text-base { font-size: 17px; line-height: 1.75; }
+.text-lg { font-size: 19px; font-weight: 700; line-height: 1.5; }
+.text-xl { font-size: 22px; font-weight: 800; line-height: 1.4; }
+.text-2xl { font-size: 26px; font-weight: 900; line-height: 1.3; }
+.text-3xl { font-size: 30px; font-weight: 900; line-height: 1.25; }
+.text-4xl { font-size: 34px; font-weight: 900; line-height: 1.22; }
+
+/* 字體角色：display 改宋體（繪本大標）；hand 保留楷體；num 保留 Baloo */
+.font-display { font-family: var(--serif); font-weight: 900; letter-spacing: .015em; }
+.font-hand { font-family: 'LXGW WenKai TC', var(--serif); font-weight: 700; letter-spacing: .01em; }
+.font-num { font-family: 'Baloo 2', var(--sans); font-weight: 800; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+.font-eyebrow { font-family: var(--sans); font-weight: 800; letter-spacing: .2em; text-transform: uppercase; font-size: 15px; line-height: 1.3; }
+
+/* 標題波浪線：紫 → 煲呔紅 */
+.title-underline::after {
+  background: var(--squiggle) no-repeat center / 100% 100%;
+  height: .22em; bottom: -.12em;
+}
+
+/* ─────────────── 3. Tailwind 顏色 utility 校正（唔准留紫） ─────────────── */
+.text-near-black { color: var(--ink); }
+.text-gray-900 { color: var(--ink); }
+.text-gray-700 { color: var(--ink-2); }
+.text-gray-600 { color: var(--ink-2); }
+.text-gray-500 { color: var(--ink-3); }
+.text-gray-400 { color: var(--ink-3); }
+.text-gray-300 { color: var(--ink-3); }
+.text-gray-200 { color: var(--ink-3); }
+.text-brand { color: var(--brand); }
+.bg-white { background: var(--milk); }
+.bg-gray-50 { background: var(--brand-tint); }
+.bg-gray-100 { background: var(--paper-2); }
+.bg-warm-white { background: var(--milk); }
+.bg-brand-light { background: var(--brand-tint); }
+.bg-brand { background: var(--brand); }
+.border-gray-100 { border-color: var(--line-soft); }
+.border-gray-200 { border-color: var(--line-soft); }
+.border-gray-300 { border-color: var(--line-strong); }
+.border-brand { border-color: var(--brand-400); }
+
+/* 狀態色：琥珀／綠／紅 → 繪本色系（細字全部用深色版，保對比） */
+.bg-amber-50 { background: var(--warm); }
+.border-amber-100 { border-color: var(--line-strong); }
+.text-amber-800, .text-amber-700, .text-amber-600 { color: var(--amber-text); }
+.bg-green-50, .bg-emerald-50 { background: #EAF3EA; }
+.border-emerald-200 { border-color: #BFD8C2; }
+.text-green-800, .text-green-700, .text-green-600,
+.text-emerald-900, .text-emerald-700 { color: var(--ok-text); }
+.bg-red-50 { background: #FBEAE5; }
+.text-red-500 { color: var(--tomato-text); }
+.text-orange-500 { color: var(--amber-text); }
+.bg-black { background: var(--ink); }
+.text-white { color: var(--milk); }
+
+/* ─────────────── 4. 區塊節奏 ─────────────── */
+main > section { padding-block: 40px; }
+main > section:first-child { padding-top: 0; }
+.sec { max-width: 1080px; margin-inline: auto; padding-inline: 18px; }
+
+.sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.sec-head .eyebrow {
+  display: block; font-family: var(--sans); font-weight: 800;
+  letter-spacing: .22em; text-transform: uppercase; font-size: 15px;
+  color: var(--tomato-text); margin-bottom: 4px;
+}
+.sec-head .eyebrow::before { content: '❤'; margin-right: 7px; }
+.sec-head h2 { margin: 0; }
+.sec-head .more {
+  flex: none; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 0 16px; border-radius: var(--r-btn);
+  background: var(--milk); color: var(--ink); border: 1.5px solid var(--ink);
+  font-size: 16px; font-weight: 700; text-decoration: none; border-bottom-width: 3px;
+  transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+.sec-head .more:hover { background: var(--butter); color: var(--ink); }
+.sec-head .more:active { transform: translateY(1px); border-bottom-width: 1.5px; }
+
+/* ─────────────── 5. 控制件（紙貼方角，硬邊） ─────────────── */
+.btn, .chip, .pill {
+  box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1.5px solid var(--ink); border-radius: var(--r-btn);
+  font-family: var(--sans);
+  font-size: 16px; font-weight: 700; line-height: 1.15; white-space: nowrap;
+  text-decoration: none; cursor: pointer;
+  transition: transform 140ms ease, background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+.btn { min-height: 50px; padding: 0 22px; letter-spacing: .04em; }
+.btn-lg { min-height: 56px; padding: 0 26px; font-size: 17px; }
+.btn-sm { min-height: 44px; padding: 0 16px; font-size: 15px; }
+.btn-primary { background: var(--ink); color: var(--milk); }
+.btn-primary:hover { background: var(--tomato); border-color: var(--tomato); }
+.btn-outline { background: transparent; color: var(--ink); }
+.btn-outline:hover { background: var(--butter); }
+.btn-ghost { background: var(--butter); color: var(--on-accent); }
+.btn-warm { background: var(--tomato); color: var(--milk); }
+.btn:active, .chip:active, .pill:active { transform: translateY(1px); }
+.btn[disabled], .btn.is-disabled { opacity: .45; pointer-events: none; }
+
+/* chip＝紙標籤：米白底＋墨框，選中＝墨底牛奶字 */
+[id^="pill-"], .filter-chip, .species-chip, .radius-chip, .type-chip, .chip {
+  box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; padding: 0 16px;
+  border-radius: var(--r-btn); border: 1.5px solid var(--ink);
+  background: var(--milk); color: var(--ink-2);
+  font-size: 16px; font-weight: 700; line-height: 1.15; white-space: nowrap;
+  text-decoration: none;
+}
+[id^="pill-"]:hover, .filter-chip:hover, .species-chip:hover,
+.radius-chip:hover, .type-chip:hover, .chip:hover {
+  background: var(--butter); color: var(--ink); border-color: var(--ink);
+}
+.chip.is-active, [id^="pill-"].is-active, .filter-chip.is-active,
+.filter-chip.active, .species-chip.active, .type-chip.active, .radius-chip.active,
+[id^="pill-"].active {
+  background: var(--ink); border-color: var(--ink); color: var(--milk);
+}
+.filter-chip.bg-brand, .species-chip.bg-brand, .type-chip.bg-brand, .radius-chip.bg-brand,
+.chip.bg-brand, [id^="pill-"].bg-brand {
+  background: var(--ink); border-color: var(--ink); color: var(--milk);
+}
+.filter-chip.bg-gray-50, .species-chip.bg-gray-50, .type-chip.bg-gray-50, .radius-chip.bg-gray-50,
+.chip.bg-gray-50, [id^="pill-"].bg-gray-50 {
+  background: var(--milk); border-color: var(--ink); color: var(--ink-2);
+}
+.chip-warm { background: var(--butter); border-color: var(--ink); color: var(--on-accent); }
+.chip-row { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 4px 0; }
+.chip-row::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) {
+  .chip-row { flex-wrap: wrap; overflow: visible; justify-content: center; }
+}
+
+/* ─────────────── 6. 卡片語言：牛奶盒 ─────────────── */
+.card, .card-soft, .stat-tile, .list-card,
+.restaurant-item, .meal-card, .article-card, .related-card, .empty-hero {
+  background: var(--milk);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-card);
+  box-shadow: none;
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+@media (hover: hover) {
+  .card:hover, .card-soft:hover, .stat-tile:hover, .list-card:hover,
+  .restaurant-item:hover, .meal-card:hover, .article-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sh2);
+    border-color: var(--ink);
+  }
+}
+.card-pad { padding: 18px; }
+
+.list-card { display: block; padding: 16px 18px; text-decoration: none; color: inherit; }
+.list-card .lc-title { font-family: var(--serif); font-size: 20px; font-weight: 900; line-height: 1.35; color: var(--ink); margin: 0; letter-spacing: .01em; }
+.list-card .lc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 8px; font-size: 15px; color: var(--ink-3); }
+.list-card .lc-addr { font-size: 15px; color: var(--ink-3); margin-top: 6px; line-height: 1.6; }
+.list-card .lc-arrow,
+.lc-arrow {
+  flex: none; width: 34px; height: 34px; border-radius: var(--r-btn);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--milk); border: 1.5px solid var(--ink); color: var(--ink); font-size: 17px;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.list-card:hover .lc-arrow,
+.article-card:hover .lc-arrow { background: var(--tomato); border-color: var(--tomato); color: var(--milk); transform: translateX(2px); }
+
+/* 首字／類別圓章 → 奶油黃紙方章 */
+.monogram {
+  flex: none; width: 52px; height: 52px; border-radius: var(--r-btn);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 23px; font-weight: 900; color: var(--ink);
+  background: var(--butter); border: 1.5px solid var(--ink); box-shadow: none;
+}
+.monogram.warm { background: var(--pink); }
+.monogram.cool { background: #CFE3CF; }
+.monogram.sun  { background: var(--butter); }
+
+/* 標籤＝貼紙 */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 28px; padding: 2px 9px;
+  border-radius: var(--r-btn); border: 1.5px solid var(--ink);
+  font-size: 15px; font-weight: 700; line-height: 1.2;
+  background: var(--milk); color: var(--ink-2);
+}
+.badge-warm { background: var(--butter); color: var(--on-accent); }
+.badge-mint { background: #E4F0E4; color: var(--ok-text); }
+.badge-sticker { transition: transform 160ms ease; }
+.badge-sticker:hover { transform: rotate(-2deg) translateY(-1px); }
+
+/* 統計磚 */
+.stat-tile { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 16px 8px; text-decoration: none; color: inherit; }
+.stat-tile .st-ico { font-size: 26px; line-height: 1; }
+.stat-tile .st-num { font-family: 'Baloo 2', var(--sans); font-weight: 800; font-size: 27px; line-height: 1.1; color: var(--ink); }
+.stat-tile .st-lab { font-size: 15px; font-weight: 600; color: var(--ink-3); line-height: 1.35; text-align: center; }
+
+/* ─────────────── 7. Nav：紙頭＋墨線，選中＝墨底 ─────────────── */
+.nav-v2 {
+  background: var(--milk) !important;
+  border-bottom: 1.5px solid var(--ink) !important;
+  backdrop-filter: none;
+  transition: box-shadow 200ms ease;
+}
+.nav-v2.is-scrolled { box-shadow: 0 2px 0 0 var(--ink); background: var(--milk) !important; }
+.nav-v2 .nav-link {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 40px; padding: 0 12px;
+  border-radius: var(--r-btn); border: 1.5px solid transparent;
+  color: var(--ink-2); font-size: 16px; font-weight: 700;
+  text-decoration: none; white-space: nowrap;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+.nav-v2 .nav-link:hover { background: var(--butter); color: var(--ink); border-color: var(--ink); }
+.nav-v2 .nav-link.is-current { background: var(--ink); color: var(--milk); border-color: var(--ink); }
+.nav-v2 .brand-name { font-family: var(--serif); font-weight: 900; font-size: 19px; letter-spacing: .01em; color: var(--ink); }
+@media (max-width: 767px) {
+  .nav-v2 .nav-emoji { display: none; }
+  .nav-v2 .nav-link { padding: 0 10px; }
+  .nav-v2 .lang-switch { min-width: 52px; padding: 0 10px; }
+}
+.lang-switch {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  min-width: 62px; min-height: 44px; padding: 0 12px; border-radius: var(--r-btn);
+  border: 1.5px solid var(--ink); background: var(--milk); color: var(--ink-2);
+  font-size: 15px; font-weight: 700;
+  transition: background 140ms ease, color 140ms ease;
+}
+.lang-switch:hover { background: var(--butter); color: var(--ink); }
+
+/* ─────────────── 8. Hero：繪本大標＋波浪線＋墨黑 CTA ─────────────── */
+.hero-v2 {
+  position: relative; overflow: hidden;
+  padding: 40px 0 36px;
+  background: var(--paper) var(--grain);
+  border-bottom: 1.5px solid var(--ink);
+}
+.hero-v2::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='%231B1814' fill-opacity='.055' transform='rotate(-18 60 60)'><ellipse cx='60' cy='72' rx='16' ry='13'/><circle cx='41' cy='53' r='6.5'/><circle cx='55' cy='44' r='6.5'/><circle cx='70' cy='46' r='6.5'/><circle cx='82' cy='57' r='6.5'/></g></svg>");
+  background-size: 190px 190px;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 78%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 78%);
+}
+.hero-v2 .sec { position: relative; z-index: 1; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 5px 13px;
+  border-radius: var(--r-btn); background: var(--butter);
+  border: 1.5px solid var(--ink); color: var(--on-accent);
+  font-size: 15px; font-weight: 800; letter-spacing: .06em;
+  transform: rotate(-1.6deg);
+}
+.hero-v2 h1 { margin: 16px 0 0; font-family: var(--serif); font-weight: 900; }
+.hero-v2 .hero-sub { font-size: 18px; color: var(--ink-2); margin: 12px 0 0; line-height: 1.75; }
+.hero-v2 .hero-sub b { font-family: 'Baloo 2', var(--sans); color: var(--ink); font-weight: 800; font-size: 1.06em; }
+.title-underline { color: var(--tomato); padding-bottom: 8px; }
+
+/* 搜尋欄：報紙方格，唔要膠囊 */
+.search-v2 {
+  display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 0 6px 0 16px;
+  background: var(--milk); border: 2px solid var(--ink); border-radius: var(--r-btn);
+  box-shadow: none;
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+.search-v2:focus-within { border-color: var(--tomato); box-shadow: 0 3px 0 0 var(--tomato); }
+.search-v2 input {
+  flex: 1; min-width: 0; min-height: 52px; border: 0; outline: 0; background: transparent;
+  font-family: var(--sans); font-size: 17px; font-weight: 500; color: var(--ink);
+}
+.search-v2 input::placeholder { color: var(--ink-3); font-weight: 500; }
+.search-v2 button {
+  flex: none; width: 44px; height: 44px; border: 1.5px solid var(--ink); border-radius: var(--r-btn);
+  background: var(--ink); color: var(--milk); font-size: 19px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 140ms ease, transform 140ms ease;
+}
+.search-v2 button:hover { background: var(--tomato); border-color: var(--tomato); }
+.search-v2 button:active { transform: translateY(1px); }
+
+/* 信任列 */
+.hero-facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; font-size: 16px; color: var(--ink-3); }
+.hero-facts span { display: inline-flex; align-items: center; gap: 6px; }
+.hero-facts .dot { width: 8px; height: 8px; border-radius: 2px; background: var(--ok-text); }
+
+/* ─────────────── 9. 內頁零件（SSR + client JS 共用 class） ─────────────── */
+h1.text-xl, h1.text-2xl { font-family: var(--serif); font-size: clamp(28px, 7vw, 38px); font-weight: 900; line-height: 1.22; letter-spacing: .01em; }
+h1.text-xl + p, h1.text-2xl + p { font-size: 16.5px !important; color: var(--ink-2) !important; }
+
+.restaurant-item { display: block; padding: 15px 17px; }
+.restaurant-item h3 { font-family: var(--serif); font-size: 20px; font-weight: 900; line-height: 1.35; letter-spacing: .01em; }
+.restaurant-item .w-1 { width: 5px; height: 44px; border-radius: 1px; background: var(--gingham); background-size: 5px 5px; border: 1px solid var(--ink); }
+.restaurant-item .bg-gray-50 {
+  background: var(--brand-tint); color: var(--ink-2); border: 1px solid var(--line-strong);
+  font-size: 15px; font-weight: 700; padding: 3px 9px; border-radius: var(--r-btn);
+}
+.restaurant-item p.truncate {
+  white-space: normal; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.restaurant-item .sub-area-label { color: var(--ink-2); font-weight: 700; }
+.restaurant-item .dist-badge {
+  background: #E4F0E4; color: var(--ok-text); border: 1px solid #BFD8C2;
+  font-size: 15px; font-weight: 700; padding: 3px 9px; border-radius: var(--r-btn);
+}
+.restaurant-item > div > div:last-child > span:last-child {
+  width: 34px; height: 34px; border-radius: var(--r-btn);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--milk); border: 1.5px solid var(--ink); color: var(--ink);
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.restaurant-item:hover > div > div:last-child > span:last-child { background: var(--tomato); border-color: var(--tomato); color: var(--milk); transform: translateX(2px); }
+
+.meal-card { padding: 18px; }
+.meal-card h2 { font-family: var(--serif); font-size: 20px; font-weight: 900; line-height: 1.35; }
+.meal-card .bg-gray-50 { background: var(--brand-tint); color: var(--amber-text); border: 1px solid var(--line-strong); font-size: 15px; font-weight: 700; border-radius: var(--r-btn); padding: 3px 9px; }
+.meal-card .bg-brand-light { background: var(--brand-tint); color: var(--tomato-text); font-size: 15px; font-weight: 700; }
+
+.article-card { display: block; padding: 18px; }
+.article-card h2 { font-family: var(--serif); font-size: 20px; font-weight: 900; line-height: 1.4; }
+.article-card p { color: var(--ink-3); }
+.article-card .bg-brand-light { background: var(--brand-tint); color: var(--tomato-text); font-size: 15px; font-weight: 700; }
+.ac-desc {
+  font-size: 16.5px; line-height: 1.75; color: var(--ink-3); margin: 10px 0 0;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ─────────────── 10. 文章正文 ─────────────── */
+.prose-custom { font-size: 18px; line-height: 1.95; color: var(--ink-2); }
+.prose-custom p { margin: 0 0 1.15em; }
+.prose-custom h2 { font-family: var(--serif); font-size: 26px; font-weight: 900; line-height: 1.35; margin: 2em 0 .7em; color: var(--ink); }
+.prose-custom h3 { font-family: var(--serif); font-size: 22px; font-weight: 800; line-height: 1.45; margin: 1.7em 0 .55em; color: var(--ink); }
+.prose-custom ul, .prose-custom ol { margin: 0 0 1.2em; padding-left: 1.35em; }
+.prose-custom li { margin-bottom: .55em; }
+.prose-custom strong, .prose-custom b { font-weight: 800; color: var(--ink); }
+.prose-custom blockquote {
+  margin: 1.4em 0; padding: 16px 18px; border-left: 4px solid var(--tomato);
+  background: var(--warm); border-radius: 0 var(--r-card) var(--r-card) 0;
+  font-family: 'LXGW WenKai TC', var(--serif); color: var(--ink-2);
+}
+.prose-custom table { width: 100%; border-collapse: collapse; margin: 1.4em 0; font-size: 16px; }
+.prose-custom th, .prose-custom td { border: 1px solid var(--line-strong); padding: 10px 12px; text-align: left; }
+.prose-custom th { background: var(--warm); font-weight: 800; color: var(--ink); }
+.prose-custom img { border-radius: var(--r-card); max-width: 100%; height: auto; border: 1.5px solid var(--ink); }
+.prose-body a, article a { color: var(--brand); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* ─────────────── 11. CTA 橫幅：墨黑板＋gingham 邊 ─────────────── */
+.cta-ink, .cta-banner {
+  background: var(--ink) !important;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--r-card) !important;
+  box-shadow: none !important;
+  position: relative;
+  overflow: hidden;
+}
+.cta-ink::before, .cta-banner::before {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
+  background: var(--gingham); background-size: 10px 10px; border-top: 1.5px solid var(--ink);
+}
+.cta-ink h2, .cta-banner h2 { color: var(--milk); font-family: var(--serif); }
+.cta-ink p, .cta-banner p { color: rgba(255, 253, 247, .82); }
+.cta-ink .btn-primary, .cta-banner .btn-primary { background: var(--butter); color: var(--on-accent); border-color: var(--milk); }
+.cta-ink .btn-primary:hover, .cta-banner .btn-primary:hover { background: var(--tomato); color: var(--milk); border-color: var(--milk); }
+.cta-ink .btn-outline, .cta-banner .btn-outline { background: transparent; color: var(--milk); border-color: var(--milk); }
+.cta-ink .btn-outline:hover, .cta-banner .btn-outline:hover { background: var(--milk); color: var(--ink); }
+
+/* ─────────────── 12. 頁尾：墨黑 + gingham（同代購站一致） ─────────────── */
+footer, footer.bg-warm-white {
+  background: var(--ink) !important;
+  border-top: 1.5px solid var(--ink) !important;
+  position: relative;
+}
+footer::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 8px;
+  background: var(--gingham); background-size: 10px 10px; border-bottom: 1.5px solid var(--ink);
+}
+footer h4, footer h4 span { color: var(--milk); font-family: var(--serif); font-weight: 800; }
+footer p, footer a, footer div, footer span, footer li { color: rgba(255, 253, 247, .80); }
+footer a:hover { color: var(--butter); }
+footer .border-t, footer .border-gray-100 { border-color: rgba(255, 253, 247, .20) !important; }
+footer .text-gray-500, footer .text-gray-300 { color: rgba(255, 253, 247, .80) !important; }
+footer .text-xs { font-size: 15px; }
+.footer-brand { min-width: 44px; }
+
+/* ─────────────── 13. 地圖／第三方／分頁 ─────────────── */
+/* 底圖調暖（跟紙米白世界觀）；keyless basemap 係灰白 positron → 加 sepia 貼近紙色 */
+.leaflet-tile-pane { filter: sepia(.26) saturate(.90) brightness(1.02) contrast(.97); }
+.leaflet-container { background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: var(--r-card); }
+.leaflet-bar a, .leaflet-bar a:hover { background: var(--milk); color: var(--ink); border-bottom-color: var(--line-strong); }
+.leaflet-control-attribution { background: rgba(255, 253, 247, .88) !important; color: var(--ink-3) !important; font-size: 12px; }
+.leaflet-popup-content { font-family: var(--sans); font-size: 15px !important; line-height: 1.55; }
+.leaflet-popup-content a { color: var(--brand); font-weight: 700; }
+.leaflet-popup-content-wrapper { border-radius: var(--r-card) !important; border: 1.5px solid var(--ink); box-shadow: var(--sh2) !important; background: var(--milk); }
+.leaflet-popup-tip { border: 1.5px solid var(--ink); background: var(--milk); }
+#pager button, #pager a { font-size: 16px !important; font-weight: 700; min-height: 44px; padding-inline: 16px; border: 1.5px solid var(--ink); border-radius: var(--r-btn); background: var(--milk); }
+#pager span { font-size: 16px; color: var(--ink-3); }
+
+/* ─────────────── 14. 其他零件 ─────────────── */
+.chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-wrap.is-collapsed { max-height: 104px; overflow: hidden; }
+.eyebrow-label { font-family: var(--sans); font-weight: 800; letter-spacing: .2em; text-transform: uppercase; font-size: 15px; color: var(--tomato-text); }
+.tag-toggle {
+  min-height: 44px; padding: 0 14px; border-radius: var(--r-btn);
+  border: 1.5px solid var(--ink); background: var(--milk); color: var(--ink);
+  font-size: 16px; font-weight: 700; font-family: inherit;
+  transition: background 140ms ease;
+}
+.tag-toggle:hover { background: var(--butter); }
+.tag-toggle:active { transform: translateY(1px); }
+.related-card { padding: 16px; }
+.related-card h3 { font-family: var(--serif); font-size: 19px; font-weight: 700; }
+.empty-hero {
+  padding: 44px 22px; background: var(--warm);
+}
+
+/* 分隔元素（PawDivider 之類）轉墨色 */
+.paw-divider, .paw-divider svg { color: var(--ink-3); fill: currentColor; }
+
+/* ─────────────── 15. 觸控 / 無障礙 ─────────────── */
+@media (pointer: coarse) {
+  a[href], button, [role="button"], input[type="submit"] { min-height: 44px; }
+}
+:where(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid var(--tomato) !important;
+  outline-offset: 3px;
+  border-radius: var(--r-btn);
+}
+
+/* ─────────────── 16. 動態（保留 v2，減弱誇張感） ─────────────── */
+.reveal { opacity: 0; transform: translateY(14px); }
+.reveal.is-in { opacity: 1; transform: none; transition: opacity 380ms ease, transform 380ms ease; }
+@keyframes riseIn { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes floaty { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+@keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(217, 67, 43, .35) } 70% { box-shadow: 0 0 0 14px rgba(217, 67, 43, 0) } 100% { box-shadow: 0 0 0 0 rgba(217, 67, 43, 0) } }
+.anim-rise { animation: riseIn 460ms ease both; }
+.anim-fade { animation: fadeIn 460ms ease both; }
+.anim-float { animation: floaty 4.2s ease-in-out infinite; }
+.anim-ring { animation: pulseRing 2.4s ease-out infinite; }
+
+/* ─────────────── 17. 桌面 ─────────────── */
+@media (min-width: 768px) {
+  body { font-size: 17.5px; }
+  main > section { padding-block: 56px; }
+  .hero-v2 { padding: 60px 0 52px; }
+  .list-card { padding: 20px 22px; }
+  .sec { padding-inline: 24px; }
+}
+
+/* ─────────────── 18. Reduced motion ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .anim-rise, .anim-fade, .anim-float, .anim-ring { animation: none !important; }
+  html { scroll-behavior: auto; }
+}

@@ -8,6 +8,7 @@ import Analytics from '@vercel/analytics/astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import '../styles/brand.css';  // 全域品牌字體（唔可以放 <style> 內，Astro 會加 component scope）
 import '../styles/ui-v2.css';  // 視覺系統 v2（字階放大／控制件尺寸／卡片／動態）— 必須後於 brand.css
+import '../styles/ui-v3-book.css'; // 視覺系統 v3「繪本牛奶盒」— 必須最後（unlayered 覆寫全部）
 
 export interface Props {
   title: string;
@@ -165,10 +166,10 @@ const allLd = [...baseLdBlocks, ...extraLd];
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700;900&family=Noto+Serif+HK:wght@600;700;900&display=swap"
     />
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet" />
-    <meta name="theme-color" content="#7C3AED" />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700;900&family=Noto+Serif+HK:wght@600;700;900&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#F4EEDF" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png" />
@@ -177,29 +178,29 @@ const allLd = [...baseLdBlocks, ...extraLd];
     <style>
       @import "tailwindcss";
       @theme {
-        /* 紫曜淺色組（token 來源：nexi-design-system/tokens-light.css）
-           原則：白底為主，紫 #8B5CF6 只做 accent（CTA／選中／關鍵數字） */
-        --color-brand: #7C3AED;
-        --color-brand-dark: #6D28D9;
-        --color-brand-light: #F1EDFF;
-        --color-brand-deep: #5B21B6;
-        --color-brand-coral: #DB2777;
-        --color-near-black: #1E1B2E;
-        --color-warm-white: #FBF9FF;
-        --color-gray-900: #1E1B2E;
-        --color-gray-700: #3A3350;
-        --color-gray-500: #4B4661;
-        --color-gray-300: #6E6688;
-        --color-gray-100: #EDE9FE;
-        --color-gray-50: #F5F3FF;
-        --color-paw-orange: #B45309;
-        --color-vet-blue: #2563EB;
-        --color-healthy-green: #047857;
-        --color-closed-red: #DC2626;
+        /* v3「繪本牛奶盒」token（來源：CowPetStore /static/tokens.css）
+           原則：紙米白底，煲呔紅 #C03818 只做 accent（CTA／選中／關鍵數字） */
+        --color-brand: #C03818;
+        --color-brand-dark: #97290F;
+        --color-brand-light: #FBEFD6;
+        --color-brand-deep: #97290F;
+        --color-brand-coral: #D9432B;
+        --color-near-black: #1B1814;
+        --color-warm-white: #FFFDF7;
+        --color-gray-900: #1B1814;
+        --color-gray-700: #4A433A;
+        --color-gray-500: #4A433A;
+        --color-gray-300: #5C544A;
+        --color-gray-100: #EDE4CE;
+        --color-gray-50: #FBEFD6;
+        --color-paw-orange: #8A5A00;
+        --color-vet-blue: #1E4E8C;
+        --color-healthy-green: #15642F;
+        --color-closed-red: #C03818;
       }
-      body { font-family: 'Noto Sans HK', system-ui, sans-serif; color: var(--color-near-black); background: white; margin: 0; }
+      body { font-family: 'Noto Sans HK', system-ui, sans-serif; color: var(--color-near-black); background: #F4EEDF; margin: 0; }
       /* ux: keyboard focus visibility — keyboard-only, not mouse */
-      :where(a, button, input, select, textarea, [tabindex]):focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; border-radius: 4px; }
+      :where(a, button, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid #D9432B; outline-offset: 3px; border-radius: 3px; }
       /* ux: respect reduced motion globally */
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
@@ -217,8 +218,10 @@ const allLd = [...baseLdBlocks, ...extraLd];
     ))}
   </head>
   <body class="min-h-screen flex flex-col">
+    <!-- 頂部 gingham 膠紙（v3 簽名元素：跟 CowPetStore 對外店一致） -->
+    <div class="tape-top" aria-hidden="true"></div>
     <!-- Navigation -->
-    <nav class="nav-v2 sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+    <nav class="nav-v2 sticky top-0 z-50 border-b border-gray-100">
       <div class="max-w-6xl mx-auto px-3 md:px-4 h-14 md:h-16 flex items-center justify-between gap-2">
         <a href={isZh ? '/' : '/en'} class="footer-brand flex items-center gap-2 no-underline shrink-0 group">
           <img src="/logo_nav.png" alt="HK Pet Portal" width="96" height="64" decoding="async" class="h-10 md:h-11 w-auto transition-transform duration-200 group-hover:scale-105" />

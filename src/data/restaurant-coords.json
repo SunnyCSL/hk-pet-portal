@@ -137,7 +137,7 @@
   "2": {
     "lat": 22.213168,
     "lng": 114.215184,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "赤柱",
     "score": 15.0,
@@ -150,34 +150,24 @@
     }
   },
   "8": {
-    "lat": 22.445904,
-    "lng": 114.018874,
-    "prec": "street",
-    "src": "csdi",
-    "q": "元朗 元朗鳯攸南街 3號",
-    "score": 15.0,
-    "alt": 112,
-    "parts": {
-      "street": "元朗鳯攸南街",
-      "num": "3號",
-      "building": "元朗鳯攸南街3號好順景大廈",
-      "sub": "元朗"
-    }
+    "lat": 22.4421,
+    "lng": 114.03377,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 98.13,
+    "q": "元朗鳯攸南街3號好順景大廈2座 51",
+    "alt": 112
   },
   "15": {
-    "lat": 22.281886,
-    "lng": 114.15936,
-    "prec": "street",
-    "src": "csdi",
-    "q": "中環",
-    "score": 15.0,
-    "alt": 52,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "中環街市1樓",
-      "sub": "中環"
-    }
+    "lat": 22.28429,
+    "lng": 114.15578,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 100.0,
+    "q": "中環德輔道中80號及皇后大道中93號 中環街市 124-125",
+    "alt": 52
   },
   "18": {
     "lat": 22.327542,
@@ -210,19 +200,14 @@
     }
   },
   "22": {
-    "lat": 22.273576,
-    "lng": 114.174411,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 2,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "灣仔慶雲街",
-      "sub": null
-    }
+    "lat": 22.27368,
+    "lng": 114.17421,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 92",
+    "score": 91.9,
+    "q": "灣仔慶雲街5及9號",
+    "alt": 2
   },
   "17": {
     "lat": 22.308357,
@@ -330,34 +315,24 @@
     }
   },
   "27": {
-    "lat": 22.334056,
-    "lng": 114.159441,
-    "prec": "street",
-    "src": "csdi",
-    "q": "深水埗福榮街 119-125號",
-    "score": 55.0,
-    "alt": 71,
-    "parts": {
-      "street": "深水埗福榮街",
-      "num": "119-125號",
-      "building": "恆誠大廈",
-      "sub": null
-    }
+    "lat": 22.33174,
+    "lng": 114.16272,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "深水埗福榮街 119 - 125 號 恆誠大廈 B",
+    "alt": 71
   },
   "32": {
-    "lat": 22.445979,
-    "lng": 114.022332,
-    "prec": "street",
-    "src": "csdi",
-    "q": "新界元朗元朗安寧路55號地下",
-    "score": 47.9,
-    "alt": 50,
-    "parts": {
-      "street": "元朗元朗安寧路",
-      "num": "55號",
-      "building": "元朗元朗安寧路",
-      "sub": "元朗"
-    }
+    "lat": 22.44597,
+    "lng": 114.02765,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 99.74,
+    "q": "元朗元朗安寧路55號",
+    "alt": 50
   },
   "29": {
     "lat": 22.375408,
@@ -375,19 +350,14 @@
     }
   },
   "28": {
-    "lat": 22.333827,
-    "lng": 114.160591,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍深水埗福榮街119-125號及桂林街42-44號恆誠大廈 地下C鋪",
-    "score": 55.0,
-    "alt": 105,
-    "parts": {
-      "street": "深水埗福榮街",
-      "num": "119-125號",
-      "building": "深水埗福榮街119-125號及桂林街42-44號恆誠大廈",
-      "sub": null
-    }
+    "lat": 22.33174,
+    "lng": 114.16272,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "深水埗福榮街119-125號及桂林街42-44號恆誠大廈 C",
+    "alt": 105
   },
   "33": {
     "lat": 22.329883,
@@ -452,7 +422,7 @@
   "38": {
     "lat": 22.448157,
     "lng": 114.172736,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "大埔",
     "score": 15.0,
@@ -527,7 +497,7 @@
   "40": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -572,7 +542,7 @@
   "44": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -585,19 +555,14 @@
     }
   },
   "41": {
-    "lat": 22.445904,
-    "lng": 114.018874,
+    "lat": 22.44201,
+    "lng": 114.03153,
     "prec": "street",
-    "src": "csdi",
-    "q": "元朗",
-    "score": 15.0,
-    "alt": 139,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "元朗合益路好景洋樓",
-      "sub": "元朗"
-    }
+    "src": "als",
+    "conf": "als score 93",
+    "score": 92.86,
+    "q": "元朗合益路好景洋樓 6及7",
+    "alt": 139
   },
   "52": {
     "lat": 22.319219,
@@ -632,7 +597,7 @@
   "45": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -705,24 +670,19 @@
     }
   },
   "57": {
-    "lat": 22.303885,
-    "lng": 114.172323,
-    "prec": "street",
-    "src": "csdi",
-    "q": "佐敦 柯士甸道 71號",
-    "score": 52.5,
-    "alt": 62,
-    "parts": {
-      "street": "柯士甸道",
-      "num": "71號",
-      "building": "186-194號幸運大廈",
-      "sub": "佐敦"
-    }
+    "lat": 22.30339,
+    "lng": 114.17042,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 81.79,
+    "q": "佐敦柯士甸道55-63, 67-73號 吳松街 186-194號幸運大廈(柯士甸道71號) 8",
+    "alt": 62
   },
   "55": {
     "lat": 22.285509,
     "lng": 113.935109,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "馬灣涌",
     "score": 15.0,
@@ -795,19 +755,14 @@
     }
   },
   "69": {
-    "lat": 22.500043,
-    "lng": 114.142937,
-    "prec": "street",
-    "src": "csdi",
-    "q": "粉嶺 粉嶺聯和墟聯安街 25號",
-    "score": 48.0,
-    "alt": 62,
-    "parts": {
-      "street": "粉嶺聯和墟聯安街",
-      "num": "25號",
-      "building": "粉嶺聯和墟聯安街25號富燕樓",
-      "sub": "粉嶺"
-    }
+    "lat": 22.49969,
+    "lng": 114.14333,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "粉嶺聯和墟聯安街25號富燕樓",
+    "alt": 62
   },
   "70": {
     "lat": 22.443309,
@@ -855,34 +810,24 @@
     }
   },
   "71": {
-    "lat": 22.333827,
-    "lng": 114.160591,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 84,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "深水埗福榮街25-31A號新榮大樓",
-      "sub": null
-    }
+    "lat": 22.32952,
+    "lng": 114.16563,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "深水埗福榮街25-31A號新榮大樓 E",
+    "alt": 84
   },
   "73": {
-    "lat": 22.369198,
-    "lng": 114.06006,
-    "prec": "street",
-    "src": "csdi",
-    "q": "新界荃灣深井新村大街13號",
-    "score": 11.3,
-    "alt": 50,
-    "parts": {
-      "street": "荃灣深井新村大街",
-      "num": "13號",
-      "building": "荃灣深井新村大街",
-      "sub": "深井"
-    }
+    "lat": 22.36913,
+    "lng": 114.05959,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "荃灣深井新村大街13號",
+    "alt": 50
   },
   "62": {
     "lat": 22.44341,
@@ -960,49 +905,34 @@
     }
   },
   "80": {
-    "lat": 22.284442,
-    "lng": 114.191323,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港天后清風街13號地下",
-    "score": 50.0,
-    "alt": 17,
-    "parts": {
-      "street": "天后清風街",
-      "num": "13號",
-      "building": "天后清風街",
-      "sub": "天后"
-    }
+    "lat": 22.28494,
+    "lng": 114.1923,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 96",
+    "score": 96.37,
+    "q": "天后清風街13號",
+    "alt": 17
   },
   "77": {
-    "lat": 22.345793,
-    "lng": 114.197984,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 75,
-    "parts": {
-      "street": "雲山鳳凰新村銀鳳街",
-      "num": "24號",
-      "building": "慈雲山鳳凰新村銀鳳街",
-      "sub": null
-    }
+    "lat": 22.34464,
+    "lng": 114.1981,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 84",
+    "score": 84.24,
+    "q": "慈雲山鳳凰新村銀鳳街24號",
+    "alt": 75
   },
   "76": {
-    "lat": 22.319599,
-    "lng": 114.168828,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍旺角砵蘭街174-176號新興大廈地下A1舖",
-    "score": 49.4,
-    "alt": 86,
-    "parts": {
-      "street": "旺角砵蘭街",
-      "num": "174-176號",
-      "building": "旺角砵蘭街174-176號新興大廈",
-      "sub": "旺角"
-    }
+    "lat": 22.31675,
+    "lng": 114.1694,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.0,
+    "q": "旺角砵蘭街174-176號新興大廈 A1",
+    "alt": 86
   },
   "82": {
     "lat": 22.284637,
@@ -1170,34 +1100,24 @@
     }
   },
   "92": {
-    "lat": 22.369198,
-    "lng": 114.06006,
-    "prec": "street",
-    "src": "csdi",
-    "q": "新界荃灣深井新村大街9號地下及一樓",
-    "score": 11.3,
-    "alt": 51,
-    "parts": {
-      "street": "荃灣深井新村大街",
-      "num": "9號",
-      "building": "荃灣深井新村大街",
-      "sub": "深井"
-    }
+    "lat": 22.36886,
+    "lng": 114.05969,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "荃灣深井新村大街9號 及",
+    "alt": 51
   },
   "90": {
-    "lat": 22.445904,
-    "lng": 114.018874,
-    "prec": "street",
-    "src": "csdi",
-    "q": "元朗",
-    "score": 15.0,
-    "alt": 100,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "元朗屏山庸園路蝦尾新村",
-      "sub": "元朗"
-    }
+    "lat": 22.45158,
+    "lng": 114.01178,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.33,
+    "q": "元朗屏山庸園路蝦尾新村121號",
+    "alt": 100
   },
   "99": {
     "lat": 22.335502,
@@ -1427,7 +1347,7 @@
   "109": {
     "lat": 22.374444,
     "lng": 114.107236,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "荃灣",
     "score": 15.0,
@@ -1515,19 +1435,14 @@
     }
   },
   "114": {
-    "lat": 22.448157,
-    "lng": 114.172736,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大埔",
-    "score": 15.0,
-    "alt": 97,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "91B號龍騰閣",
-      "sub": "大埔"
-    }
+    "lat": 22.44715,
+    "lng": 114.16807,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "大埔運頭街 89 及 91B號龍騰閣",
+    "alt": 97
   },
   "118": {
     "lat": 22.5039,
@@ -1695,19 +1610,14 @@
     }
   },
   "126": {
-    "lat": 22.442664,
-    "lng": 114.064623,
+    "lat": 22.44003,
+    "lng": 114.06693,
     "prec": "street",
-    "src": "csdi",
-    "q": "錦田",
-    "score": 15.0,
-    "alt": 100,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "元朗錦田丈量約份",
-      "sub": "錦田"
-    }
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "元朗錦田丈量約份109地段第13號永隆圍38C號",
+    "alt": 100
   },
   "134": {
     "lat": 22.278419,
@@ -1800,19 +1710,14 @@
     }
   },
   "135": {
-    "lat": 22.2905,
-    "lng": 114.1946,
-    "prec": "street",
-    "src": "csdi",
-    "q": "北角 北角電器道 183號",
-    "score": 43.0,
-    "alt": 58,
-    "parts": {
-      "street": "北角電器道",
-      "num": "183號",
-      "building": "北角電器道183號友邦廣場",
-      "sub": "北角"
-    }
+    "lat": 22.28838,
+    "lng": 114.19246,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 96.67,
+    "q": "北角電器道183號友邦廣場 17",
+    "alt": 58
   },
   "139": {
     "lat": 22.208919,
@@ -1907,7 +1812,7 @@
   "147": {
     "lat": 22.234133,
     "lng": 114.171452,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "香港香港仔海洋公園夢幻水都餅店平台及舖前露天茶座",
     "score": 15.0,
@@ -1950,19 +1855,14 @@
     }
   },
   "152": {
-    "lat": 22.317525,
-    "lng": 114.19276,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 60,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "灣仔月街",
-      "sub": null
-    }
+    "lat": 22.27629,
+    "lng": 114.16855,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.32,
+    "q": "灣仔月街9及11號",
+    "alt": 60
   },
   "150": {
     "lat": 22.208123,
@@ -2190,19 +2090,14 @@
     }
   },
   "167": {
-    "lat": 22.389179,
-    "lng": 114.19114,
-    "prec": "street",
-    "src": "csdi",
-    "q": "沙田",
-    "score": 15.0,
-    "alt": 53,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "沙田上徑口村",
-      "sub": "沙田"
-    }
+    "lat": 22.36331,
+    "lng": 114.17376,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "沙田上徑口村72號",
+    "alt": 53
   },
   "170": {
     "lat": 22.382503,
@@ -2325,19 +2220,14 @@
     }
   },
   "180": {
-    "lat": 22.286814,
-    "lng": 114.141368,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 2,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "皇后大道西330-336號新昇大廈",
-      "sub": null
-    }
+    "lat": 22.28681,
+    "lng": 114.14137,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 90.0,
+    "q": "皇后大道西330-336號新昇大廈 A",
+    "alt": 2
   },
   "179": {
     "lat": 22.332575,
@@ -2417,7 +2307,7 @@
   "181": {
     "lat": 22.397767,
     "lng": 113.974237,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "屯門",
     "score": 15.0,
@@ -2460,19 +2350,14 @@
     }
   },
   "182": {
-    "lat": 22.325514,
-    "lng": 114.175244,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍九龍城太子道西368-374號龍珠樓 地庫1-40號鋪及地下1號鋪",
-    "score": 0.5,
-    "alt": 131,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "九龍城",
-      "sub": "太子"
-    }
+    "lat": 22.32766,
+    "lng": 114.18792,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 95",
+    "score": 95.0,
+    "q": "九龍城太子道西368-374號龍珠樓 1-40 及 1",
+    "alt": 131
   },
   "186": {
     "lat": 22.392857,
@@ -2580,19 +2465,14 @@
     }
   },
   "192": {
-    "lat": 22.345173,
-    "lng": 114.098552,
+    "lat": 22.35927,
+    "lng": 114.10771,
     "prec": "street",
-    "src": "csdi",
-    "q": "新界青衣青衣城第二層222號鋪",
-    "score": 15.0,
-    "alt": 140,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "青衣青衣城",
-      "sub": "青衣"
-    }
+    "src": "als",
+    "conf": "als score 83",
+    "score": 83.33,
+    "q": "青衣青衣城第二層222",
+    "alt": 140
   },
   "197": {
     "lat": 22.371618,
@@ -2642,7 +2522,7 @@
   "193": {
     "lat": 22.207917,
     "lng": 114.123844,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "南丫島",
     "score": 15.0,
@@ -2685,19 +2565,14 @@
     }
   },
   "204": {
-    "lat": 22.278193,
-    "lng": 114.186616,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港銅鑼灣希雲街27號禮雲大樓地下",
-    "score": 45.8,
-    "alt": 8,
-    "parts": {
-      "street": "銅鑼灣希雲街",
-      "num": "27號",
-      "building": "銅鑼灣希雲街27號禮雲大樓",
-      "sub": "銅鑼灣"
-    }
+    "lat": 22.27748,
+    "lng": 114.18705,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "銅鑼灣希雲街27號禮雲大樓",
+    "alt": 8
   },
   "203": {
     "lat": 22.278211,
@@ -2760,24 +2635,19 @@
     }
   },
   "208": {
-    "lat": 22.243912,
-    "lng": 114.156833,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港鴨脷洲新市街29號 城木酒店地下",
-    "score": 46.6,
-    "alt": 58,
-    "parts": {
-      "street": "鴨脷洲新市街",
-      "num": "29號",
-      "building": "城木酒店",
-      "sub": "鴨脷洲"
-    }
+    "lat": 22.24391,
+    "lng": 114.15683,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 73",
+    "score": 73.07,
+    "q": "鴨脷洲新市街29號 城木酒店",
+    "alt": 58
   },
   "202": {
     "lat": 22.304183,
     "lng": 114.185657,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "紅磡",
     "score": 15.0,
@@ -2865,19 +2735,14 @@
     }
   },
   "211": {
-    "lat": 22.282204,
-    "lng": 114.126096,
+    "lat": 22.28359,
+    "lng": 114.12678,
     "prec": "street",
-    "src": "csdi",
-    "q": "堅尼地城",
-    "score": 15.0,
-    "alt": 99,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "堅尼地城爹核士街1A號裕福大廈",
-      "sub": "堅尼地城"
-    }
+    "src": "als",
+    "conf": "als score 79",
+    "score": 79.0,
+    "q": "堅尼地城爹核士街1A號裕福大廈 1",
+    "alt": 99
   },
   "216": {
     "lat": 22.281914,
@@ -2957,7 +2822,7 @@
   "219": {
     "lat": 22.397767,
     "lng": 113.974237,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "屯門",
     "score": 15.0,
@@ -2985,19 +2850,14 @@
     }
   },
   "221": {
-    "lat": 22.389179,
-    "lng": 114.19114,
+    "lat": 22.37313,
+    "lng": 114.19714,
     "prec": "street",
-    "src": "csdi",
-    "q": "沙田",
-    "score": 15.0,
-    "alt": 55,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "沙田水泉澳邨水泉澳廣場",
-      "sub": "沙田"
-    }
+    "src": "als",
+    "conf": "als score 69",
+    "score": 69.05,
+    "q": "沙田水泉澳邨水泉澳廣場 205",
+    "alt": 55
   },
   "225": {
     "lat": 22.320681,
@@ -3165,19 +3025,14 @@
     }
   },
   "232": {
-    "lat": 22.279124,
-    "lng": 114.228185,
-    "prec": "street",
-    "src": "csdi",
-    "q": "筲箕灣",
-    "score": 15.0,
-    "alt": 98,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "筲箕灣東大街14至22號東旺樓",
-      "sub": "筲箕灣"
-    }
+    "lat": 22.28039,
+    "lng": 114.23043,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "筲箕灣東大街14至22號東旺樓 B",
+    "alt": 98
   },
   "242": {
     "lat": 22.379669,
@@ -3317,7 +3172,7 @@
   "248": {
     "lat": 22.38394,
     "lng": 114.273833,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "西貢 西貢沙咀徑 5號",
     "score": 15.0,
@@ -3435,19 +3290,14 @@
     }
   },
   "260": {
-    "lat": 22.322922,
-    "lng": 114.170798,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 50,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "洗衣街167-175A嘉德大廈",
-      "sub": null
-    }
+    "lat": 22.32294,
+    "lng": 114.17079,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "洗衣街167-175A嘉德大廈2",
+    "alt": 50
   },
   "263": {
     "lat": 22.278075,
@@ -3482,7 +3332,7 @@
   "256": {
     "lat": 22.38394,
     "lng": 114.273833,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "新界西貢 白沙灣117號地下",
     "score": 15.0,
@@ -3495,19 +3345,14 @@
     }
   },
   "262": {
-    "lat": 22.362676,
-    "lng": 114.128543,
-    "prec": "street",
-    "src": "csdi",
-    "q": "葵涌",
-    "score": 15.0,
-    "alt": 96,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "葵涌KCTL",
-      "sub": "葵涌"
-    }
+    "lat": 22.36456,
+    "lng": 114.12831,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 84",
+    "score": 83.85,
+    "q": "葵涌KCTL321葵盛圍32-40號 A01",
+    "alt": 96
   },
   "269": {
     "lat": 22.452112,
@@ -3570,19 +3415,14 @@
     }
   },
   "271": {
-    "lat": 22.278364,
-    "lng": 114.169363,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港灣仔駱克道399號金禧大廈地下",
-    "score": 55.0,
-    "alt": 105,
-    "parts": {
-      "street": "灣仔駱克道",
-      "num": "399號",
-      "building": "灣仔駱克道399號金禧大廈",
-      "sub": null
-    }
+    "lat": 22.27975,
+    "lng": 114.18,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "灣仔駱克道399號金禧大廈",
+    "alt": 105
   },
   "272": {
     "lat": 22.379768,
@@ -3737,7 +3577,7 @@
   "283": {
     "lat": 22.293245,
     "lng": 114.259185,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "將軍澳",
     "score": 15.0,
@@ -3750,19 +3590,14 @@
     }
   },
   "284": {
-    "lat": 22.277181,
-    "lng": 114.192525,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大坑",
-    "score": 15.0,
-    "alt": 110,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "大坑施弼街",
-      "sub": "大坑"
-    }
+    "lat": 22.27845,
+    "lng": 114.19222,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "大坑施弼街6及7號 及 B",
+    "alt": 110
   },
   "286": {
     "lat": 22.327952,
@@ -3797,7 +3632,7 @@
   "285": {
     "lat": 22.424584,
     "lng": 114.212959,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "香港科學園17W大樓",
     "score": 15.0,
@@ -3840,34 +3675,24 @@
     }
   },
   "290": {
-    "lat": 22.207917,
-    "lng": 114.123844,
+    "lat": 22.21928,
+    "lng": 114.11925,
     "prec": "street",
-    "src": "csdi",
-    "q": "南丫島",
-    "score": 15.0,
-    "alt": 90,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "浪濤軒",
-      "sub": "南丫島"
-    }
+    "src": "als",
+    "conf": "als score 86",
+    "score": 86.37,
+    "q": "南丫島榕樹灣洪聖爺灘28 號 浪濤軒 B",
+    "alt": 90
   },
   "291": {
-    "lat": 22.275556,
-    "lng": 114.172343,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 90,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "灣仔皇后大道東",
-      "sub": null
-    }
+    "lat": 22.27535,
+    "lng": 114.17231,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 86.25,
+    "q": "灣仔皇后大道東200號利東街 G35 (大部份) 及 F35A",
+    "alt": 90
   },
   "296": {
     "lat": 22.374658,
@@ -4065,19 +3890,14 @@
     }
   },
   "309": {
-    "lat": 22.28668,
-    "lng": 114.13695,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 98,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "皇后大道中",
-      "sub": null
-    }
+    "lat": 22.2862,
+    "lng": 114.14893,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 98.28,
+    "q": "皇后大道中379號 A部份",
+    "alt": 98
   },
   "304": {
     "lat": 22.322365,
@@ -4095,19 +3915,14 @@
     }
   },
   "303": {
-    "lat": 22.324412,
-    "lng": 114.168284,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
+    "lat": 22.33381,
+    "lng": 114.197241,
+    "prec": "building",
+    "src": "csdi",
+    "conf": "adj",
     "score": null,
-    "alt": 114,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "九龍NKIL",
-      "sub": "太子"
-    }
+    "q": "NKIL 6308新蒲崗太子道東638號MIKIKI G02A及G03B",
+    "alt": 114
   },
   "313": {
     "lat": 22.296646,
@@ -4140,19 +3955,14 @@
     }
   },
   "314": {
-    "lat": 22.33459,
-    "lng": 114.19583,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 55,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "新蒲崗錦榮街6-24A號金橋大廈",
-      "sub": null
-    }
+    "lat": 22.33583,
+    "lng": 114.19552,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 86",
+    "score": 86.0,
+    "q": "新蒲崗錦榮街6-24A號金橋大廈 7",
+    "alt": 55
   },
   "316": {
     "lat": 22.312112,
@@ -4305,34 +4115,24 @@
     }
   },
   "326": {
-    "lat": 22.325486,
-    "lng": 114.166702,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍柏樹街19號華麗閣地下A舖",
-    "score": 55.0,
-    "alt": 50,
-    "parts": {
-      "street": "柏樹街",
-      "num": "19號",
-      "building": "柏樹街19號華麗閣",
-      "sub": null
-    }
+    "lat": 22.3255,
+    "lng": 114.16669,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 90.78,
+    "q": "柏樹街19號華麗閣 A",
+    "alt": 50
   },
   "327": {
-    "lat": 22.283764,
-    "lng": 114.153217,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 55,
-    "parts": {
-      "street": "灣仔永豐街",
-      "num": "8-10號",
-      "building": "永豐大廈",
-      "sub": null
-    }
+    "lat": 22.27674,
+    "lng": 114.1682,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 77.98,
+    "q": "灣仔永豐街8-10號 永豐大廈 D至L",
+    "alt": 55
   },
   "322": {
     "lat": 22.38234,
@@ -4635,19 +4435,14 @@
     }
   },
   "351": {
-    "lat": 22.320402,
-    "lng": 114.170459,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍旺角通菜街210號地下",
-    "score": 52.8,
-    "alt": 50,
-    "parts": {
-      "street": "旺角通菜街",
-      "num": "210號",
-      "building": "旺角通菜街",
-      "sub": "旺角"
-    }
+    "lat": 22.32462,
+    "lng": 114.16962,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 88.75,
+    "q": "旺角通菜街210號",
+    "alt": 50
   },
   "346": {
     "lat": 22.285071,
@@ -4665,19 +4460,14 @@
     }
   },
   "350": {
-    "lat": 22.375615,
-    "lng": 114.178758,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大圍",
-    "score": 15.0,
-    "alt": 96,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "沙田大圍上徑口村",
-      "sub": "大圍"
-    }
+    "lat": 22.36434,
+    "lng": 114.17452,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "沙田大圍上徑口村143號",
+    "alt": 96
   },
   "352": {
     "lat": 22.269199,
@@ -4772,7 +4562,7 @@
   "355": {
     "lat": 22.234133,
     "lng": 114.171452,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "香港香港仔海洋公園東翼零售大廈平台2及3號鋪",
     "score": 15.0,
@@ -4800,19 +4590,14 @@
     }
   },
   "358": {
-    "lat": 22.333827,
-    "lng": 114.160591,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍深水埗福榮街92-98號常福大廈地下A舖",
-    "score": 55.0,
-    "alt": 107,
-    "parts": {
-      "street": "深水埗福榮街",
-      "num": "92-98號",
-      "building": "深水埗福榮街92-98號常福大廈",
-      "sub": null
-    }
+    "lat": 22.3322,
+    "lng": 114.16273,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "深水埗福榮街92-98號常福大廈 A",
+    "alt": 107
   },
   "365": {
     "lat": 22.327535,
@@ -4860,19 +4645,14 @@
     }
   },
   "363": {
-    "lat": 22.320104,
-    "lng": 114.171488,
+    "lat": 22.31453,
+    "lng": 114.16946,
     "prec": "street",
-    "src": "csdi",
-    "q": "旺角",
-    "score": 15.0,
-    "alt": 60,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "旺角咸美頓街",
-      "sub": "旺角"
-    }
+    "src": "als",
+    "conf": "als score 89",
+    "score": 88.75,
+    "q": "旺角咸美頓街5A號",
+    "alt": 60
   },
   "364": {
     "lat": 22.31863,
@@ -5012,7 +4792,7 @@
   "372": {
     "lat": 22.419196,
     "lng": 114.231257,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "馬鞍山",
     "score": 15.0,
@@ -5175,34 +4955,24 @@
     }
   },
   "385": {
-    "lat": 22.337161,
-    "lng": 114.167001,
-    "prec": "street",
-    "src": "csdi",
-    "q": "石硤尾白田街 30號",
-    "score": 55.0,
-    "alt": 69,
-    "parts": {
-      "street": "石硤尾白田街",
-      "num": "30號",
-      "building": "賽馬會創意藝術中心",
-      "sub": null
-    }
+    "lat": 22.33465,
+    "lng": 114.16565,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "石硤尾白田街30號 賽馬會創意藝術中心 L1-06",
+    "alt": 69
   },
   "391": {
-    "lat": 22.278672,
-    "lng": 114.185966,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港邊寧頓街13號集貴中心3樓",
-    "score": 55.0,
-    "alt": 15,
-    "parts": {
-      "street": "邊寧頓街",
-      "num": "13號",
-      "building": "邊寧頓街13號集貴中心",
-      "sub": null
-    }
+    "lat": 22.27864,
+    "lng": 114.18599,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 99.69,
+    "q": "邊寧頓街13號集貴中心",
+    "alt": 15
   },
   "393": {
     "lat": 22.345536,
@@ -5220,34 +4990,24 @@
     }
   },
   "389": {
-    "lat": 22.290554,
-    "lng": 114.238126,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 81,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "鯉魚門海傍道中",
-      "sub": null
-    }
+    "lat": 22.28926,
+    "lng": 114.23758,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 74",
+    "score": 73.75,
+    "q": "鯉魚門 海傍道中43A號",
+    "alt": 81
   },
   "387": {
-    "lat": 22.278364,
-    "lng": 114.169363,
-    "prec": "street",
-    "src": "csdi",
-    "q": "灣仔駱克道 401-403號",
-    "score": 55.0,
-    "alt": 93,
-    "parts": {
-      "street": "灣仔駱克道",
-      "num": "401-403號",
-      "building": "灣仔駱克道401-403號榮華商業大廈",
-      "sub": null
-    }
+    "lat": 22.27977,
+    "lng": 114.18025,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.0,
+    "q": "灣仔駱克道401-403號榮華商業大廈 A",
+    "alt": 93
   },
   "390": {
     "lat": 22.282041,
@@ -5295,19 +5055,14 @@
     }
   },
   "394": {
-    "lat": 22.38394,
-    "lng": 114.273833,
+    "lat": 22.37436,
+    "lng": 114.26513,
     "prec": "street",
-    "src": "csdi",
-    "q": "西貢",
-    "score": 15.0,
-    "alt": 100,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "蕉坑獅子會自然教育中心",
-      "sub": "西貢"
-    }
+    "src": "als",
+    "conf": "als score 71",
+    "score": 71.43,
+    "q": "西貢 蕉坑獅子會自然教育中心 茶座及茶座側露天座位",
+    "alt": 100
   },
   "396": {
     "lat": 22.282851,
@@ -5372,7 +5127,7 @@
   "402": {
     "lat": 22.38394,
     "lng": 114.273833,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "西貢",
     "score": 15.0,
@@ -5415,19 +5170,14 @@
     }
   },
   "404": {
-    "lat": 22.325323,
-    "lng": 114.198539,
+    "lat": 22.32464,
+    "lng": 114.1956,
     "prec": "street",
-    "src": "csdi",
-    "q": "九龍城啟德啟德體育園運動健康中心",
-    "score": 15.0,
-    "alt": 104,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "九龍城啟德啟德體育園運動健康中心",
-      "sub": "啟德"
-    }
+    "src": "als",
+    "conf": "als score 90",
+    "score": 90.0,
+    "q": "九龍城啟德啟德體育園運動健康中心 WC-401及 前部份",
+    "alt": 104
   },
   "409": {
     "lat": 22.316438,
@@ -5475,19 +5225,14 @@
     }
   },
   "414": {
-    "lat": 22.34827,
-    "lng": 114.20055,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 51,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "慈雲山慈樂邨慈雲山中心",
-      "sub": null
-    }
+    "lat": 22.34821,
+    "lng": 114.20061,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 70",
+    "score": 70.42,
+    "q": "慈雲山慈樂邨慈雲山中心 108C",
+    "alt": 51
   },
   "411": {
     "lat": 22.338472,
@@ -5522,7 +5267,7 @@
   "413": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -5580,19 +5325,14 @@
     }
   },
   "415": {
-    "lat": 22.397767,
-    "lng": 113.974237,
+    "lat": 22.4136,
+    "lng": 113.98282,
     "prec": "street",
-    "src": "csdi",
-    "q": "屯門",
-    "score": 15.0,
-    "alt": 109,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "屯門富泰邨富泰商場2樓",
-      "sub": "屯門"
-    }
+    "src": "als",
+    "conf": "als score 93",
+    "score": 92.85,
+    "q": "屯門富泰邨富泰商場 217 (A部分)",
+    "alt": 109
   },
   "423": {
     "lat": 22.307199,
@@ -5625,34 +5365,24 @@
     }
   },
   "422": {
-    "lat": 22.30347,
-    "lng": 114.171003,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 71,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柯士甸道西",
-      "sub": null
-    }
+    "lat": 22.30676,
+    "lng": 114.16147,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 91.85,
+    "q": "柯士甸道西1號圓方頂層R011 及舗前露天座位",
+    "alt": 71
   },
   "417": {
-    "lat": 22.264961,
-    "lng": 114.23924,
+    "lat": 22.27653,
+    "lng": 114.24011,
     "prec": "street",
-    "src": "csdi",
-    "q": "柴灣",
-    "score": 15.0,
-    "alt": 130,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柴灣杏花邨杏花新城",
-      "sub": "柴灣"
-    }
+    "src": "als",
+    "conf": "als score 93",
+    "score": 92.85,
+    "q": "柴灣杏花邨杏花新城 G53A",
+    "alt": 130
   },
   "428": {
     "lat": 22.285279,
@@ -5672,7 +5402,7 @@
   "421": {
     "lat": 22.424584,
     "lng": 114.212959,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "新界白石角香港科學園17W大樓1樓RT-102",
     "score": 15.0,
@@ -5685,19 +5415,14 @@
     }
   },
   "427": {
-    "lat": 22.316817,
-    "lng": 114.172177,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍旺角豉油街60-102號,104A及104B號鴻都大廈 地下9及10號鋪",
-    "score": 47.6,
-    "alt": 87,
-    "parts": {
-      "street": "旺角豉油街",
-      "num": "60-102號",
-      "building": "104A及104B號鴻都大廈",
-      "sub": "旺角"
-    }
+    "lat": 22.31684,
+    "lng": 114.17239,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 77.5,
+    "q": "旺角豉油街60-102號,104A及104B號鴻都大廈 9及10",
+    "alt": 87
   },
   "431": {
     "lat": 22.31893,
@@ -5730,19 +5455,14 @@
     }
   },
   "430": {
-    "lat": 22.30617,
-    "lng": 114.169799,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍廟街46-54號1樓",
-    "score": 55.0,
-    "alt": 52,
-    "parts": {
-      "street": "九龍廟街",
-      "num": "46-54號",
-      "building": "廟街46-54號1樓",
-      "sub": null
-    }
+    "lat": 22.31045,
+    "lng": 114.17052,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 81",
+    "score": 81.25,
+    "q": "廟街46-54號",
+    "alt": 52
   },
   "432": {
     "lat": 22.317548,
@@ -5910,19 +5630,14 @@
     }
   },
   "436": {
-    "lat": 22.367581,
-    "lng": 114.059557,
-    "prec": "street",
-    "src": "csdi",
-    "q": "深井",
-    "score": 15.0,
-    "alt": 92,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "荃灣深井青山公路深井村",
-      "sub": "深井"
-    }
+    "lat": 22.36701,
+    "lng": 114.05876,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "荃灣深井青山公路深井村92號",
+    "alt": 92
   },
   "446": {
     "lat": 22.28446,
@@ -6090,49 +5805,34 @@
     }
   },
   "460": {
-    "lat": 22.284909,
-    "lng": 114.144067,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港高街48-78號恒陞大樓 地下1號舖",
-    "score": 55.0,
-    "alt": 92,
-    "parts": {
-      "street": "香港高街",
-      "num": "48-78號",
-      "building": "高街48-78號恒陞大樓",
-      "sub": null
-    }
+    "lat": 22.28506,
+    "lng": 114.1415,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.27,
+    "q": "高街48-78號恒陞大樓 1",
+    "alt": 92
   },
   "459": {
-    "lat": 22.284909,
-    "lng": 114.144067,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港高街48-78號恒陞大樓地下8號舖",
-    "score": 55.0,
-    "alt": 92,
-    "parts": {
-      "street": "香港高街",
-      "num": "48-78號",
-      "building": "高街48-78號恒陞大樓",
-      "sub": null
-    }
+    "lat": 22.28506,
+    "lng": 114.1415,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.27,
+    "q": "高街48-78號恒陞大樓 8",
+    "alt": 92
   },
   "461": {
-    "lat": 22.284909,
-    "lng": 114.144067,
-    "prec": "street",
-    "src": "csdi",
-    "q": "高街80-86號麗賢閣 香港高街",
-    "score": 55.0,
-    "alt": 106,
-    "parts": {
-      "street": "香港高街",
-      "num": "80-86號",
-      "building": "高街80-86號麗賢閣",
-      "sub": null
-    }
+    "lat": 22.28514,
+    "lng": 114.14093,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 86",
+    "score": 85.5,
+    "q": "高街80-86號麗賢閣 A及B",
+    "alt": 106
   },
   "462": {
     "lat": 22.33079,
@@ -6150,19 +5850,14 @@
     }
   },
   "453": {
-    "lat": 22.349574,
-    "lng": 114.059038,
+    "lat": 22.34831,
+    "lng": 114.05754,
     "prec": "street",
-    "src": "csdi",
-    "q": "馬灣",
-    "score": 15.0,
-    "alt": 95,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "荃灣馬灣馬灣公園二期",
-      "sub": "馬灣"
-    }
+    "src": "als",
+    "conf": "als score 78",
+    "score": 78.18,
+    "q": "荃灣馬灣馬灣公園二期馬灣大街52A號2座 G02號",
+    "alt": 95
   },
   "466": {
     "lat": 22.320547,
@@ -6300,19 +5995,14 @@
     }
   },
   "470": {
-    "lat": 22.205798,
-    "lng": 114.027878,
-    "prec": "street",
-    "src": "csdi",
-    "q": "新界長洲建新里3號地下",
-    "score": 46.9,
-    "alt": 51,
-    "parts": {
-      "street": "長洲建新里",
-      "num": "3號",
-      "building": "長洲建新里",
-      "sub": "長洲"
-    }
+    "lat": 22.20593,
+    "lng": 114.02802,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "長洲建新里3號",
+    "alt": 51
   },
   "475": {
     "lat": 22.285318,
@@ -6330,19 +6020,14 @@
     }
   },
   "477": {
-    "lat": 22.300093,
-    "lng": 114.172575,
-    "prec": "street",
-    "src": "csdi",
-    "q": "尖沙咀 博物館路 18號",
-    "score": 15.0,
-    "alt": 56,
-    "parts": {
-      "street": "博物館路",
-      "num": "18號",
-      "building": "尖沙咀博物館路",
-      "sub": "尖沙咀"
-    }
+    "lat": 22.29993,
+    "lng": 114.1564,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 94",
+    "score": 94.29,
+    "q": "尖沙咀 博物館路 18 號 西九文化區 自由空間 LIVEHOUSE 及 前露天座位",
+    "alt": 56
   },
   "480": {
     "lat": 22.271247,
@@ -6540,19 +6225,14 @@
     }
   },
   "483": {
-    "lat": 22.325514,
-    "lng": 114.175244,
-    "prec": "street",
-    "src": "csdi",
-    "q": "太子",
-    "score": 0.5,
-    "alt": 134,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "九龍城",
-      "sub": "太子"
-    }
+    "lat": 22.32801,
+    "lng": 114.19018,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 79",
+    "score": 79.36,
+    "q": "九龍城太子道西428-430號 A",
+    "alt": 134
   },
   "493": {
     "lat": 22.369923,
@@ -6661,18 +6341,13 @@
   },
   "499": {
     "lat": 22.37301,
-    "lng": 114.110955,
+    "lng": 114.11096,
     "prec": "street",
-    "src": "csdi",
-    "q": "新界荃灣沙咀道105-129號好運唐樓地下5-7號舖",
-    "score": 46.7,
-    "alt": 81,
-    "parts": {
-      "street": "荃灣沙咀道",
-      "num": "105-129號",
-      "building": "荃灣沙咀道105-129號好運唐樓",
-      "sub": "荃灣"
-    }
+    "src": "als",
+    "conf": "als score 89",
+    "score": 89.43,
+    "q": "荃灣沙咀道105-129號好運唐樓 5-7",
+    "alt": 81
   },
   "504": {
     "lat": 22.275863,
@@ -6720,19 +6395,14 @@
     }
   },
   "508": {
-    "lat": 22.276947,
-    "lng": 114.173604,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 50,
-    "parts": {
-      "street": "灣仔汕頭街",
-      "num": "1-3號",
-      "building": "灣仔汕頭街",
-      "sub": null
-    }
+    "lat": 22.27547,
+    "lng": 114.17147,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 81",
+    "score": 81.25,
+    "q": "灣仔汕頭街1-3號 及",
+    "alt": 50
   },
   "505": {
     "lat": 22.369923,
@@ -6797,7 +6467,7 @@
   "506": {
     "lat": 22.288216,
     "lng": 114.199863,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "北角",
     "score": 15.0,
@@ -6840,19 +6510,14 @@
     }
   },
   "514": {
-    "lat": 22.30617,
-    "lng": 114.169799,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍廟街46-54號4樓及露天座位",
-    "score": 55.0,
-    "alt": 97,
-    "parts": {
-      "street": "九龍廟街",
-      "num": "46-54號",
-      "building": "廟街46-54號4樓",
-      "sub": null
-    }
+    "lat": 22.31045,
+    "lng": 114.17052,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 81",
+    "score": 81.25,
+    "q": "廟街46-54號",
+    "alt": 97
   },
   "522": {
     "lat": 22.306909,
@@ -6870,19 +6535,14 @@
     }
   },
   "511": {
-    "lat": 22.317316,
-    "lng": 114.267449,
-    "prec": "street",
-    "src": "csdi",
-    "q": "坑口",
-    "score": 15.0,
-    "alt": 98,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "西貢將軍澳坑口村",
-      "sub": "坑口"
-    }
+    "lat": 22.32038,
+    "lng": 114.26682,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "西貢 將軍澳坑口村26號",
+    "alt": 98
   },
   "523": {
     "lat": 22.247335,
@@ -6975,19 +6635,14 @@
     }
   },
   "524": {
-    "lat": 22.264961,
-    "lng": 114.23924,
+    "lat": 22.27653,
+    "lng": 114.24011,
     "prec": "street",
-    "src": "csdi",
-    "q": "柴灣",
-    "score": 15.0,
-    "alt": 83,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柴灣杏花新城",
-      "sub": "柴灣"
-    }
+    "src": "als",
+    "conf": "als score 89",
+    "score": 89.09,
+    "q": "柴灣杏花新城 133-135",
+    "alt": 83
   },
   "530": {
     "lat": 22.336131,
@@ -7050,19 +6705,14 @@
     }
   },
   "531": {
-    "lat": 22.309347,
-    "lng": 114.235717,
+    "lat": 22.30867,
+    "lng": 114.23494,
     "prec": "street",
-    "src": "csdi",
-    "q": "藍田",
-    "score": 15.0,
-    "alt": 54,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "藍田啟田邨啟田商場3樓",
-      "sub": "藍田"
-    }
+    "src": "als",
+    "conf": "als score 93",
+    "score": 92.85,
+    "q": "藍田啟田邨啟田商場 331",
+    "alt": 54
   },
   "537": {
     "lat": 22.410962,
@@ -7097,7 +6747,7 @@
   "532": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -7277,7 +6927,7 @@
   "551": {
     "lat": 22.374444,
     "lng": 114.107236,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "荃灣",
     "score": 15.0,
@@ -7545,34 +7195,24 @@
     }
   },
   "573": {
-    "lat": 22.424584,
-    "lng": 114.212959,
-    "prec": "street",
-    "src": "csdi",
-    "q": "沙田白石角科技大道西1號香港科學園1期核心大樓",
-    "score": 15.0,
-    "alt": 78,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "沙田白石角科技大道西1號香港科學園1期核心大樓",
-      "sub": "科學園"
-    }
+    "lat": 22.42512,
+    "lng": 114.21269,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 87",
+    "score": 87.27,
+    "q": "沙田白石角科技大道西1號香港科學園1期核心大樓2 S002",
+    "alt": 78
   },
   "579": {
-    "lat": 22.278329,
-    "lng": 114.172659,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港灣仔駱克道125號安安大樓地下",
-    "score": 55.0,
-    "alt": 1,
-    "parts": {
-      "street": "灣仔駱克道",
-      "num": "125號",
-      "building": "灣仔駱克道125號安安大樓",
-      "sub": null
-    }
+    "lat": 22.27827,
+    "lng": 114.17264,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 91.0,
+    "q": "灣仔駱克道125號安安大樓",
+    "alt": 1
   },
   "577": {
     "lat": 22.379282,
@@ -7742,7 +7382,7 @@
   "589": {
     "lat": 22.362676,
     "lng": 114.128543,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "葵涌",
     "score": 15.0,
@@ -7785,19 +7425,14 @@
     }
   },
   "593": {
-    "lat": 22.286354,
-    "lng": 114.153622,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 53,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "德輔道中199號無限極廣場",
-      "sub": null
-    }
+    "lat": 22.28658,
+    "lng": 114.15374,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 97.69,
+    "q": "德輔道中199號無限極廣場 G07-08",
+    "alt": 53
   },
   "592": {
     "lat": 22.314547,
@@ -7892,7 +7527,7 @@
   "595": {
     "lat": 22.349574,
     "lng": 114.059038,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "馬灣",
     "score": 15.0,
@@ -8310,19 +7945,14 @@
     }
   },
   "633": {
-    "lat": 22.448058,
-    "lng": 114.16611,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大埔 大埔南盛街 16-20號",
-    "score": 41.4,
-    "alt": 53,
-    "parts": {
-      "street": "大埔南盛街",
-      "num": "16-20號",
-      "building": "大埔南盛街16-20號南盛大廈",
-      "sub": "大埔"
-    }
+    "lat": 22.44798,
+    "lng": 114.16582,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "大埔南盛街16-20號南盛大廈 6",
+    "alt": 53
   },
   "627": {
     "lat": 22.328511,
@@ -8387,7 +8017,7 @@
   "636": {
     "lat": 22.424584,
     "lng": 114.212959,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "新界沙田白石角香港科學園2期12E大樓地下 S082-S083單位",
     "score": 15.0,
@@ -8640,19 +8270,14 @@
     }
   },
   "653": {
-    "lat": 22.304056,
-    "lng": 114.16157,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 81,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柯士甸道西1號圓方1樓",
-      "sub": null
-    }
+    "lat": 22.30676,
+    "lng": 114.16147,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 92",
+    "score": 91.85,
+    "q": "柯士甸道西1號圓方 1028A",
+    "alt": 81
   },
   "659": {
     "lat": 22.27972,
@@ -8685,19 +8310,14 @@
     }
   },
   "661": {
-    "lat": 22.275556,
-    "lng": 114.172343,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 90,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "灣仔皇后大道東",
-      "sub": null
-    }
+    "lat": 22.27535,
+    "lng": 114.17231,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 88.75,
+    "q": "灣仔皇后大道東200號利東街 G30",
+    "alt": 90
   },
   "662": {
     "lat": 22.319794,
@@ -8807,7 +8427,7 @@
   "670": {
     "lat": 22.448157,
     "lng": 114.172736,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "大埔",
     "score": 15.0,
@@ -8850,34 +8470,24 @@
     }
   },
   "673": {
-    "lat": 22.281886,
-    "lng": 114.15936,
-    "prec": "street",
-    "src": "csdi",
-    "q": "中環",
-    "score": 15.0,
-    "alt": 100,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "中環德輔道中22號華懋中心",
-      "sub": "中環"
-    }
+    "lat": 22.28245,
+    "lng": 114.15716,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 91.99,
+    "q": "中環德輔道中22號華懋中心一期 及 部分",
+    "alt": 100
   },
   "675": {
-    "lat": 22.284909,
-    "lng": 114.144067,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港高街46號楊華閣地下A舖",
-    "score": 55.0,
-    "alt": 100,
-    "parts": {
-      "street": "香港高街",
-      "num": "46號",
-      "building": "高街46號楊華閣",
-      "sub": null
-    }
+    "lat": 22.28507,
+    "lng": 114.14205,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "高街46號楊華閣 A",
+    "alt": 100
   },
   "678": {
     "lat": 22.303626,
@@ -8972,7 +8582,7 @@
   "679": {
     "lat": 22.448157,
     "lng": 114.172736,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "大埔",
     "score": 15.0,
@@ -9030,24 +8640,19 @@
     }
   },
   "689": {
-    "lat": 22.382841,
-    "lng": 114.272108,
-    "prec": "street",
-    "src": "csdi",
-    "q": "新界西貢褔民路42-56號西貢大廈地下16號鋪",
-    "score": 50.7,
-    "alt": 57,
-    "parts": {
-      "street": "西貢褔民路",
-      "num": "42-56號",
-      "building": "西貢褔民路42-56號西貢大廈",
-      "sub": "西貢"
-    }
+    "lat": 22.38231,
+    "lng": 114.27265,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 90.0,
+    "q": "西貢褔民路42-56號西貢大廈 16",
+    "alt": 57
   },
   "682": {
     "lat": 22.397767,
     "lng": 113.974237,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "屯門",
     "score": 15.0,
@@ -9060,19 +8665,14 @@
     }
   },
   "690": {
-    "lat": 22.327004,
-    "lng": 114.1681,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍旺角西洋菜北街215號四方大廈地下",
-    "score": 38.1,
-    "alt": 58,
-    "parts": {
-      "street": "旺角西洋菜北街",
-      "num": "215號",
-      "building": "旺角西洋菜北街215號四方大廈",
-      "sub": "旺角"
-    }
+    "lat": 22.32741,
+    "lng": 114.1679,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 90.73,
+    "q": "旺角西洋菜北街215號四方大廈",
+    "alt": 58
   },
   "691": {
     "lat": 22.332619,
@@ -9105,19 +8705,14 @@
     }
   },
   "693": {
-    "lat": 22.374444,
-    "lng": 114.107236,
+    "lat": 22.37074,
+    "lng": 114.11961,
     "prec": "street",
-    "src": "csdi",
-    "q": "荃灣",
-    "score": 15.0,
-    "alt": 100,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "荃灣青山公路荃灣段117-121號蘊崇大廈",
-      "sub": "荃灣"
-    }
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "荃灣青山公路荃灣段117-121號蘊崇大廈 C,E",
+    "alt": 100
   },
   "695": {
     "lat": 22.32014,
@@ -9135,39 +8730,29 @@
     }
   },
   "692": {
-    "lat": 22.300093,
-    "lng": 114.172575,
-    "prec": "street",
-    "src": "csdi",
-    "q": "尖沙咀",
-    "score": 15.0,
-    "alt": 138,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "尖沙咀漆咸道南115號達成商業大廈",
-      "sub": "尖沙咀"
-    }
+    "lat": 22.30168,
+    "lng": 114.17633,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "尖沙咀漆咸道南115號達成商業大廈",
+    "alt": 138
   },
   "696": {
-    "lat": 22.349574,
-    "lng": 114.059038,
+    "lat": 22.34845,
+    "lng": 114.05657,
     "prec": "street",
-    "src": "csdi",
-    "q": "馬灣",
-    "score": 15.0,
-    "alt": 131,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "荃灣馬灣地段編號684號馬灣公園二期",
-      "sub": "馬灣"
-    }
+    "src": "als",
+    "conf": "als score 78",
+    "score": 78.18,
+    "q": "荃灣馬灣地段編號684號馬灣公園二期馬灣大街 41A-41B號18-19號屋 G18-19 部分及 前露天座位",
+    "alt": 131
   },
   "697": {
     "lat": 22.349574,
     "lng": 114.059038,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "馬灣",
     "score": 15.0,
@@ -9210,19 +8795,14 @@
     }
   },
   "699": {
-    "lat": 22.317738,
-    "lng": 114.191598,
-    "prec": "street",
-    "src": "csdi",
-    "q": "土瓜灣",
-    "score": 15.0,
-    "alt": 143,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "土瓜灣九龍城道10-16A號聯業大廈",
-      "sub": "土瓜灣"
-    }
+    "lat": 22.31606,
+    "lng": 114.18808,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 95",
+    "score": 95.0,
+    "q": "土瓜灣九龍城道10-16A號聯業大廈 B 及 部份",
+    "alt": 143
   },
   "700": {
     "lat": 22.38234,
@@ -9315,19 +8895,14 @@
     }
   },
   "706": {
-    "lat": 22.309475,
-    "lng": 114.170944,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 51,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "康僑大廈",
-      "sub": null
-    }
+    "lat": 22.30606,
+    "lng": 114.17127,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 90.97,
+    "q": "彌敦道311及313號 康僑大廈",
+    "alt": 51
   },
   "711": {
     "lat": 22.286293,
@@ -9362,7 +8937,7 @@
   "702": {
     "lat": 22.424584,
     "lng": 114.212959,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "新界白石角香港科學園17W大樓地下RT-G01單位",
     "score": 15.0,
@@ -9510,34 +9085,24 @@
     }
   },
   "722": {
-    "lat": 22.277945,
-    "lng": 114.192427,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港灣仔區大坑新村街16號地下",
-    "score": 13.3,
-    "alt": 50,
-    "parts": {
-      "street": "灣仔區大坑新村街",
-      "num": "16號",
-      "building": "灣仔區大坑新村街",
-      "sub": "大坑"
-    }
+    "lat": 22.27805,
+    "lng": 114.19214,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 89.36,
+    "q": "灣仔區大坑新村街16號",
+    "alt": 50
   },
   "723": {
-    "lat": 22.445904,
-    "lng": 114.018874,
+    "lat": 22.4438,
+    "lng": 114.03388,
     "prec": "street",
-    "src": "csdi",
-    "q": "元朗",
-    "score": 15.0,
-    "alt": 109,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "元朗5-7鳳攸北街順豐大廈",
-      "sub": "元朗"
-    }
+    "src": "als",
+    "conf": "als score 79",
+    "score": 78.57,
+    "q": "元朗5-7鳳攸北街順豐大廈 37",
+    "alt": 109
   },
   "725": {
     "lat": 22.298413,
@@ -9632,7 +9197,7 @@
   "721": {
     "lat": 22.349574,
     "lng": 114.059038,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "馬灣",
     "score": 15.0,
@@ -9692,7 +9257,7 @@
   "734": {
     "lat": 22.259376,
     "lng": 114.130723,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "數碼港",
     "score": 15.0,
@@ -9750,19 +9315,14 @@
     }
   },
   "741": {
-    "lat": 22.30365,
-    "lng": 114.165054,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 55,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柯士甸道西1號九龍站圓方3樓",
-      "sub": null
-    }
+    "lat": 22.30406,
+    "lng": 114.16157,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 96",
+    "score": 95.55,
+    "q": "柯士甸道西1號九龍站圓方 R005-R007 及 前露天座位",
+    "alt": 55
   },
   "738": {
     "lat": 22.281,
@@ -9887,7 +9447,7 @@
   "744": {
     "lat": 22.397767,
     "lng": 113.974237,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "屯門",
     "score": 15.0,
@@ -9990,34 +9550,24 @@
     }
   },
   "759": {
-    "lat": 22.276206,
-    "lng": 114.168811,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 50,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "進教圍",
-      "sub": null
-    }
+    "lat": 22.27616,
+    "lng": 114.16897,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 99.58,
+    "q": "進教圍17-18號",
+    "alt": 50
   },
   "762": {
-    "lat": 22.500043,
-    "lng": 114.142937,
-    "prec": "street",
-    "src": "csdi",
-    "q": "新界粉嶺聯和墟聯安街1-7號富好閣地下B鋪",
-    "score": 48.0,
-    "alt": 63,
-    "parts": {
-      "street": "粉嶺聯和墟聯安街",
-      "num": "1-7號",
-      "building": "粉嶺聯和墟聯安街1-7號富好閣",
-      "sub": "粉嶺"
-    }
+    "lat": 22.49926,
+    "lng": 114.14383,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "粉嶺聯和墟聯安街1-7號富好閣 B",
+    "alt": 63
   },
   "763": {
     "lat": 22.381457,
@@ -10260,19 +9810,14 @@
     }
   },
   "779": {
-    "lat": 22.27619,
-    "lng": 114.175303,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 48,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "灣仔皇后大道東",
-      "sub": null
-    }
+    "lat": 22.27455,
+    "lng": 114.17894,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 75",
+    "score": 75.0,
+    "q": "灣仔皇后大道東200號利東街 G14及G15 (主部份)及 F15A",
+    "alt": 48
   },
   "780": {
     "lat": 22.367689,
@@ -10305,19 +9850,14 @@
     }
   },
   "783": {
-    "lat": 22.275635,
-    "lng": 114.17184,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港灣仔廈門街29號廈門樓地下",
-    "score": 55.0,
-    "alt": 13,
-    "parts": {
-      "street": "灣仔廈門街",
-      "num": "29號",
-      "building": "灣仔廈門街29號廈門樓",
-      "sub": null
-    }
+    "lat": 22.27598,
+    "lng": 114.17205,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.07,
+    "q": "灣仔廈門街29號廈門樓",
+    "alt": 13
   },
   "781": {
     "lat": 22.303199,
@@ -10337,7 +9877,7 @@
   "778": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -10395,19 +9935,14 @@
     }
   },
   "782": {
-    "lat": 22.234133,
-    "lng": 114.171452,
+    "lat": 22.24647,
+    "lng": 114.17647,
     "prec": "street",
-    "src": "csdi",
-    "q": "海洋公園",
-    "score": 15.0,
-    "alt": 99,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "香港仔海洋公園山上登山纜車站大廈",
-      "sub": "海洋公園"
-    }
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.0,
+    "q": "香港仔海洋公園山上登山纜車站大廈 及頂樓 , 山上海洋館2層展館 , 山上太平洋海岸展館 , 山下大熊貓園展館 , 纜車站大樓頂樓露天座位間 及纜車站大樓 露天座位間",
+    "alt": 99
   },
   "789": {
     "lat": 22.333072,
@@ -10440,19 +9975,14 @@
     }
   },
   "790": {
-    "lat": 22.31046,
-    "lng": 114.169149,
-    "prec": "street",
-    "src": "csdi",
-    "q": "油麻地 油麻地東彌敦道 380號",
-    "score": 15.0,
-    "alt": 95,
-    "parts": {
-      "street": "油麻地東彌敦道",
-      "num": "380號",
-      "building": "油麻地東彌敦道380號4樓",
-      "sub": "油麻地"
-    }
+    "lat": 22.30803,
+    "lng": 114.1716,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 81",
+    "score": 80.95,
+    "q": "油麻地東彌敦道380號",
+    "alt": 95
   },
   "793": {
     "lat": 22.29989,
@@ -10472,7 +10002,7 @@
   "787": {
     "lat": 22.297565,
     "lng": 114.012755,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "愉景灣",
     "score": 15.0,
@@ -10755,19 +10285,14 @@
     }
   },
   "809": {
-    "lat": 22.300093,
-    "lng": 114.172575,
+    "lat": 22.29847,
+    "lng": 114.17477,
     "prec": "street",
-    "src": "csdi",
-    "q": "尖沙咀",
-    "score": 15.0,
-    "alt": 134,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "尖沙咀寶勒巷17-19寶勒商業大廈",
-      "sub": "尖沙咀"
-    }
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.0,
+    "q": "尖沙咀寶勒巷17-19寶勒商業大廈",
+    "alt": 134
   },
   "817": {
     "lat": 22.375194,
@@ -10815,19 +10340,14 @@
     }
   },
   "812": {
-    "lat": 22.349574,
-    "lng": 114.059038,
+    "lat": 22.34841,
+    "lng": 114.05667,
     "prec": "street",
-    "src": "csdi",
-    "q": "馬灣",
-    "score": 15.0,
-    "alt": 102,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "馬灣公園二期",
-      "sub": "馬灣"
-    }
+    "src": "als",
+    "conf": "als score 78",
+    "score": 78.18,
+    "q": "荃灣馬灣地段編號684號 馬灣公園二期馬灣大街42A-42B號 16-17號屋 G16-17 部份",
+    "alt": 102
   },
   "818": {
     "lat": 22.441681,
@@ -10967,7 +10487,7 @@
   "826": {
     "lat": 22.424584,
     "lng": 114.212959,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "新界沙田白石角香港科學園2期東翼海濱大樓地下S088 及S089號鋪",
     "score": 15.0,
@@ -11055,19 +10575,14 @@
     }
   },
   "839": {
-    "lat": 22.319734,
-    "lng": 114.170333,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍旺角通菜街71號地下",
-    "score": 52.5,
-    "alt": 1,
-    "parts": {
-      "street": "旺角通菜街",
-      "num": "71號",
-      "building": "旺角通菜街",
-      "sub": "旺角"
-    }
+    "lat": 22.31878,
+    "lng": 114.17053,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 88.75,
+    "q": "旺角通菜街71號",
+    "alt": 1
   },
   "832": {
     "lat": 22.443608,
@@ -11145,19 +10660,14 @@
     }
   },
   "842": {
-    "lat": 22.304056,
+    "lat": 22.30406,
     "lng": 114.16157,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 81,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柯士甸道西1號圓方1樓",
-      "sub": null
-    }
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 94",
+    "score": 94.29,
+    "q": "柯士甸道西1號圓方 1002 及1002 前座位間",
+    "alt": 81
   },
   "844": {
     "lat": 22.358383,
@@ -11175,49 +10685,34 @@
     }
   },
   "847": {
-    "lat": 22.376193,
-    "lng": 114.177729,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大圍 沙田大圍積信街 31-51號",
-    "score": 52.5,
-    "alt": 54,
-    "parts": {
-      "street": "沙田大圍積信街",
-      "num": "31-51號",
-      "building": "沙田大圍積信街31-51號安信樓",
-      "sub": "大圍"
-    }
+    "lat": 22.37646,
+    "lng": 114.17812,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 92",
+    "score": 91.54,
+    "q": "沙田大圍積信街31-51號安信樓 P",
+    "alt": 54
   },
   "848": {
-    "lat": 22.274252,
-    "lng": 114.171769,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港灣仔春園街1-11號春暉大廈一樓",
-    "score": 55.0,
-    "alt": 31,
-    "parts": {
-      "street": "灣仔春園街",
-      "num": "1-11號",
-      "building": "灣仔春園街1-11號春暉大廈",
-      "sub": null
-    }
+    "lat": 22.27619,
+    "lng": 114.17275,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.0,
+    "q": "灣仔春園街1-11號春暉大廈",
+    "alt": 31
   },
   "846": {
-    "lat": 22.278612,
-    "lng": 114.173719,
-    "prec": "street",
-    "src": "csdi",
-    "q": "香港灣仔謝斐道151-161號金聲大廈地下B鋪",
-    "score": 55.0,
-    "alt": 83,
-    "parts": {
-      "street": "灣仔謝斐道",
-      "num": "151-161號",
-      "building": "灣仔謝斐道151-161號金聲大廈",
-      "sub": null
-    }
+    "lat": 22.2789,
+    "lng": 114.17416,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 86",
+    "score": 86.07,
+    "q": "灣仔謝斐道151-161號金聲大廈 B",
+    "alt": 83
   },
   "851": {
     "lat": 22.300138,
@@ -11235,19 +10730,14 @@
     }
   },
   "853": {
-    "lat": 22.281886,
-    "lng": 114.15936,
-    "prec": "street",
-    "src": "csdi",
-    "q": "中環",
-    "score": 15.0,
-    "alt": 50,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "及1樓",
-      "sub": "中環"
-    }
+    "lat": 22.28224,
+    "lng": 114.15361,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 76",
+    "score": 76.19,
+    "q": "中環荷李活道35及37號 C WISDOM CENTRE 及",
+    "alt": 50
   },
   "835": {
     "lat": 22.38234,
@@ -11327,7 +10817,7 @@
   "855": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -11415,19 +10905,14 @@
     }
   },
   "863": {
-    "lat": 22.341157,
-    "lng": 114.151831,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍深水埗永康街79號創匯國際中心地下B鋪",
-    "score": 55.0,
-    "alt": 46,
-    "parts": {
-      "street": "深水埗永康街",
-      "num": "79號",
-      "building": "深水埗永康街79號創匯國際中心",
-      "sub": null
-    }
+    "lat": 22.33958,
+    "lng": 114.14952,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 91.0,
+    "q": "深水埗永康街79號創匯國際中心 B",
+    "alt": 46
   },
   "868": {
     "lat": 22.273973,
@@ -11445,19 +10930,14 @@
     }
   },
   "862": {
-    "lat": 22.281886,
-    "lng": 114.15936,
-    "prec": "street",
-    "src": "csdi",
-    "q": "中環",
-    "score": 15.0,
-    "alt": 55,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "中環德輔道中22號華懋中心",
-      "sub": "中環"
-    }
+    "lat": 22.28245,
+    "lng": 114.15716,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 91.99,
+    "q": "中環德輔道中22號華懋中心一期",
+    "alt": 55
   },
   "870": {
     "lat": 22.321025,
@@ -11537,7 +11017,7 @@
   "872": {
     "lat": 22.209123,
     "lng": 114.029479,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "長洲東灣華威酒店地下(部分)",
     "score": 15.0,
@@ -11565,24 +11045,19 @@
     }
   },
   "871": {
-    "lat": 22.325514,
-    "lng": 114.175244,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍太子道西379號家歡樓地下J鋪",
-    "score": 0.5,
-    "alt": 78,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "太子道西379號家歡樓",
-      "sub": "太子"
-    }
+    "lat": 22.32732,
+    "lng": 114.18894,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "太子道西379號家歡樓 J",
+    "alt": 78
   },
   "877": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -11685,19 +11160,14 @@
     }
   },
   "883": {
-    "lat": 22.285459,
-    "lng": 114.141107,
-    "prec": "street",
-    "src": "csdi",
-    "q": "西營盤 西營盤高街 46號",
-    "score": 49.4,
-    "alt": 80,
-    "parts": {
-      "street": "西營盤高街",
-      "num": "46號",
-      "building": "西營盤高街46號楊華閣",
-      "sub": "西營盤"
-    }
+    "lat": 22.28507,
+    "lng": 114.14205,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 84",
+    "score": 84.17,
+    "q": "西營盤高街46號楊華閣 C舗",
+    "alt": 80
   },
   "887": {
     "lat": 22.280811,
@@ -11910,24 +11380,19 @@
     }
   },
   "907": {
-    "lat": 22.316865,
-    "lng": 113.942499,
-    "prec": "street",
-    "src": "csdi",
-    "q": "機場 國際機場航天城東路 1號",
-    "score": 42.4,
-    "alt": 5,
-    "parts": {
-      "street": "國際機場航天城東路",
-      "num": "1號",
-      "building": "大嶼山香港國際機場航天城",
-      "sub": "機場"
-    }
+    "lat": 22.31912,
+    "lng": 113.94371,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 84",
+    "score": 84.17,
+    "q": "大嶼山香港國際機場航天城東路1號 香港天際萬豪酒店 (B部份)及 (B部份)",
+    "alt": 5
   },
   "901": {
     "lat": 22.448157,
     "lng": 114.172736,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "大埔",
     "score": 15.0,
@@ -11957,7 +11422,7 @@
   "905": {
     "lat": 22.419196,
     "lng": 114.231257,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "馬鞍山",
     "score": 15.0,
@@ -12075,19 +11540,14 @@
     }
   },
   "904": {
-    "lat": 22.389179,
-    "lng": 114.19114,
+    "lat": 22.38468,
+    "lng": 114.19196,
     "prec": "street",
-    "src": "csdi",
-    "q": "沙田",
-    "score": 15.0,
-    "alt": 99,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "沙田瀝源邨瀝源商場附翼2座1樓",
-      "sub": "沙田"
-    }
+    "src": "als",
+    "conf": "als score 91",
+    "score": 90.74,
+    "q": "沙田瀝源邨瀝源商場附翼2座 4",
+    "alt": 99
   },
   "919": {
     "lat": 22.294665,
@@ -12165,19 +11625,14 @@
     }
   },
   "914": {
-    "lat": 22.287807,
-    "lng": 114.142038,
-    "prec": "street",
-    "src": "csdi",
-    "q": "西營盤",
-    "score": 15.0,
-    "alt": 93,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "西營盤皇后大道西533-543號和發大廈",
-      "sub": "西營盤"
-    }
+    "lat": 22.28679,
+    "lng": 114.13269,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 75",
+    "score": 74.62,
+    "q": "西營盤皇后大道西533-543號和發大廈 4-6",
+    "alt": 93
   },
   "918": {
     "lat": 22.306179,
@@ -12225,34 +11680,24 @@
     }
   },
   "930": {
-    "lat": 22.316865,
-    "lng": 113.942499,
-    "prec": "street",
-    "src": "csdi",
-    "q": "機場 國際機場航天城東路 1號",
-    "score": 42.4,
-    "alt": 5,
-    "parts": {
-      "street": "國際機場航天城東路",
-      "num": "1號",
-      "building": "大嶼山香港國際機場航天城",
-      "sub": "機場"
-    }
+    "lat": 22.31912,
+    "lng": 113.94371,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 84",
+    "score": 84.17,
+    "q": "大嶼山香港國際機場航天城東路1號香港天際萬豪酒店 (A部份)及 (A部份)",
+    "alt": 5
   },
   "931": {
-    "lat": 22.334056,
-    "lng": 114.159441,
-    "prec": "street",
-    "src": "csdi",
-    "q": "深水埗福榮街 218號",
-    "score": 55.0,
-    "alt": 50,
-    "parts": {
-      "street": "深水埗福榮街",
-      "num": "218號",
-      "building": "深水埗福榮街218號美居中心",
-      "sub": null
-    }
+    "lat": 22.33465,
+    "lng": 114.15995,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 91.0,
+    "q": "深水埗福榮街218號美居中心 67B店",
+    "alt": 50
   },
   "932": {
     "lat": 22.296646,
@@ -12300,19 +11745,14 @@
     }
   },
   "929": {
-    "lat": 22.287158,
-    "lng": 114.14459,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 50,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "西區皇后大道西403-405號宏立閣",
-      "sub": null
-    }
+    "lat": 22.28672,
+    "lng": 114.13853,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 86",
+    "score": 86.01,
+    "q": "西區皇后大道西403-405號宏立閣",
+    "alt": 50
   },
   "936": {
     "lat": 22.446779,
@@ -12422,7 +11862,7 @@
   "938": {
     "lat": 22.349574,
     "lng": 114.059038,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "馬灣",
     "score": 15.0,
@@ -12435,24 +11875,19 @@
     }
   },
   "944": {
-    "lat": 22.319156,
-    "lng": 114.174991,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 22,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "梭椏道",
-      "sub": null
-    }
+    "lat": 22.31968,
+    "lng": 114.17479,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 86",
+    "score": 85.67,
+    "q": "梭椏道25A號",
+    "alt": 22
   },
   "941": {
     "lat": 22.424584,
     "lng": 114.212959,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "科學園",
     "score": 15.0,
@@ -12600,24 +12035,19 @@
     }
   },
   "956": {
-    "lat": 22.277822,
-    "lng": 114.172754,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 27,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "灣仔皇后大道東213號胡忠大廈",
-      "sub": null
-    }
+    "lat": 22.27442,
+    "lng": 114.17274,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 91.0,
+    "q": "灣仔皇后大道東213號胡忠大廈 餐廳A及2",
+    "alt": 27
   },
   "945": {
     "lat": 22.448157,
     "lng": 114.172736,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "大埔",
     "score": 15.0,
@@ -12660,34 +12090,24 @@
     }
   },
   "950": {
-    "lat": 22.207917,
-    "lng": 114.123844,
+    "lat": 22.20576,
+    "lng": 114.1315,
     "prec": "street",
-    "src": "csdi",
-    "q": "南丫島",
-    "score": 15.0,
-    "alt": 128,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "南丫島索罟灣第一街",
-      "sub": "南丫島"
-    }
+    "src": "als",
+    "conf": "als score 87",
+    "score": 86.67,
+    "q": "南丫島索罟灣第一街1A-1B號",
+    "alt": 128
   },
   "959": {
-    "lat": 22.283722,
-    "lng": 114.127367,
-    "prec": "street",
-    "src": "csdi",
-    "q": "西環吉席街 78-86號",
-    "score": 55.0,
-    "alt": 37,
-    "parts": {
-      "street": "西環吉席街",
-      "num": "78-86號",
-      "building": "西環吉席街78-86號娛安樓",
-      "sub": null
-    }
+    "lat": 22.28299,
+    "lng": 114.1269,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.0,
+    "q": "西環吉席街78-86號娛安樓 D",
+    "alt": 37
   },
   "957": {
     "lat": 22.279186,
@@ -12795,19 +12215,14 @@
     }
   },
   "961": {
-    "lat": 22.349574,
-    "lng": 114.059038,
-    "prec": "street",
-    "src": "csdi",
-    "q": "馬灣",
-    "score": 15.0,
-    "alt": 95,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "荃灣馬灣馬灣大街村北",
-      "sub": "馬灣"
-    }
+    "lat": 22.35329,
+    "lng": 114.05941,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 98",
+    "score": 97.69,
+    "q": "荃灣馬灣馬灣大街村北335號",
+    "alt": 95
   },
   "967": {
     "lat": 22.427058,
@@ -12840,19 +12255,14 @@
     }
   },
   "970": {
-    "lat": 22.287418,
-    "lng": 114.138166,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 50,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "西區德輔道西430-440A號均益大廈",
-      "sub": null
-    }
+    "lat": 22.28674,
+    "lng": 114.13443,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 89.13,
+    "q": "西區德輔道西430-440A號均益大廈一期 7",
+    "alt": 50
   },
   "971": {
     "lat": 22.372378,
@@ -12930,39 +12340,29 @@
     }
   },
   "972": {
-    "lat": 22.374144,
-    "lng": 114.105094,
-    "prec": "street",
-    "src": "csdi",
-    "q": "荃灣 青山公路 353號",
-    "score": 50.5,
-    "alt": 91,
-    "parts": {
-      "street": "青山公路",
-      "num": "353號",
-      "building": "帝景酒店",
-      "sub": "荃灣"
-    }
+    "lat": 22.36846,
+    "lng": 114.07801,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 88.15,
+    "q": "荃灣汀九 青山公路353號 帝景酒店 第2層及第5層 及在第2層及第5層的",
+    "alt": 91
   },
   "977": {
-    "lat": 22.448157,
-    "lng": 114.172736,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大埔",
-    "score": 15.0,
-    "alt": 49,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "大埔錦石新村",
-      "sub": "大埔"
-    }
+    "lat": 22.44924,
+    "lng": 114.15895,
+    "prec": "building",
+    "src": "als+csdi",
+    "conf": "both",
+    "score": 97.69,
+    "q": "大埔 錦石新村105號",
+    "alt": 49
   },
   "976": {
     "lat": 22.213168,
     "lng": 114.215184,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "赤柱",
     "score": 15.0,
@@ -13020,19 +12420,14 @@
     }
   },
   "983": {
-    "lat": 22.442475,
-    "lng": 114.031254,
-    "prec": "street",
-    "src": "csdi",
-    "q": "元朗 元朗建業街 88號",
-    "score": 28.4,
-    "alt": 10,
-    "parts": {
-      "street": "元朗建業街",
-      "num": "88號",
-      "building": "元朗建業街88號仁義大廈",
-      "sub": "元朗"
-    }
+    "lat": 22.44239,
+    "lng": 114.03142,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "元朗建業街88號仁義大廈 A",
+    "alt": 10
   },
   "985": {
     "lat": 22.277263,
@@ -13125,19 +12520,14 @@
     }
   },
   "984": {
-    "lat": 22.287807,
-    "lng": 114.142038,
-    "prec": "street",
-    "src": "csdi",
-    "q": "西營盤",
-    "score": 15.0,
-    "alt": 60,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "西營盤德輔道西434號均益大廈",
-      "sub": "西營盤"
-    }
+    "lat": 22.28674,
+    "lng": 114.13443,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 93",
+    "score": 93.07,
+    "q": "西營盤德輔道西434號均益大廈第一期 4",
+    "alt": 60
   },
   "987": {
     "lat": 22.329577,
@@ -13172,7 +12562,7 @@
   "982": {
     "lat": 22.38394,
     "lng": 114.273833,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "西貢",
     "score": 15.0,
@@ -13380,34 +12770,24 @@
     }
   },
   "1002": {
-    "lat": 22.448157,
-    "lng": 114.172736,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大埔 大埔滘紅林路 2號",
-    "score": 15.0,
-    "alt": 47,
-    "parts": {
-      "street": "大埔滘紅林路",
-      "num": "2號",
-      "building": "大埔滘紅林路",
-      "sub": "大埔"
-    }
+    "lat": 22.43602,
+    "lng": 114.18874,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "大埔滘紅林路2號 B",
+    "alt": 47
   },
   "1008": {
-    "lat": null,
-    "lng": null,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 8,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "深水埗楓樹街",
-      "sub": null
-    }
+    "lat": 22.32619,
+    "lng": 114.16424,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 88.75,
+    "q": "深水埗楓樹街5A號及界限街10H號",
+    "alt": 8
   },
   "1010": {
     "lat": 22.326952,
@@ -13500,19 +12880,14 @@
     }
   },
   "1007": {
-    "lat": 22.448157,
-    "lng": 114.172736,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大埔",
-    "score": 15.0,
-    "alt": 96,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "大埔汀角路龍尾村",
-      "sub": "大埔"
-    }
+    "lat": 22.45718,
+    "lng": 114.17656,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.33,
+    "q": "大埔汀角路龍尾村61號",
+    "alt": 96
   },
   "1017": {
     "lat": 22.339058,
@@ -13562,7 +12937,7 @@
   "1015": {
     "lat": 22.293245,
     "lng": 114.259185,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "將軍澳",
     "score": 15.0,
@@ -13577,7 +12952,7 @@
   "1009": {
     "lat": 22.454302,
     "lng": 114.001756,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "天水圍",
     "score": 15.0,
@@ -13682,7 +13057,7 @@
   "1024": {
     "lat": 22.424584,
     "lng": 114.212959,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "科學園",
     "score": 15.0,
@@ -13712,7 +13087,7 @@
   "1018": {
     "lat": 22.445904,
     "lng": 114.018874,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "元朗",
     "score": 15.0,
@@ -13742,7 +13117,7 @@
   "1021": {
     "lat": 22.38394,
     "lng": 114.273833,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "西貢白沙灣碼頭酒店",
     "score": 15.0,
@@ -13785,19 +13160,14 @@
     }
   },
   "1033": {
-    "lat": 22.424584,
-    "lng": 114.212959,
-    "prec": "street",
-    "src": "csdi",
-    "q": "科學園",
-    "score": 15.0,
-    "alt": 50,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": null,
-      "sub": "科學園"
-    }
+    "lat": 22.42512,
+    "lng": 114.21269,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 91",
+    "score": 91.0,
+    "q": "沙田白石角 香港科學園 科技大道西1號",
+    "alt": 50
   },
   "1036": {
     "lat": 22.284595,
@@ -13815,19 +13185,14 @@
     }
   },
   "1032": {
-    "lat": null,
-    "lng": null,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 43,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "深水埗青山道",
-      "sub": null
-    }
+    "lat": 22.33583,
+    "lng": 114.15937,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 79",
+    "score": 78.92,
+    "q": "深水埗青山道193A號 B",
+    "alt": 43
   },
   "1038": {
     "lat": 22.319751,
@@ -13845,49 +13210,34 @@
     }
   },
   "1037": {
-    "lat": 22.30617,
-    "lng": 114.169799,
-    "prec": "street",
-    "src": "csdi",
-    "q": "九龍廟街 273-285號",
-    "score": 55.0,
-    "alt": 57,
-    "parts": {
-      "street": "九龍廟街",
-      "num": "273-285號",
-      "building": "廟街273-285號寶發大廈",
-      "sub": null
-    }
+    "lat": 22.30374,
+    "lng": 114.16957,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "廟街273-285號寶發大廈 5",
+    "alt": 57
   },
   "1028": {
-    "lat": 22.300093,
-    "lng": 114.172575,
-    "prec": "street",
-    "src": "csdi",
-    "q": "尖沙咀",
-    "score": 15.0,
-    "alt": 98,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "尖沙咀漆咸道南121-123號永業大廈",
-      "sub": "尖沙咀"
-    }
+    "lat": 22.30212,
+    "lng": 114.17648,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 81.75,
+    "q": "尖沙咀漆咸道南121-123號永業大廈 G及H",
+    "alt": 98
   },
   "1035": {
-    "lat": 22.348321,
-    "lng": 114.057546,
-    "prec": "street",
-    "src": "csdi",
-    "q": "馬灣 荃灣馬灣馬灣大街 52號",
-    "score": 50.9,
-    "alt": 93,
-    "parts": {
-      "street": "荃灣馬灣馬灣大街",
-      "num": "52號",
-      "building": "荃灣馬灣馬灣大街52號馬灣公園二期",
-      "sub": "馬灣"
-    }
+    "lat": 22.34828,
+    "lng": 114.05749,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 88.75,
+    "q": "荃灣馬灣馬灣大街52號馬灣公園二期３座",
+    "alt": 93
   },
   "1042": {
     "lat": 22.375194,
@@ -13920,34 +13270,24 @@
     }
   },
   "1044": {
-    "lat": 22.279365,
-    "lng": 114.188407,
-    "prec": "street",
-    "src": "csdi",
-    "q": "銅鑼灣 銅鑼灣信德街 18號",
-    "score": 47.1,
-    "alt": 7,
-    "parts": {
-      "street": "銅鑼灣信德街",
-      "num": "18號",
-      "building": "銅鑼灣信德街",
-      "sub": "銅鑼灣"
-    }
+    "lat": 22.27898,
+    "lng": 114.1885,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 85",
+    "score": 85.03,
+    "q": "銅鑼灣信德街18號",
+    "alt": 7
   },
   "1043": {
-    "lat": null,
-    "lng": null,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 43,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柯士甸道西",
-      "sub": null
-    }
+    "lat": 22.30676,
+    "lng": 114.16147,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 92",
+    "score": 91.85,
+    "q": "柯士甸道西1號圓方第1層1089C",
+    "alt": 43
   },
   "1039": {
     "lat": 22.28452,
@@ -13980,19 +13320,14 @@
     }
   },
   "1046": {
-    "lat": null,
-    "lng": null,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 48,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "柯士甸道西1號圓方3樓",
-      "sub": null
-    }
+    "lat": 22.30406,
+    "lng": 114.16157,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 94",
+    "score": 94.29,
+    "q": "柯士甸道西1號圓方 及天台R001 及 前露天座位",
+    "alt": 48
   },
   "1045": {
     "lat": 22.38234,
@@ -14042,7 +13377,7 @@
   "1049": {
     "lat": 22.367329,
     "lng": 113.992534,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "黃金海岸",
     "score": 15.0,
@@ -14100,19 +13435,14 @@
     }
   },
   "1056": {
-    "lat": 22.3766,
-    "lng": 114.177972,
-    "prec": "street",
-    "src": "csdi",
-    "q": "大圍 沙田大圍積存街 74-76號",
-    "score": 52.3,
-    "alt": 22,
-    "parts": {
-      "street": "沙田大圍積存街",
-      "num": "74-76號",
-      "building": "沙田大圍積存街74-76號慶雲樓",
-      "sub": "大圍"
-    }
+    "lat": 22.37692,
+    "lng": 114.17875,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "沙田大圍積存街74-76號慶雲樓 及 A",
+    "alt": 22
   },
   "1048": {
     "lat": 22.299208,
@@ -14130,49 +13460,34 @@
     }
   },
   "1047": {
-    "lat": 22.445904,
-    "lng": 114.018874,
-    "prec": "street",
-    "src": "csdi",
-    "q": "元朗",
-    "score": 15.0,
-    "alt": 49,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "元朗仁樂坊5號利發大樓",
-      "sub": "元朗"
-    }
+    "lat": 22.44339,
+    "lng": 114.02682,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 100",
+    "score": 100.0,
+    "q": "元朗仁樂坊5號利發大樓 D",
+    "alt": 49
   },
   "1055": {
-    "lat": null,
-    "lng": null,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 48,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "灣仔皇后大道東",
-      "sub": null
-    }
+    "lat": 22.27549,
+    "lng": 114.1707,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 88.75,
+    "q": "灣仔皇后大道東127號",
+    "alt": 48
   },
   "1059": {
-    "lat": null,
-    "lng": null,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 34,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "白楊街",
-      "sub": null
-    }
+    "lat": 22.3274,
+    "lng": 114.16694,
+    "prec": "street",
+    "src": "als",
+    "conf": "als score 86",
+    "score": 85.69,
+    "q": "白楊街 25E 及 25F 號",
+    "alt": 34
   },
   "1057": {
     "lat": 22.30096,
@@ -14267,7 +13582,7 @@
   "1061": {
     "lat": 22.293245,
     "lng": 114.259185,
-    "prec": "street",
+    "prec": "area",
     "src": "csdi",
     "q": "將軍澳",
     "score": 15.0,
@@ -14415,19 +13730,14 @@
     }
   },
   "1077": {
-    "lat": 22.316865,
-    "lng": 113.942499,
-    "prec": "street",
-    "src": "csdi",
-    "q": "機場 國際機場航天城東路 1號",
-    "score": 42.4,
-    "alt": 5,
-    "parts": {
-      "street": "國際機場航天城東路",
-      "num": "1號",
-      "building": "大嶼山香港國際機場航天城",
-      "sub": "機場"
-    }
+    "lat": 22.31912,
+    "lng": 113.94371,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 84",
+    "score": 84.17,
+    "q": "大嶼山香港國際機場航天城東路1號香港天際萬豪酒店 A部 份",
+    "alt": 5
   },
   "1078": {
     "lat": 22.321095,
@@ -14565,34 +13875,24 @@
     }
   },
   "1075": {
-    "lat": 22.282302,
-    "lng": 114.186209,
-    "prec": "street",
-    "src": "csdi",
-    "q": "銅鑼灣",
-    "score": 15.0,
-    "alt": 98,
-    "parts": {
-      "street": null,
-      "num": null,
-      "building": "羅素街2及4號二千年廣場",
-      "sub": "銅鑼灣"
-    }
+    "lat": 22.27859,
+    "lng": 114.18147,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 65",
+    "score": 65.39,
+    "q": "銅鑼灣堅拿道東6,7,8及9號及 羅素街2及4號二千年廣場",
+    "alt": 98
   },
   "1087": {
-    "lat": 22.32667,
-    "lng": 114.17043,
-    "prec": "street",
-    "src": "csdi",
-    "q": "旺角 旺角界限街31號恆順大樓 旺角界限街",
-    "score": 40.2,
-    "alt": 76,
-    "parts": {
-      "street": "旺角界限街",
-      "num": "31號",
-      "building": "旺角界限街31號恆順大樓",
-      "sub": "旺角"
-    }
+    "lat": 22.32661,
+    "lng": 114.16702,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 87",
+    "score": 87.29,
+    "q": "旺角界限街31號恆順大樓 C",
+    "alt": 76
   },
   "1086": {
     "lat": 22.305601,
@@ -14625,19 +13925,14 @@
     }
   },
   "1091": {
-    "lat": 22.397767,
-    "lng": 113.974237,
-    "prec": "area",
-    "src": "fallback",
-    "q": null,
-    "score": null,
-    "alt": 11,
-    "parts": {
-      "street": "屯門藍地藍地大街",
-      "num": "35號",
-      "building": "屯門藍地藍地大街",
-      "sub": "屯門"
-    }
+    "lat": 22.41914,
+    "lng": 113.98381,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 89",
+    "score": 88.75,
+    "q": "屯門藍地藍地大街35號",
+    "alt": 11
   },
   "1084": {
     "lat": 22.286606,
@@ -14715,19 +14010,14 @@
     }
   },
   "1096": {
-    "lat": 22.297537,
-    "lng": 114.172585,
-    "prec": "street",
-    "src": "csdi",
-    "q": "彌敦道 54-64號",
-    "score": 55.0,
-    "alt": 54,
-    "parts": {
-      "street": "彌敦道",
-      "num": "54-64號",
-      "building": "彌敦道54-64號美麗都大廈",
-      "sub": null
-    }
+    "lat": 22.29728,
+    "lng": 114.17288,
+    "prec": "building",
+    "src": "als",
+    "conf": "als score 82",
+    "score": 82.0,
+    "q": "彌敦道54-64號美麗都大廈 44",
+    "alt": 54
   },
   "1098": {
     "lat": 22.269563,

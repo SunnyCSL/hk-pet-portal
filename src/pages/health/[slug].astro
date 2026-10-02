@@ -231,9 +231,9 @@ const relatedArticles = (() => {
   </button>
 
   <style is:global>
-    /* ---------- Hero gradient backdrop (light brand-green wash) ---------- */
+    /* ---------- Hero gradient backdrop (v3 紙米白暖洗) ---------- */
     .hero-gradient {
-      background: linear-gradient(180deg, #F1EDFF 0%, #F5F3FF 60%, #ffffff 100%);
+      background: linear-gradient(180deg, #FBEFD6 0%, #F4EEDF 70%, #F4EEDF 100%);
     }
 
     /* ---------- Emoji tile (64px on desktop, scales down on mobile) ---------- */
@@ -243,19 +243,19 @@ const relatedArticles = (() => {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: #ffffff;
-      border: 1px solid #E0EFE3;
-      border-radius: 16px;
+      background: #FFFDF7;
+      border: 1.5px solid #1B1814;
+      border-radius: 4px;
       font-size: 36px;
       line-height: 1;
-      box-shadow: 0 2px 8px rgba(45, 155, 78, 0.08);
+      box-shadow: none;
     }
     @media (max-width: 640px) {
       .emoji-tile {
         width: 52px;
         height: 52px;
         font-size: 28px;
-        border-radius: 14px;
+        border-radius: 4px;
       }
     }
 
@@ -356,15 +356,15 @@ const relatedArticles = (() => {
       border-right: none;
     }
     .prose-custom thead th {
-      background: #F1EDFF;
-      color: var(--color-brand);
-      font-weight: 600;
+      background: #FFF9E4;
+      color: #1B1814;
+      font-weight: 700;
       font-size: 0.9rem;
-      border-bottom: 1px solid #D6E8D8;
+      border-bottom: 1px solid #C9BC9C;
     }
     /* zebra body rows */
     .prose-custom tbody tr:nth-child(even) td {
-      background: #FAFBF7;
+      background: #F7F1E2;
     }
     .prose-custom tbody tr:last-child td {
       border-bottom: none;
@@ -375,7 +375,7 @@ const relatedArticles = (() => {
       margin: 1.5rem 0;
       padding: 0.75rem 1rem;
       border-left: 3px solid var(--color-brand);
-      background: #F4FAF5;
+      background: #FFF9E4;
       color: var(--color-gray-700);
       border-radius: 0 8px 8px 0;
     }
@@ -386,7 +386,7 @@ const relatedArticles = (() => {
     /* ---------- hr divider ---------- */
     .prose-custom hr {
       border: none;
-      border-top: 1px solid #ECECEC;
+      border-top: 1px solid #E0D6BE;
       margin: 2rem 0;
     }
 
