@@ -1,18 +1,18 @@
 {
-  "audit_date": "2026-09-27",
-  "run_at": "2026-09-27T18:05:47.145236",
-  "db_total": 1098,
+  "audit_date": "2026-10-04",
+  "run_at": "2026-10-04T18:10:24.863887",
+  "db_total": 1103,
   "db_by_status": {
-    "active": 1027,
+    "active": 1029,
     "removed": 29,
-    "flagged": 42
+    "flagged": 45
   },
   "fehd": {
     "status": "ok",
     "source": "json",
-    "size": 458365,
-    "license_count": 991,
-    "list_update": "2026-09-25"
+    "size": 459176,
+    "license_count": 993,
+    "list_update": "2026-10-02"
   },
   "db_diff": {
     "new_delistings": [],
@@ -20,54 +20,21 @@
     "newly_permitted_sample": []
   },
   "site_diff": {
-    "site_total": 991,
+    "site_total": 993,
     "site_stale_count": 0,
     "site_stale_sample": [],
     "site_missing_count": 0
   },
-  "note": "2026-09-27 審計: 首跑發現 4 個新除名 (潮江春 上水匯 / 美心皇宮 綠楊坊 / 意粉屋 尖沙咀北京道 / 意粉屋 沙田新城市廣場一期)。核實: (1) 官方食環署名單 25/09/2026 版 — JSON getData.php 同 fulllist.pdf 兩個來源都冇該 4 個牌照號; (2) 逐間用瀏覽器開 OpenRice 核實 — 4 間全部仍「營業中」(意粉屋兩店可訂座、潮江春上水匯仍有餐飲券、美心皇宮綠楊坊 OpenRice 仍掛「寵物友善餐廳」標籤)。結論: 屬退出狗隻計劃／准許被撤，唔係結業。DB 已由 active 改為 removed, 重跑後 diff 歸零。",
-  "new_delistings_resolved": [
-    {
-      "license_no": "2296801448",
-      "name": "潮江春",
-      "district": "北區",
-      "address": "新界上水石湖墟龍琛路48號上水匯6樓601室",
-      "verify": "OpenRice 顯示營業中 (上水匯 6 樓 601 號舖)",
-      "action": "status active → removed"
-    },
-    {
-      "license_no": "2292001907",
-      "name": "美心皇宮",
-      "district": "荃灣區",
-      "address": "新界荃灣蕙荃路22-26綠楊坊商場G27號舖",
-      "verify": "OpenRice 顯示營業中, 但仍掛「寵物友善餐廳」標籤 → 標籤過時, 以食環署官方名單為準",
-      "action": "status active → removed"
-    },
-    {
-      "license_no": "2261101946",
-      "name": "意粉屋",
-      "district": "油尖區",
-      "address": "九龍尖沙咀北京道57號1樓",
-      "verify": "OpenRice 顯示營業中, 可訂座 (北京道 57 號國都大廈 1 樓)",
-      "action": "status active → removed"
-    },
-    {
-      "license_no": "2297807045",
-      "name": "意粉屋",
-      "district": "沙田區",
-      "address": "新界沙田新城市廣埸第一期七樓710號鋪",
-      "verify": "OpenRice 顯示營業中, 可訂座 (新城市廣場一期 7 樓 710 號舖)",
-      "action": "status active → removed"
-    }
-  ],
   "news_findings": [
-    "狗隻進食肆｜2宗檢控涉無穩妥牽狗帶 食環署籲狗主中秋用膳守法",
-    "狗隻入食肆︱食環署：約十多間食肆退出申請 收到意見主要涉及狗隻「唔覺意碰到枱面」",
-    "狗隻友善食肆｜新政五日巡2300次接20宗投訴 有餐廳延期推行、退出 食環署署長：尊重決定 (有線)",
-    "狗隻入食肆｜食環署：10多間餐廳撤銷申請 投訴主要涉及狗隻「唔覺意碰到枱面」 (am730)",
-    "狗隻入食肆｜名單上至少兩食肆結業 食環：確認有需要才發准許 (HK01 11/07/2026 — 沙田帝逸酒店 ALVA HOUSE + 逸軒 30/06 結業, DB 已於 7 月標 removed)",
-    "Hong Kong's new pet-friendly dining policy sparks complaints",
-    "Hong Kong Dog-Friendly Restaurant Policy Sparks Controversy and Complaints"
+    "狗隻入食肆輿情兩極4日20投訴 食環署袁旭健：初期須適應是預期 (香港01, 14/07/2026)",
+    "狗隻入食肆｜食環署巡查208間未獲批攜狗食肆 發出2宗口頭警告 (香港01, 12/07/2026)",
+    "狗隻友善食肆良好作業及行為指引（全文） (食環署)",
+    "狗隻入食肆｜西灣河無申請食肆疑准食客帶狗入 食環署：已巡查、口頭警告負責人 (am730, 13/07/2026)"
   ],
-  "needs_update": false
+  "needs_update": false,
+  "news_note": "以上 4 條由 18:01 首跑檢索到；18:10 重跑時搜尋後端回 0 條（後端不穩），故保留首跑結果。全部為 07/2026 政策期舊聞，本週無新增個案。",
+  "audit_actions": [
+    "3 個新除名牌照 (意粉屋銅鑼灣/民豐餃子甜品/Rakuraku利東街) 經 JSON+PDF 雙源核實已唔喺 10月2日版官方名單；查證非同址換新牌照；OpenRice 顯示仍營業中 → 判定退出計劃而非結業",
+    "DB hk_dog_restaurants 該 3 行 status 由 active 改為 flagged 並附證據註記"
+  ]
 }
