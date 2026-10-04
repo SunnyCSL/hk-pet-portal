@@ -3584,14 +3584,6 @@
   "id": 504
  },
  {
-  "name_en": "Man Fung Dumpings and Dessert",
-  "name_zh": "民豐餃子·甜品",
-  "district": "荃灣區",
-  "address": "新界荃灣 楊屋道1號 荃新天地 地下G46號鋪",
-  "license_no": "3192802496",
-  "id": 505
- },
- {
   "name_en": "Man Kim",
   "name_zh": "Man Kim",
   "district": "東區",
@@ -4630,14 +4622,6 @@
   "address": "香港山頂道118號山頂廣場地下G01號鋪",
   "license_no": "2218813843",
   "id": 660
- },
- {
-  "name_en": "Rakuraku Ramen",
-  "name_zh": "Rakuraku Ramen",
-  "district": "灣仔區",
-  "address": "香港灣仔皇后大道東200號利東街地下G30號鋪",
-  "license_no": "2212816673",
-  "id": 661
  },
  {
   "name_en": "RAKURAKU RAMEN",
@@ -5742,14 +5726,6 @@
   "address": "新界荃灣馬灣地段編號684號 馬灣公園二期馬灣大街42A-42B號 16-17號屋 地下G16-17號鋪部份",
   "license_no": "3192803310",
   "id": 812
- },
- {
-  "name_en": "The Spaghetti House",
-  "name_zh": "意粉屋",
-  "district": "灣仔區",
-  "address": "香港銅鑼灣百德新街22-36號翡翠明珠廣場一樓3號舖",
-  "license_no": "2212814941",
-  "id": 813
  },
  {
   "name_en": "The Square",
@@ -7934,5 +7910,45 @@
   "address": "九龍啟德協調道2號 AIRSIDE 1樓L118舖",
   "license_no": "3152804047",
   "id": 1104
+ },
+ {
+  "name_en": "CAFE ZI",
+  "name_zh": "梔子",
+  "district": "油尖區",
+  "address": "九龍尖沙咀山林道8號高荔商業中心地下A及B鋪",
+  "license_no": "3161807468",
+  "id": 1105
+ },
+ {
+  "name_en": "Essence of chicken",
+  "name_zh": "風林火雞",
+  "district": "荃灣區",
+  "address": "新界荃灣荃景圍208號荃德花園地下5B鋪",
+  "license_no": "2292807086",
+  "id": 1106
+ },
+ {
+  "name_en": "Immerse",
+  "name_zh": "Immerse",
+  "district": "觀塘區",
+  "address": "九龍觀塘海濱道90號觀塘海濱活動空間2餐廳2",
+  "license_no": "3151803685",
+  "id": 1107
+ },
+ {
+  "name_en": "Match2 Taiwanese Kitchen",
+  "name_zh": "麻吉灶咖",
+  "district": "油尖區",
+  "address": "九龍尖沙咀河內道18號 K11地庫二層 B226及B227A號舖",
+  "license_no": "2261822467",
+  "id": 1108
+ },
+ {
+  "name_en": "Next Station",
+  "name_zh": "Next Station",
+  "district": "元朗區",
+  "address": "新界元朗媽橫路7號富來花園地下10號鋪",
+  "license_no": "3194802153",
+  "id": 1109
  }
 ]
