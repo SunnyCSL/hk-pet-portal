@@ -75,5 +75,40 @@
     "topic": "Bladder infection",
     "caption_zh": "🎬 影片版：狗狗膀胱感染 5 大徵狀",
     "caption_en": "🎬 Watch the video: 5 signs of a bladder infection in dogs"
+  },
+  {
+    "slug": "dog-itchy-skin-itching-guide",
+    "video_id": "Vi6IrAHQUHM",
+    "topic": "Itchy skin",
+    "caption_zh": "🎬 影片版：狗狗皮膚痕癢 — 痕癢循環解碼",
+    "caption_en": "🎬 Watch the video: dog itchy skin — the itch-scratch cycle explained"
+  },
+  {
+    "slug": "dog-limping-joint-pain-signs",
+    "video_id": "tPeO6XyLae8",
+    "topic": "Lameness",
+    "caption_zh": "🎬 影片版：狗狗跛行 — 拉傷定關節問題？",
+    "caption_en": "🎬 Watch the video: dog limping — strain or joint problem?"
+  },
+  {
+    "slug": "dog-tick-flea-prevention-guide",
+    "video_id": "L1Y_pI1do6Y",
+    "topic": "Ticks & fleas",
+    "caption_zh": "🎬 影片版：蜱蟲同跳蚤 — 香港全年風險",
+    "caption_en": "🎬 Watch the video: ticks vs fleas — year-round risk in Hong Kong"
+  },
+  {
+    "slug": "dog-unexplained-weight-loss-guide",
+    "video_id": "-ygtINk4b0g",
+    "topic": "Weight loss",
+    "caption_zh": "🎬 影片版：狗狗無故變瘦點算",
+    "caption_en": "🎬 Watch the video: unexplained weight loss in dogs"
+  },
+  {
+    "slug": "dog-vomiting-bile-foam-guide",
+    "video_id": "2EwxoyiB0ts",
+    "topic": "Vomiting",
+    "caption_zh": "🎬 影片版：嘔黃色膽汁／白色泡 — 顏色解碼",
+    "caption_en": "🎬 Watch the video: vomiting bile or white foam — colour decoder"
   }
 ]
