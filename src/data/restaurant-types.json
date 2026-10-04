@@ -329,6 +329,18 @@
       "酒吧"
     ]
   },
+  "1105": {
+    "source": "name-infer",
+    "types": [
+      "咖啡"
+    ]
+  },
+  "1108": {
+    "source": "name-infer",
+    "types": [
+      "台灣"
+    ]
+  },
   "111": {
     "source": "name-infer",
     "types": [
@@ -1212,12 +1224,6 @@
       "酒吧"
     ]
   },
-  "505": {
-    "source": "name-infer",
-    "types": [
-      "甜品／烘焙"
-    ]
-  },
   "512": {
     "source": "name-infer",
     "types": [
@@ -1543,12 +1549,6 @@
     "source": "name-infer",
     "types": [
       "咖啡"
-    ]
-  },
-  "661": {
-    "source": "name-infer",
-    "types": [
-      "拉麵／烏冬"
     ]
   },
   "662": {
@@ -1908,12 +1908,6 @@
     "source": "name-infer",
     "types": [
       "泰越星馬"
-    ]
-  },
-  "813": {
-    "source": "name-infer",
-    "types": [
-      "西餐"
     ]
   },
   "816": {
