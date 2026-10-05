@@ -61,11 +61,15 @@ const openRiceHref = `https://www.openrice.com/zh/hongkong/restaurants?where=${e
       </div>
     </header>
 
-    <!-- ── 卡＋地圖融合：一張卡由地圖頂住，下面資料列，底部大掣 ────── -->
-    <section class="rd-card" aria-label="地點資料">
-      <div id="restaurant-map" class="rd-map"
-           data-lat={restLat} data-lng={restLng}
-           data-name={displayName} data-address={restaurant.address}></div>
+    <!-- ── 卡＋地圖融合：地圖（桌面 ≥1000px 釘右邊）＋資料卡，底部大掣 ────── -->
+    <div class="rd-cols">
+      <aside class="rd-colmap" aria-label="地圖">
+        <div id="restaurant-map" class="rd-map"
+             data-lat={restLat} data-lng={restLng}
+             data-name={displayName} data-address={restaurant.address}></div>
+      </aside>
+      <div class="rd-colmain">
+      <section class="rd-card" aria-label="地點資料">
 
       <div class="rd-rows">
         <div class="rd-row">
@@ -167,5 +171,7 @@ const openRiceHref = `https://www.openrice.com/zh/hongkong/restaurants?where=${e
         </div>
       </div>
     )}
+    </div><!-- /.rd-colmain -->
+    </div><!-- /.rd-cols -->
   </div>
 </BaseLayout>

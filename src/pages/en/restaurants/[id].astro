@@ -77,11 +77,15 @@ const openRiceHref = `https://www.openrice.com/en/hongkong/restaurants?where=${e
       </div>
     </header>
 
-    <!-- ── Card + map fused ───────────────────────────────────────── -->
-    <section class="rd-card" aria-label="Venue details">
-      <div id="restaurant-map" class="rd-map"
-           data-lat={restLat} data-lng={restLng}
-           data-name={displayName} data-address={restaurant.address}></div>
+    <!-- ── Card + map fused (map pinned right on desktop ≥1000px) ─── -->
+    <div class="rd-cols">
+      <aside class="rd-colmap" aria-label="Map">
+        <div id="restaurant-map" class="rd-map"
+             data-lat={restLat} data-lng={restLng}
+             data-name={displayName} data-address={restaurant.address}></div>
+      </aside>
+      <div class="rd-colmain">
+      <section class="rd-card" aria-label="Venue details">
 
       <div class="rd-rows">
         <div class="rd-row">
@@ -179,5 +183,7 @@ const openRiceHref = `https://www.openrice.com/en/hongkong/restaurants?where=${e
         </div>
       </div>
     )}
+    </div><!-- /.rd-colmain -->
+    </div><!-- /.rd-cols -->
   </div>
 </BaseLayout>

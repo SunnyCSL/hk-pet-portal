@@ -58,9 +58,12 @@
         if (map.__basemapDone) return;
         clearTimeout(stall);
         try {
-          L.maplibreGL({ style: OFM_STYLE, attributionControl: false }).addTo(map);
+          var gl = L.maplibreGL({ style: OFM_STYLE, attributionControl: false }).addTo(map);
+          map.__glLayer = gl;
           addAttribution(map, OFM_ATTR);
           map.__basemapKind = 'openfreemap-positron-vector';
+          // 首次加完之後版面可能仲未定（字體／reveal 動畫）→ 過一陣再同步一次
+          setTimeout(function () { resize(map); }, 150);
         } catch (e) {
           addEsri(map);
         }
@@ -71,5 +74,30 @@
       });
   }
 
-  window.NexiBasemap = { add: add };
+  /* 容器大細變咗（例如拖分線／視窗 resize）時，Leaflet 只會 invalidateSize，
+     但 @maplibre/maplibre-gl-leaflet 0.1.0 有兩個陷阱（實測 2026-10-05）：
+       1. resize handler 唔會叫 MapLibre resize；
+       2. gl 容器嘅 width/height 只喺 onAdd 時寫死 px（_initContainer），之後
+          再冇更新 → 拖闊之後 canvas 停留舊闊度，右邊出現空條。
+     所以呢度要自己：改 gl 容器 px → 叫 MapLibre resize → fire('move') 重新定位。 */
+  function resize(map) {
+    var layer = map && map.__glLayer;
+    if (!layer) return;
+    try {
+      var cont = (layer.getContainer && layer.getContainer()) || layer._container;
+      if (cont) {
+        // ⚠️ 一定要用 layer.getSize()（= map size × (1 + padding*2)，預設 1.2 倍），
+        // 唔係 map.getSize()。插件刻意整大個 gl 容器等滾動時唔使即刻重繪；
+        // 用細咗嘅尺寸會令容器縮細 + 位置偏移，右／下邊出現一條冇圖嘅空條。
+        var s = layer.getSize ? layer.getSize() : map.getSize();
+        cont.style.width = s.x + 'px';
+        cont.style.height = s.y + 'px';
+      }
+      var m = layer.getMaplibreMap ? layer.getMaplibreMap() : null;
+      if (m && m.resize) m.resize();
+      if (map.fire) map.fire('move');
+    } catch (e) {}
+  }
+
+  window.NexiBasemap = { add: add, resize: resize };
 })();
