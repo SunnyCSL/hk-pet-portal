@@ -166,7 +166,8 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
 ---
 
 <BaseLayout title="🍽️ 餐廳搜尋" lang="zh">
-  <div class="max-w-4xl mx-auto px-4 py-6 md:py-8">
+  <div id="lrWrap" class="max-w-4xl mx-auto px-4 py-6 md:py-8 lr-wrap">
+    <div class="lr-top">
     <!-- Header -->
     <div class="flex items-center justify-between mb-5">
       <div class="flex items-center gap-3">
@@ -238,12 +239,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       <a href="#" id="area-page-link" class="hidden text-xs text-brand hover:underline mt-0.5">查看此地區專頁 →</a>
     </div>
 
-    <!-- ── 卡＋地圖融合：清單上方嘅地圖，同清單行同一批結果（2026-10-05） ── -->
+    </div><!-- /.lr-top -->
+
     <button id="map-toggle" class="lr-maptoggle" type="button" aria-expanded="true" aria-controls="map-panel">🗺️ 隱藏地圖</button>
     <div class="lr-mapwrap" id="map-panel">
       <div id="list-map" class="lr-map" aria-label="搜尋結果地圖"></div>
     </div>
 
+    <div class="lr-list">
     <!-- Results list — first 50 are server-rendered for SEO; rest are JS-rendered into this same wrapper -->
     <div id="restaurant-list" class="flex flex-col gap-2">
       {firstPage.map((r: StaticCard) => (
@@ -308,6 +311,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       <p class="text-sm">搵唔到相關餐廳</p>
       <a href="/restaurants" onclick="resetFilter(); return false;" class="text-brand text-sm hover:underline mt-2 inline-block">清除篩選重新搜尋</a>
     </div>
+    </div><!-- /.lr-list -->
+
+    <div id="deskSplitter" class="lr-splitter" role="separator" aria-orientation="vertical" title="拖動調左右大細（雙擊還原）"></div>
   </div>
 
   <!-- fix/restaurant-search-v2: data island for JS pagination. Compact array form
@@ -338,6 +344,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" is:inline></script>
   <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.0/leaflet-maplibre-gl.js" is:inline></script>
   <script src="/basemap.js" is:inline></script>
+  <script src="/desk-splitter.js" is:inline></script>
 
   <script is:inline src="/card-face.js"></script>
   <script is:inline>
@@ -1240,6 +1247,17 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           updateListMap(r2.ids.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE));
           if (listMap) setTimeout(function () { listMap.invalidateSize(); }, 80);
         }
+      });
+    }
+
+
+    // 桌面（≥1000px）：中間分線拖動調地圖闊度、雙擊還原（同 travel 站最新版一致）
+    if (window.NexiSplitter) {
+      NexiSplitter.init({
+        wrap: document.getElementById("lrWrap"),
+        splitter: document.getElementById("deskSplitter"),
+        getMap: function () { return listMap; },
+        key: "pet_list_map_w", defWidth: 460, minMap: 300, clampMin: 520, pad: 28
       });
     }
 

@@ -726,6 +726,146 @@ footer .text-xs { font-size: 15px; }
   .restaurant-item .rc-thumb { width: 116px; height: 116px; }
 }
 
+/* ─────────────── 19c. 桌面版（≥1000px）：跟自家 travel 站 2026-10-05 最新做法 ───────────────
+   原則：**手機（<1000px）版面完全不變**；≥1000px 先變寬版 —— 內容／卡喺左，
+   地圖釘右邊（sticky），中間一條可拖分線（寬度寫入 --map-w，記入 localStorage）。
+   分線邏輯喺 `public/desk-splitter.js`（共用，唔好抄一份落每個 page）。 */
+.lr-splitter { display: none; }
+.rd-cols { display: block; }
+
+@media (max-width: 999px) {
+  /* 詳情頁：地圖＋資料卡睇落仍然係「一張卡」（同改版前一樣） */
+  .rd-cols { border-radius: var(--r-card); box-shadow: 3px 3px 0 rgba(27, 24, 20, .14); }
+  .rd-colmap .rd-map { border: 1.5px solid var(--ink); border-bottom: 0; border-radius: var(--r-card) var(--r-card) 0 0; }
+  .rd-colmain .rd-card { border-top: 0; border-radius: 0 0 var(--r-card) var(--r-card); box-shadow: none; }
+}
+
+@media (min-width: 1000px) {
+  /* ── 列表頁：清單左、地圖右、中間可拖分線 ── */
+  .lr-wrap {
+    max-width: 1400px !important;
+    padding: 28px 28px 48px !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10px minmax(300px, min(var(--map-w, 460px), 50%));
+    column-gap: 10px;
+    align-items: start;
+  }
+  .lr-wrap > .lr-top { grid-column: 1; grid-row: 1; min-width: 0; }
+  .lr-wrap > .lr-list { grid-column: 1; grid-row: 2; min-width: 0; }
+  .lr-wrap > #map-panel { grid-column: 3; grid-row: 1 / span 2; margin-bottom: 0; position: sticky; top: 76px; }
+  .lr-wrap > #deskSplitter { grid-column: 2; grid-row: 1 / span 2; align-self: stretch; }
+  .lr-wrap > #map-toggle { display: none; }      /* 桌面地圖長駐，唔使開關 */
+  .lr-map { height: clamp(340px, calc(100vh - 210px), 900px); }
+  /* 卡片變多欄格（同 travel 站一樣 auto-fill；窄螢幕自動減欄） */
+  #restaurant-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+  #restaurant-list > [data-area-group],
+  #restaurant-list > [data-area-notice] { grid-column: 1 / -1; }
+  #pager { justify-content: flex-start; }
+
+  /* 分線外觀：線跟全高，grip 用 sticky 留喺畫面中間（.lr-splitter 由 desk-splitter.js 驅動） */
+  .lr-splitter { display: block; position: relative; cursor: col-resize; touch-action: none; }
+  .lr-splitter::before {
+    content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+    transform: translateX(-50%); background: rgba(27, 24, 20, .20); border-radius: 1px;
+    transition: background .12s ease, width .12s ease;
+  }
+  .lr-splitter::after {
+    content: ''; display: block; position: sticky; top: calc(50vh - 32px);
+    width: 8px; height: 64px; margin: 0 auto; border-radius: 4px;
+    background: rgba(27, 24, 20, .34); box-shadow: 0 0 0 3px rgba(244, 238, 223, .85);
+    transition: background .12s ease, height .12s ease, top .12s ease;
+  }
+  .lr-splitter:hover::before, .lr-splitter.dragging::before { background: var(--tomato); width: 3px; }
+  .lr-splitter:hover::after, .lr-splitter.dragging::after { background: var(--tomato); height: 92px; top: calc(50vh - 46px); }
+  body.kr-dragging, body.kr-dragging * { cursor: col-resize !important; user-select: none !important; }
+
+  /* ── 詳情頁：資料左、地圖右釘住 ── */
+  .rd-wrap { max-width: 1280px; }
+  .rd-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, min(var(--map-w, 460px), 48%));
+    column-gap: 18px;
+    align-items: stretch;
+  }
+  .rd-colmain { grid-column: 1; grid-row: 1; align-self: start; }
+  .rd-colmap { grid-column: 2; grid-row: 1; }
+  .rd-colmap .rd-map {
+    height: clamp(360px, calc(100vh - 210px), 780px);
+    border: 1.5px solid var(--ink); border-radius: var(--r-card);
+    position: sticky; top: 76px;
+  }
+  .rd-card { box-shadow: 3px 3px 0 rgba(27, 24, 20, .14); }
+}
+
+/* ─────────────── 19d. 地圖頁：清單＋地圖並排（2026-10-05） ───────────────
+   同列表頁同一套：手機唔變（地圖 → 清單），≥1000px 左邊清單、右邊釘住地圖、中間可拖分線。 */
+.mp-wrap { max-width: 896px; margin-inline: auto; padding: 16px 16px 48px; }
+.mp-head { margin-bottom: 12px; }
+.mp-title { margin: 0; font-family: var(--serif); font-weight: 900; }
+.mp-sub { margin: 4px 0 0; font-size: 15px; color: var(--ink-3); }
+.mp-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.mp-chip {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 40px; padding: 4px 14px;
+  border: 1.5px solid var(--ink); border-radius: var(--r-btn);
+  background: var(--milk); color: var(--ink-2);
+  font-family: var(--sans); font-size: 15px; font-weight: 700; line-height: 1.25; cursor: pointer;
+}
+.mp-chip:hover { background: var(--butter); color: var(--ink); }
+.mp-chip.is-active { background: var(--ink); border-color: var(--ink); color: var(--milk); }
+.mp-chip-n { font-family: 'Baloo 2', var(--sans); font-weight: 700; opacity: .8; }
+.mp-legend { margin: 0 0 12px; font-size: 15px; color: var(--ink-3); }
+.mp-map {
+  width: 100%; height: 62vh; min-height: 320px;
+  border: 1.5px solid var(--ink); border-radius: var(--r-card);
+  overflow: hidden; background: var(--paper-2);
+}
+.mp-listwrap { margin-top: 14px; }
+.mp-search {
+  width: 100%; min-height: 52px; padding: 0 16px; margin-bottom: 10px;
+  border: 2px solid var(--ink); border-radius: var(--r-btn);
+  background: var(--milk); color: var(--ink);
+  font-family: var(--sans); font-size: 17px;
+}
+.mp-search::placeholder { color: var(--ink-3); }
+.mp-list { display: flex; flex-direction: column; gap: 8px; }
+.mp-row { display: flex; align-items: stretch; gap: 8px; }
+.mp-item {
+  flex: 1; min-width: 0; min-height: 56px; padding: 10px 14px;
+  display: flex; flex-direction: column; gap: 2px; text-align: left;
+  border: 1.5px solid var(--ink); border-radius: var(--r-card);
+  background: var(--milk); font-family: inherit; cursor: pointer;
+  transition: background 140ms ease;
+}
+.mp-item:hover { background: var(--butter); }
+.mp-item-name { font-size: 16.5px; font-weight: 800; color: var(--ink); }
+.mp-item-meta {
+  font-size: 14.5px; color: var(--ink-3); line-height: 1.5;
+  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.mp-go {
+  flex: none; width: 48px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--ink); border-radius: var(--r-card);
+  background: var(--milk); color: var(--ink); font-size: 19px; text-decoration: none;
+}
+.mp-go:hover { background: var(--tomato); border-color: var(--tomato); color: var(--milk); }
+.mp-empty { text-align: center; padding: 24px; color: var(--ink-3); }
+
+@media (min-width: 1000px) {
+  .mp-wrap {
+    max-width: 1400px; padding: 24px 28px 48px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10px minmax(320px, min(var(--map-w, 460px), 50%));
+    column-gap: 10px;
+    align-items: start;
+  }
+  .mp-main { grid-column: 1; grid-row: 1; min-width: 0; }
+  .mp-listwrap { grid-column: 1; grid-row: 2; margin-top: 16px; min-width: 0; }
+  .mp-mapcol { grid-column: 3; grid-row: 1 / span 2; position: sticky; top: 76px; }
+  .mp-map { height: clamp(360px, calc(100vh - 200px), 900px); }
+  #mpSplitter { grid-column: 2; grid-row: 1 / span 2; align-self: stretch; }
+  .mp-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+}
+
 /* ─────────────── 20. Reduced motion ─────────────── */
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; }
