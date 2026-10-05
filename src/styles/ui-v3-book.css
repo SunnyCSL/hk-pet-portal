@@ -615,7 +615,118 @@ footer .text-xs { font-size: 15px; }
   .sec { padding-inline: 24px; }
 }
 
-/* ─────────────── 18. Reduced motion ─────────────── */
+/* ─────────────── 19. 地點詳情頁（卡＋地圖＋大掣融合，2026-10-05） ───────────────
+   參考：kr-travel-guide（Sunny 指定模仿）：一張卡由地圖頂住 → 資料列 → 底部大掣。
+   目的：地圖同地址／牌照／類型全部喺同一張卡，OpenRice／Google Maps 用大掣出。 */
+.rd-wrap { max-width: 768px; margin-inline: auto; padding: 22px 16px 40px; }
+.rd-back {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px;
+  font-size: 16px; font-weight: 700; color: var(--ink-2); text-decoration: none;
+}
+.rd-back:hover { color: var(--brand); }
+.rd-head { margin: 4px 0 16px; }
+.rd-title { margin: 0; font-family: var(--serif); font-weight: 900; }
+.rd-sub { margin: 6px 0 0; font-size: 16px; color: var(--ink-3); }
+.rd-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.rd-chip {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 4px 12px;
+  border: 1.5px solid var(--ink); border-radius: var(--r-btn);
+  background: var(--milk); color: var(--ink-2);
+  font-size: 15px; font-weight: 700; line-height: 1.25;
+}
+.rd-chip-area { background: var(--brand-tint); color: var(--tomato-text); }
+
+.rd-card {
+  background: var(--milk); border: 1.5px solid var(--ink); border-radius: var(--r-card);
+  overflow: hidden; box-shadow: 3px 3px 0 rgba(27, 24, 20, .14);
+}
+.rd-map { height: 260px; border-bottom: 1.5px solid var(--ink); background: var(--paper-2); }
+/* 地圖喺卡內：唔要再加多一層邊框／圓角（.leaflet-container 全域有） */
+.rd-card .leaflet-container { border: 0; border-radius: 0; }
+
+.rd-rows { padding: 4px 18px 6px; }
+.rd-row { display: flex; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.rd-row:last-child { border-bottom: 0; }
+.rd-label { flex: none; width: 68px; font-size: 16px; font-weight: 800; color: var(--ink-3); }
+.rd-value { flex: 1; min-width: 0; font-size: 17px; font-weight: 500; color: var(--ink); line-height: 1.6; }
+.rd-license { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.rd-license-no { font-family: 'Baloo 2', var(--sans); font-weight: 800; letter-spacing: .02em; font-size: 18px; }
+.rd-badge-ok {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 28px; padding: 2px 10px;
+  border: 1.5px solid #BFD8C2; border-radius: var(--r-btn);
+  background: #EAF3EA; color: var(--ok-text); font-size: 15px; font-weight: 700;
+}
+
+.rd-actions { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 14px 18px 0; }
+@media (min-width: 520px) { .rd-actions { grid-template-columns: 1fr 1fr; } }
+.rd-cta {
+  width: 100%; min-height: 56px; padding: 0 16px;
+  font-size: 17px; font-weight: 800; letter-spacing: .01em; text-align: center;
+  white-space: normal;
+}
+.rd-src { margin: 12px 0 0; padding: 0 18px 18px; font-size: 15px; color: var(--ink-3); line-height: 1.6; }
+.rd-src a { color: var(--brand); font-weight: 700; }
+
+.rd-related { margin-top: 32px; padding-top: 22px; border-top: 1.5px solid var(--line-strong); }
+.rd-related-title { margin: 0 0 12px; font-family: var(--serif); font-size: 20px; font-weight: 900; }
+.rd-related-list { display: flex; flex-direction: column; gap: 10px; }
+.rd-related-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  min-height: 56px; padding: 12px 16px; text-decoration: none;
+  background: var(--milk); border: 1.5px solid var(--ink); border-radius: var(--r-card);
+}
+.rd-related-item:hover { background: var(--butter); }
+.rd-related-name { font-family: var(--serif); font-size: 19px; font-weight: 700; color: var(--ink); }
+.rd-related-arrow {
+  flex: none; width: 34px; height: 34px; border-radius: var(--r-btn);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--milk); border: 1.5px solid var(--ink); color: var(--ink); font-size: 17px;
+}
+.rd-related-item:hover .rd-related-arrow { background: var(--tomato); border-color: var(--tomato); color: var(--milk); }
+
+@media (min-width: 768px) {
+  .rd-map { height: 340px; }
+  .rd-wrap { padding-inline: 24px; }
+}
+
+/* ─────────────── 19b. 餐廳列表：卡＋地圖融合（2026-10-05） ───────────────
+   參考：kr-travel-guide — 地圖喺清單上方，卡片係「貼紙卡」。 */
+.lr-mapwrap { margin-bottom: 14px; }
+.lr-map {
+  height: 260px; width: 100%;
+  background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: var(--r-card);
+  overflow: hidden;
+}
+.lr-map.is-hidden, .lr-mapwrap.is-hidden { display: none; }
+.lr-maptoggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 18px; margin-bottom: 14px;
+  border: 1.5px solid var(--ink); border-radius: var(--r-btn);
+  background: var(--milk); color: var(--ink);
+  font-family: var(--sans); font-size: 16px; font-weight: 700; cursor: pointer;
+}
+.lr-maptoggle:hover { background: var(--butter); }
+@media (min-width: 768px) { .lr-map { height: 340px; } }
+
+/* 列表卡（row 版）放大＋貼紙化 */
+#restaurant-list { gap: 12px; }
+.restaurant-item { padding: 16px 18px; border-width: 1.5px; }
+.restaurant-item .rc-thumb { width: 92px; height: 92px; border-radius: var(--r-card); }
+.restaurant-item h3 { font-size: 21px; line-height: 1.3; }
+.restaurant-item .bg-gray-50 {
+  background: var(--butter) !important; color: var(--on-accent) !important;
+  border: 1.5px solid var(--ink) !important; font-size: 15px; padding: 2px 10px;
+}
+/* 右邊箭嘴 → 貼紙方掣 */
+.restaurant-item > div > div:last-child > span:last-child {
+  width: 42px; height: 42px; font-size: 19px;
+}
+@media (min-width: 768px) {
+  .restaurant-item { padding: 18px 20px; }
+  .restaurant-item .rc-thumb { width: 116px; height: 116px; }
+}
+
+/* ─────────────── 20. Reduced motion ─────────────── */
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; }
   .anim-rise, .anim-fade, .anim-float, .anim-ring { animation: none !important; }

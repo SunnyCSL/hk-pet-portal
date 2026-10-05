@@ -281,6 +281,12 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       <a href="#" id="area-page-link" class="hidden text-xs text-brand hover:underline mt-0.5">View this area page →</a>
     </div>
 
+    <!-- ── Cards + map fusion: results map above the list (2026-10-05) ── -->
+    <button id="map-toggle" class="lr-maptoggle" type="button" aria-expanded="true" aria-controls="map-panel">🗺️ Hide map</button>
+    <div class="lr-mapwrap" id="map-panel">
+      <div id="list-map" class="lr-map" aria-label="Search results map"></div>
+    </div>
+
     <!-- Results list — first 50 are server-rendered for SEO; rest are JS-rendered into this same wrapper -->
     <div id="restaurant-list" class="flex flex-col gap-2">
       {firstPage.map((r: StaticCard) => (
@@ -367,6 +373,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   <script type="application/json" id="restaurant-types" set:html={JSON.stringify(restaurantTypes)} />
 
   <script type="application/json" id="cuisine-illus" set:html={JSON.stringify(illusJson)} />
+  <!-- List map (cards + map fusion): Leaflet + OpenFreeMap vector basemap -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" is:inline></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.0/leaflet-maplibre-gl.js" is:inline></script>
+  <script src="/basemap.js" is:inline></script>
+
   <script is:inline src="/card-face.js"></script>
   <script is:inline>
   // Sub-area names used to compute the search key (kept in sync with SSR).
@@ -955,6 +969,57 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     return null;
   }
 
+  // ---- List map (cards + map fusion) ----
+  // The map mirrors the current page of results; rebuildPage() refreshes markers.
+  var listMap = null, listLayer = null, mapOn = true;
+  var LR_DISTRICT_COLORS = {
+    '中西區': '#8C2318', '灣仔區': '#D9432B', '東區': '#E9822B',
+    '南區': '#C9A227', '油尖區': '#F6D77A', '深水埗區': '#8A9B4A',
+    '九龍城區': '#4E7A3A', '黃大仙區': '#2F6F6B', '觀塘區': '#3D6B9A',
+    '荃灣區': '#5B5EA6', '屯門區': '#7A5AA6', '元朗區': '#A64C86',
+    '北區': '#B5467A', '大埔區': '#8C6D4F', '沙田區': '#6E8C7A',
+    '西貢區': '#2F5D8C', '葵青區': '#A34B2A', '離島區': '#1E6E6A',
+    '旺角區': '#E0A0B0'
+  };
+  function ensureListMap() {
+    if (listMap) return;
+    var el = document.getElementById('list-map');
+    if (!el || typeof L === 'undefined') return;
+    try {
+      listMap = L.map(el, { zoomControl: true, scrollWheelZoom: false });
+      listMap.setView([22.36, 114.15], 11);
+      if (window.NexiBasemap) NexiBasemap.add(listMap);
+      listLayer = L.layerGroup().addTo(listMap);
+      setTimeout(function () { listMap.invalidateSize(); }, 120);
+    } catch (e) { listMap = null; }
+  }
+  function updateListMap(ids) {
+    if (!mapOn) return;
+    ensureListMap();
+    if (!listMap || !listLayer) return;
+    listLayer.clearLayers();
+    var bounds = null;
+    for (var i = 0; i < ids.length; i++) {
+      var e = findIndexEntry(ids[i]);
+      if (!e || e.lat == null || e.lng == null) continue;
+      L.circleMarker([e.lat, e.lng], {
+        radius: 7, color: '#1B1814', weight: 1.5,
+        fillColor: LR_DISTRICT_COLORS[e.district] || '#C03818', fillOpacity: 1
+      }).addTo(listLayer).bindPopup(
+        '<strong>' + escapeHtml(e.name_zh || e.name_en || '') + '</strong><br>' +
+        '<span style="color:#4A433A">' + escapeHtml(e.address || '') + '</span><br>' +
+        '<a href="/en/restaurants/' + e.id + '" style="color:#C03818;font-weight:700">View details →</a>'
+      );
+      if (!bounds) bounds = L.latLngBounds([e.lat, e.lng], [e.lat, e.lng]);
+      else bounds.extend([e.lat, e.lng]);
+    }
+    if (bounds && bounds.isValid()) {
+      listMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
+    }
+    setTimeout(function () { listMap.invalidateSize(); }, 60);
+  }
+
+
   // ---- Pagination / state ----
   // fix/radius-chips-honest: state.radius === -1 means "Whole area" (legacy
   // union semantics). 500/1000/2000 are STRICT distance filters. 0 = All.
@@ -1061,6 +1126,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var visibleIds = ids.slice(start, end);
     var visibleSet = {};
     for (var vi = 0; vi < visibleIds.length; vi++) visibleSet[visibleIds[vi]] = true;
+
+    // Cards + map fusion: markers follow the current page of results
+    updateListMap(visibleIds);
 
     // Update distance badges on static SSR cards.
     Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item:not([data-island-card="1"])'), function (el) {
@@ -1272,6 +1340,24 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     }
     if (q) document.getElementById('search-input').value = q;
     if (d) setDistrict(d);
+
+    // Map on/off (default on: cards + map fusion)
+    var mapToggle = document.getElementById('map-toggle');
+    if (mapToggle) {
+      mapToggle.addEventListener('click', function () {
+        mapOn = !mapOn;
+        var wrap = document.getElementById('map-panel');
+        if (wrap) wrap.classList.toggle('is-hidden', !mapOn);
+        mapToggle.textContent = mapOn ? '🗺️ Hide map' : '🗺️ Show map';
+        mapToggle.setAttribute('aria-expanded', mapOn ? 'true' : 'false');
+        if (mapOn) {
+          ensureListMap();
+          var r2 = currentMatches();
+          updateListMap(r2.ids.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE));
+          if (listMap) setTimeout(function () { listMap.invalidateSize(); }, 80);
+        }
+      });
+    }
     rebuildPage();
   });
   </script>
