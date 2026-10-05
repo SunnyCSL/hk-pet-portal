@@ -36,9 +36,9 @@ const enriched = (articles as any[]).map((a) => {
   };
 });
 
-const catFilter = Astro.url.searchParams.get('cat') || '';
-const filtered = catFilter ? enriched.filter(a => a.cat === catFilter) : enriched;
-
+// 🔴 分類篩選一律喺 client 做（本站 output: 'static'，frontmatter 係 build 期執行 →
+// `Astro.url.searchParams.get('cat')` 永遠空 → 以前呢度嘅 catFilter 從來冇生效）。
+// 見 public/health-cat-filter.js。
 const categories = [
   { id: '', name: 'All', count: enriched.length },
   { id: 'nutrition', name: 'Nutrition', count: enriched.filter(a => a.cat === 'nutrition').length },
@@ -65,17 +65,19 @@ const categories = [
       <div class="flex gap-1.5 w-max md:w-auto">
         {categories.map((c: { id: string; name: string; count: number }) => (
           <a href={c.id ? `/en/health?cat=${c.id}` : '/en/health'}
-            class:list={['chip no-underline shrink-0', { 'is-active': catFilter === c.id }]}
+            data-cat-chip={c.id}
+            class:list={['chip no-underline shrink-0', { 'is-active': c.id === '' }]}
           >{c.name} ({c.count})</a>
         ))}
       </div>
     </div>
 
     <!-- Article grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {filtered.map((a: { emoji: string; display_title: string; display_desc: string; cat: string; catName: string; date: string; slug: string; has_en: boolean; link: string }) => (
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" data-health-grid>
+      {enriched.map((a: { emoji: string; display_title: string; display_desc: string; cat: string; catName: string; date: string; slug: string; has_en: boolean; link: string }) => (
         <a href={a.link}
           class="article-card group no-underline"
+          data-cat={a.cat}
         >
           <div class="flex items-center gap-3.5">
             <span class="monogram shrink-0" style="font-size:26px" aria-hidden="true">{a.emoji}</span>
@@ -96,11 +98,11 @@ const categories = [
       ))}
     </div>
 
-    {filtered.length === 0 && (
-      <div class="text-center py-16 text-gray-500">
+    <div class="text-center py-16 text-gray-500" data-health-empty hidden>
         <p class="text-sm">No articles in this category yet</p>
         <a href="/en/health" class="text-brand text-sm hover:underline mt-2 inline-block">View all articles</a>
-      </div>
-    )}
+    </div>
   </div>
+
+  <script is:inline src="/health-cat-filter.js"></script>
 </BaseLayout>

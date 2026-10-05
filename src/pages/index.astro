@@ -38,10 +38,10 @@ const statTiles = [
 // 健康四大類（數字由資料算，唔寫死）
 const catCount = (name: string) => healthArticles.filter((a: { catName: string }) => a.catName === name).length;
 const healthCats = [
-  { emoji: '🌿', title: '中醫養生', desc: '體質・季節食療', count: catCount('中醫'), cls: 'cool' },
-  { emoji: '🥩', title: '營養鮮食', desc: '比例・成份拆解', count: catCount('營養'), cls: '' },
-  { emoji: '🐕', title: '行為訓練', desc: '肢體語言解讀', count: catCount('行為'), cls: 'sun' },
-  { emoji: '💆', title: '護理急救', desc: '中暑・按摩・牙齒', count: catCount('護理'), cls: 'warm' },
+  { cat: 'tcm', emoji: '🌿', title: '中醫養生', desc: '體質・季節食療', count: catCount('中醫'), cls: 'cool' },
+  { cat: 'nutrition', emoji: '🥩', title: '營養鮮食', desc: '比例・成份拆解', count: catCount('營養'), cls: '' },
+  { cat: 'behavior', emoji: '🐕', title: '行為訓練', desc: '肢體語言解讀', count: catCount('行為'), cls: 'sun' },
+  { cat: 'care', emoji: '💆', title: '護理急救', desc: '中暑・按摩・牙齒', count: catCount('護理'), cls: 'warm' },
 ];
 
 const featuredMeals = mealPlans.slice(0, 3);
@@ -138,7 +138,7 @@ const featuredMeals = mealPlans.slice(0, 3);
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       {healthCats.map((c) => (
-        <a href="/health" class="card card-pad no-underline text-center health-tile" data-reveal>
+        <a href={`/health?cat=${c.cat}`} class="card card-pad no-underline text-center health-tile" data-reveal>
           <span class:list={['monogram mx-auto', c.cls]} style="width:56px;height:56px;font-size:26px">{c.emoji}</span>
           <div class="text-lg mt-2.5 font-bold text-near-black">{c.title}</div>
           <div class="text-sm text-gray-600 mt-0.5">{c.desc}</div>
