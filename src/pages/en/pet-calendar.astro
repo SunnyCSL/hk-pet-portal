@@ -1,0 +1,195 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Pet Medication Calendar Generator"
+  description="Free tool: enter your dog's or cat's medication, flea/tick treatment and vaccination dates, then generate a calendar file (.ics) for your phone calendar with automatic reminders. No sign-up, nothing leaves your device."
+  lang="en"
+>
+  <section class="hero-v2">
+    <div class="sec">
+      <span class="hero-eyebrow">🆓 Free tool · No sign-up</span>
+      <h1>Pet Medication<br><span class="title-underline">Calendar Generator</span></h1>
+      <p class="hero-sub">
+        Enter your pet's <b>medication, flea/tick treatment and vaccination</b> dates and get a calendar
+        file you can add to your phone in one tap — with reminders <b>one day before and on the day</b>.{' '}
+        <b>Nothing leaves your device</b>, and we store nothing.
+      </p>
+    </div>
+  </section>
+
+  <section class="sec" style="padding-top:26px;max-width:680px">
+    <div class="card card-pad" style="margin-bottom:14px">
+      <label class="fld-l">Pet name</label>
+      <input id="pet" class="fld-in" placeholder="e.g. Bobby" maxlength="20" autocomplete="off">
+    </div>
+
+    <div class="card card-pad" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px">
+        <label class="fld-l" style="margin:0">Medication / Vaccines</label>
+        <button class="btn btn-sm" id="add" type="button">＋ Add</button>
+      </div>
+      <div id="items"></div>
+      <p class="cap">Common products already have sensible intervals (editable). For “as needed” treatments, just add a custom item.</p>
+    </div>
+
+    <div class="card card-pad" style="margin-bottom:14px">
+      <button class="btn btn-primary btn-lg" id="gen" type="button" style="width:100%">📅 Generate calendar file</button>
+      <div id="out" hidden style="margin-top:16px"></div>
+    </div>
+
+    <div class="notice-book">
+      <b>🔒 Privacy</b><br>
+      Everything is computed in your browser. The calendar content is passed once inside the URL —
+      we have <b>no accounts, no cookies and no database</b>, and we never receive your pet's name or medication dates.
+    </div>
+
+    <div class="notice-book" style="margin-top:12px;background:#FFF9E4">
+      <b>⚠️ Disclaimer</b><br>
+      This tool is only a scheduling aid and is not veterinary advice. Product choice, dosage and intervals
+      should always follow your registered veterinarian's instructions. Reminder time defaults to 09:00 and can be changed in your calendar app.
+    </div>
+  </section>
+
+  <template id="tpl">
+    <div class="item">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <b>Item <span class="n"></span></b>
+        <button class="btn btn-sm f-del" type="button">✕ Remove</button>
+      </div>
+      <label class="fld-l">Product / vaccine</label>
+      <select class="fld-in f-preset"></select>
+      <div class="fld-row">
+        <div><label class="fld-l">Interval (months)</label><input class="fld-in f-months" type="number" min="1" max="120" value="1"></div>
+        <div><label class="fld-l">Last given</label><input class="fld-in f-last" type="date"></div>
+      </div>
+      <label class="fld-l">Custom name (optional)</label>
+      <input class="fld-in f-name" placeholder="e.g. Heartworm injection" maxlength="30" autocomplete="off">
+    </div>
+  </template>
+
+  <script>
+    type Preset = [string, number];
+    const PRESETS: Preset[] = [
+      ['Frontline Plus (spot-on · flea/tick)', 1],
+      ['Bravecto (oral · flea/tick)', 3],
+      ['Heartgard (heartworm prevention)', 1],
+      ['Dewormer', 3],
+      ['ProHeart heartworm injection', 12],
+      ['Rabies vaccine + licence', 36],
+      ['DHPPi booster', 12],
+      ['Leptospirosis (L4) vaccine', 12],
+      ['Cytopoint (itch relief)', 1],
+      ['Other / custom', 1],
+    ];
+    const $ = (s: string) => document.querySelector(s);
+    const items = $('#items') as HTMLElement;
+    const tpl = $('#tpl') as HTMLTemplateElement;
+
+    function esc(s: string) {
+      return String(s).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string,
+      );
+    }
+
+    function addItem() {
+      const el = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      const sel = el.querySelector('.f-preset') as HTMLSelectElement;
+      PRESETS.forEach(([name], i) => {
+        const o = document.createElement('option');
+        o.value = String(i);
+        o.textContent = name;
+        sel.appendChild(o);
+      });
+      (el.querySelector('.f-last') as HTMLInputElement).value = new Date()
+        .toLocaleDateString('sv-SE', { timeZone: 'Asia/Hong_Kong' });
+      sel.onchange = () => {
+        (el.querySelector('.f-months') as HTMLInputElement).value = String(PRESETS[+sel.value][1]);
+      };
+      el.querySelector('.f-del')!.addEventListener('click', () => {
+        el.remove();
+        renum();
+      });
+      items.appendChild(el);
+      renum();
+    }
+    function renum() {
+      [...items.children].forEach((el, i) => {
+        (el.querySelector('.n') as HTMLElement).textContent = String(i + 1);
+      });
+    }
+
+    function addMonths(iso: string, months: number) {
+      const [y, m, d] = iso.split('-').map(Number);
+      const total = m - 1 + months;
+      const ny = y + Math.floor(total / 12);
+      const nm = (total % 12) + 1;
+      const lastDay = new Date(Date.UTC(ny, nm, 0)).getUTCDate();
+      return `${ny}-${String(nm).padStart(2, '0')}-${String(Math.min(d, lastDay)).padStart(2, '0')}`;
+    }
+    function b64url(obj: unknown) {
+      const bytes = new TextEncoder().encode(JSON.stringify(obj));
+      let bin = '';
+      bytes.forEach((b) => (bin += String.fromCharCode(b)));
+      return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    addItem();
+    $('#add')!.addEventListener('click', addItem);
+    $('#gen')!.addEventListener('click', () => {
+      const pet = ((($('#pet') as HTMLInputElement).value || '').trim() || 'My pet').slice(0, 20);
+      const list: { name: string; months: number; last: string; next: string }[] = [];
+      [...items.children].forEach((el) => {
+        const preset = PRESETS[+(el.querySelector('.f-preset') as HTMLSelectElement).value];
+        const custom = ((el.querySelector('.f-name') as HTMLInputElement).value || '').trim();
+        const months = Math.max(1, Math.min(120, +(el.querySelector('.f-months') as HTMLInputElement).value || 1));
+        const last = (el.querySelector('.f-last') as HTMLInputElement).value;
+        if (!last) return;
+        list.push({ name: (custom || preset[0]).slice(0, 30), months, last, next: addMonths(last, months) });
+      });
+      const out = $('#out') as HTMLElement;
+      out.hidden = false;
+      if (!list.length) {
+        out.innerHTML = '<b>Please add at least one item with a “last given” date.</b>';
+        return;
+      }
+      const url = `/api/ics?d=${b64url({ p: pet, i: list.map((x) => [x.name, x.months, x.last]) })}`;
+      out.innerHTML =
+        `<div class="preview"><b>${list.length} item(s)</b>` +
+        list
+          .map(
+            (x) =>
+              `<div>${esc(x.name)}　<span class="cap">every ${x.months} month(s)</span>　next <b>${x.next}</b></div>`,
+          )
+          .join('') +
+        `</div>
+        <a class="btn btn-primary btn-lg" style="width:100%;margin-top:14px" href="${url}">📅 Add to my calendar</a>
+        <a class="btn" style="width:100%;margin-top:10px" href="${url}" download="pet-med-calendar.ics">⬇️ Or download the .ics file</a>
+        <p class="cap" style="margin-top:10px">iPhone: tap the first button, confirm, then “Add All”. Android: open the file with Google Calendar.</p>`;
+    });
+  </script>
+
+  <style>
+    .fld-l { display:block; font-size:15px; font-weight:800; color:var(--ink-2); margin:10px 0 6px; }
+    .fld-in {
+      width:100%; background:var(--milk); border:2px solid var(--ink); border-radius:var(--r-btn);
+      padding:11px; min-height:50px; font:inherit; color:var(--ink); outline:none;
+    }
+    .fld-in:focus { border-color:var(--tomato); box-shadow:0 3px 0 0 var(--tomato); }
+    .fld-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .item {
+      border:1.5px dashed var(--line-strong); border-radius:var(--r-btn);
+      padding:12px; margin-bottom:10px; background:var(--warm);
+    }
+    .cap { font-size:15px; color:var(--ink-3); margin:8px 0 0; line-height:1.6; }
+    .preview { font-size:16px; line-height:1.8; color:var(--ink-2); }
+    .preview b { color:var(--ink); }
+    .notice-book {
+      background:var(--brand-tint); border:1.5px solid var(--ink); border-radius:var(--r-card);
+      padding:14px; font-size:15px; line-height:1.7; color:var(--ink-2);
+    }
+    .notice-book b { color:var(--ink); }
+    @media (max-width:520px) { .fld-row { grid-template-columns:1fr; } }
+  </style>
+</BaseLayout>

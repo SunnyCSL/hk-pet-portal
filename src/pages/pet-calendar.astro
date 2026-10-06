@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="寵物用藥日曆產生器"
+  description="免費工具：輸入狗狗／貓貓嘅食藥、滴藥、防疫針期，即刻產生日曆檔（.ics）加入手機 Calendar，到期自動提醒。唔使註冊，資料唔會離開你部機。"
+  lang="zh"
+>
+  <section class="hero-v2">
+    <div class="sec">
+      <span class="hero-eyebrow">🆓 免費工具 · 唔使註冊</span>
+      <h1>寵物用藥<br><span class="title-underline">日曆產生器</span></h1>
+      <p class="hero-sub">
+        輸入你隻毛孩嘅<b>食藥、滴藥、防疫針</b>期，即刻產生一個日曆檔加入手機 Calendar，
+        到期前一日同當日自動提醒你。<b>資料唔會離開你部機</b>，我哋唔會儲存任何嘢。
+      </p>
+    </div>
+  </section>
+
+  <section class="sec" style="padding-top:26px;max-width:680px">
+    <div class="card card-pad" style="margin-bottom:14px">
+      <label class="fld-l">寵物名</label>
+      <input id="pet" class="fld-in" placeholder="例：小白" maxlength="20" autocomplete="off">
+    </div>
+
+    <div class="card card-pad" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px">
+        <label class="fld-l" style="margin:0">用藥／針期</label>
+        <button class="btn btn-sm" id="add" type="button">＋ 加一項</button>
+      </div>
+      <div id="items"></div>
+      <p class="cap">常見藥品已預設好間隔（可以自己改）；「視需要」嘅藥品請直接加自訂項目。</p>
+    </div>
+
+    <div class="card card-pad" style="margin-bottom:14px">
+      <button class="btn btn-primary btn-lg" id="gen" type="button" style="width:100%">📅 產生日曆檔</button>
+      <div id="out" hidden style="margin-top:16px"></div>
+    </div>
+
+    <div class="notice-book">
+      <b>🔒 私隱</b><br>
+      所有計算都喺你部電話／電腦度即時做，日曆內容只係放喺條 URL 入面傳一次，我哋<b>冇帳號、冇 cookie、冇資料庫</b>，
+      亦唔會收到你嘅寵物名稱或藥期。
+    </div>
+
+    <div class="notice-book" style="margin-top:12px;background:#FFF9E4">
+      <b>⚠️ 免責聲明</b><br>
+      本工具只係一個「提醒排程器」，唔構成獸醫建議。藥品種類、劑量同間隔一律以你嘅註冊獸醫指示為準；
+      有疑問請先諮詢獸醫。日曆提醒時間（預設 09:00）可以喺 Calendar 自己改。
+    </div>
+  </section>
+
+  <template id="tpl">
+    <div class="item">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <b>項目 <span class="n"></span></b>
+        <button class="btn btn-sm f-del" type="button">✕ 刪除</button>
+      </div>
+      <label class="fld-l">藥品／針</label>
+      <select class="fld-in f-preset"></select>
+      <div class="fld-row">
+        <div><label class="fld-l">間隔（月）</label><input class="fld-in f-months" type="number" min="1" max="120" value="1"></div>
+        <div><label class="fld-l">上次做嘅日期</label><input class="fld-in f-last" type="date"></div>
+      </div>
+      <label class="fld-l">自訂名稱（可留空）</label>
+      <input class="fld-in f-name" placeholder="例：心絲蟲針" maxlength="30" autocomplete="off">
+    </div>
+  </template>
+
+  <script>
+    type Preset = [string, number];
+    const PRESETS: Preset[] = [
+      ['Frontline Plus（滴藥 · 防蚤蜱）', 1],
+      ['Bravecto（口服 · 防蚤蜱）', 3],
+      ['Heartgard（心絲蟲預防）', 1],
+      ['驅蟲藥', 3],
+      ['心絲蟲針 ProHeart', 12],
+      ['狂犬針 + 狗牌', 36],
+      ['DHPPi 疫苗加強針', 12],
+      ['勾端螺旋針（L4）', 12],
+      ['Cytopoint（止痕針）', 1],
+      ['其他／自訂', 1],
+    ];
+    const $ = (s: string) => document.querySelector(s);
+    const items = $('#items') as HTMLElement;
+    const tpl = $('#tpl') as HTMLTemplateElement;
+
+    function esc(s: string) {
+      return String(s).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string,
+      );
+    }
+
+    function addItem() {
+      const el = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      const sel = el.querySelector('.f-preset') as HTMLSelectElement;
+      PRESETS.forEach(([name], i) => {
+        const o = document.createElement('option');
+        o.value = String(i);
+        o.textContent = name;
+        sel.appendChild(o);
+      });
+      (el.querySelector('.f-last') as HTMLInputElement).value = new Date()
+        .toLocaleDateString('sv-SE', { timeZone: 'Asia/Hong_Kong' });
+      sel.onchange = () => {
+        (el.querySelector('.f-months') as HTMLInputElement).value = String(PRESETS[+sel.value][1]);
+      };
+      el.querySelector('.f-del')!.addEventListener('click', () => {
+        el.remove();
+        renum();
+      });
+      items.appendChild(el);
+      renum();
+    }
+    function renum() {
+      [...items.children].forEach((el, i) => {
+        (el.querySelector('.n') as HTMLElement).textContent = String(i + 1);
+      });
+    }
+
+    function addMonths(iso: string, months: number) {
+      const [y, m, d] = iso.split('-').map(Number);
+      const total = m - 1 + months;
+      const ny = y + Math.floor(total / 12);
+      const nm = (total % 12) + 1;
+      const lastDay = new Date(Date.UTC(ny, nm, 0)).getUTCDate();
+      return `${ny}-${String(nm).padStart(2, '0')}-${String(Math.min(d, lastDay)).padStart(2, '0')}`;
+    }
+    function b64url(obj: unknown) {
+      const bytes = new TextEncoder().encode(JSON.stringify(obj));
+      let bin = '';
+      bytes.forEach((b) => (bin += String.fromCharCode(b)));
+      return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Hong_Kong' });
+    addItem();
+
+    $('#add')!.addEventListener('click', addItem);
+    $('#gen')!.addEventListener('click', () => {
+      const pet = ((($('#pet') as HTMLInputElement).value || '').trim() || '我隻寵物').slice(0, 20);
+      const list: { name: string; months: number; last: string; next: string }[] = [];
+      [...items.children].forEach((el) => {
+        const preset = PRESETS[+(el.querySelector('.f-preset') as HTMLSelectElement).value];
+        const custom = ((el.querySelector('.f-name') as HTMLInputElement).value || '').trim();
+        const months = Math.max(1, Math.min(120, +(el.querySelector('.f-months') as HTMLInputElement).value || 1));
+        const last = (el.querySelector('.f-last') as HTMLInputElement).value;
+        if (!last) return;
+        list.push({ name: (custom || preset[0]).slice(0, 30), months, last, next: addMonths(last, months) });
+      });
+      const out = $('#out') as HTMLElement;
+      out.hidden = false;
+      if (!list.length) {
+        out.innerHTML = '<b>請至少加一項，並填「上次做嘅日期」。</b>';
+        return;
+      }
+      const url = `/api/ics?d=${b64url({ p: pet, i: list.map((x) => [x.name, x.months, x.last]) })}`;
+      out.innerHTML =
+        `<div class="preview"><b>${list.length} 個項目</b>` +
+        list
+          .map(
+            (x) =>
+              `<div>${esc(x.name)}　<span class="cap">每 ${x.months} 個月</span>　下次 <b>${x.next}</b></div>`,
+          )
+          .join('') +
+        `</div>
+        <a class="btn btn-primary btn-lg" style="width:100%;margin-top:14px" href="${url}">📅 加入我嘅 Calendar</a>
+        <a class="btn" style="width:100%;margin-top:10px" href="${url}" download="pet-med-calendar.ics">⬇️ 或者下載 .ics 檔</a>
+        <p class="cap" style="margin-top:10px">iPhone：撳第一個掣 → 系統會問你確認 → 「加入全部」就得。Android：揀用 Google Calendar 開啟。</p>`;
+    });
+  </script>
+
+  <style>
+    .fld-l { display:block; font-size:15px; font-weight:800; color:var(--ink-2); margin:10px 0 6px; }
+    .fld-in {
+      width:100%; background:var(--milk); border:2px solid var(--ink); border-radius:var(--r-btn);
+      padding:11px; min-height:50px; font:inherit; color:var(--ink); outline:none;
+    }
+    .fld-in:focus { border-color:var(--tomato); box-shadow:0 3px 0 0 var(--tomato); }
+    .fld-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .item {
+      border:1.5px dashed var(--line-strong); border-radius:var(--r-btn);
+      padding:12px; margin-bottom:10px; background:var(--warm);
+    }
+    .cap { font-size:15px; color:var(--ink-3); margin:8px 0 0; line-height:1.6; }
+    .preview { font-size:16px; line-height:1.8; color:var(--ink-2); }
+    .preview b { color:var(--ink); }
+    .notice-book {
+      background:var(--brand-tint); border:1.5px solid var(--ink); border-radius:var(--r-card);
+      padding:14px; font-size:15px; line-height:1.7; color:var(--ink-2);
+    }
+    .notice-book b { color:var(--ink); }
+    @media (max-width:520px) { .fld-row { grid-template-columns:1fr; } }
+  </style>
+</BaseLayout>
