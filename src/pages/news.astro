@@ -7,6 +7,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <h1 class="text-xl md:text-2xl font-bold text-near-black mb-1">📰 寵物資訊</h1>
     <p class="text-sm text-gray-500 mb-8">香港寵物相關最新消息、活動、政策更新</p>
 
+    <a href="/pet-calendar" class="card card-pad no-underline" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--warm);margin-bottom:22px">
+      <span class="monogram sun" aria-hidden="true">📅</span>
+      <span style="flex:1 1 220px;min-width:0">
+        <b style="display:block;font-family:var(--serif);font-size:19px;font-weight:900;color:var(--ink)">寵物用藥日曆產生器</b>
+        <span style="display:block;font-size:15px;color:var(--ink-2);line-height:1.6">
+          免費工具：輸入毛孩嘅食藥、滴藥、防疫針期，一撳加入手機 Calendar，到期前一日同當日自動提醒。
+        </span>
+      </span>
+      <span class="badge badge-warm" style="flex:none">新工具</span>
+    </a>
+
     <div class="empty-hero text-center">
       <span class="monogram mx-auto anim-float" style="width:72px;height:72px;font-size:36px" aria-hidden="true">📡</span>
       <p class="text-xl font-bold text-near-black mt-4 mb-2">Coming soon · 即將上線</p>
