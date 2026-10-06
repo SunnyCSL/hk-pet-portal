@@ -44,6 +44,16 @@ const CUISINE_EN_MAP: Record<string, string> = {
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
+// Merge of /map (2026-10-06): district pills show per-district counts, same as /map chips
+const districtCounts: Record<string, number> = (restaurants as any[]).reduce(
+  (acc: Record<string, number>, r: any) => {
+    const d = r.district || '';
+    if (d) acc[d] = (acc[d] || 0) + 1;
+    return acc;
+  },
+  {}
+);
+
 // Phase 2 (fix/restaurant-search-v2): unified search index across all 906 records.
 // Build-time: each record gets a precomputed `search_key` = base + extras.
 // Extras include SUB_AREAS detected from address+name AND any alias group
@@ -235,12 +245,12 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       <div class="flex gap-2.5 w-max md:w-auto md:flex-wrap">
         <a href="/en/restaurants" onclick="setDistrict(''); return false;"
           class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"
-          id="pill-all">All</a>
+          id="pill-all">All <span class="lr-pill-n">{restaurants.length}</span></a>
         {districts.map((d: string) => (
           <a href={`/en/restaurants?district=${encodeURIComponent(d)}`} onclick={`setDistrict('${d}'); return false;`}
             class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
             id={`pill-${d.replace(/\s/g, '')}`}
-          >{d}</a>
+          >{d} <span class="lr-pill-n">{districtCounts[d] || 0}</span></a>
         ))}
       </div>
     </div>
@@ -287,6 +297,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     <button id="map-toggle" class="lr-maptoggle" type="button" aria-expanded="true" aria-controls="map-panel">🗺️ Hide map</button>
     <div class="lr-mapwrap" id="map-panel">
       <div id="list-map" class="lr-map" aria-label="Search results map"></div>
+      <p class="lr-mapcap" id="map-caption">🗺️ Map shows every matching restaurant · tap 📍 on a card to locate it</p>
     </div>
 
     <div class="lr-list">
@@ -304,8 +315,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           data-prec={r.prec == null ? '' : r.prec}
         >
           <div class="flex items-center gap-3">
-            <img class="rc-thumb shrink-0" src={cardFace(r.id)} alt="" width="84" height="84"
-                             loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r='1';this.src=this.src;}else{this.setAttribute('data-failed','1')}" />
+            <span class="rc-thumbwrap">
+              <img class="rc-thumb shrink-0" src={cardFace(r.id)} alt="" width="84" height="84"
+                 loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r='1';this.src=this.src;}else{this.setAttribute('data-failed','1')}" />
+              <span class="ri-mapbtn" role="button" tabindex="0" data-id={r.id} title="Show on map" aria-label="Show on map">📍</span>
+            </span>
                         <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>
             <div class="min-w-0 flex-1">
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">{r.name_en || r.name_zh}</h3>
@@ -930,8 +944,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + ' data-addr="' + escapeHtml((e.address || '').toLowerCase()) + '"'
       + ' data-key="' + escapeHtml(e.key || '') + '">'
       + '<div class="flex items-center gap-3">'
+      + '<span class="rc-thumbwrap">'
       + '<img class="rc-thumb shrink-0" src="' + cardFaceSrc(e.id) + '" alt="" width="84" height="84"'
       + ' loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r=\'1\';this.src=this.src;}else{this.setAttribute(\'data-failed\',\'1\')} " />'
+      + '<span class="ri-mapbtn" role="button" tabindex="0" data-id="' + e.id + '" title="Show on map" aria-label="Show on map">📍</span>'
+      + '</span>'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>'
       + '<div class="min-w-0 flex-1">'
       + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">' + escapeHtml(nameEn) + '</h3>'
@@ -1000,16 +1017,20 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       setTimeout(function () { listMap.invalidateSize(); }, 120);
     } catch (e) { listMap = null; }
   }
+  // Merge of /map: keep markers by id so a card can "fly to it"
+  var markersById = {};
   function updateListMap(ids) {
     if (!mapOn) return;
     ensureListMap();
     if (!listMap || !listLayer) return;
     listLayer.clearLayers();
+    markersById = {};
     var bounds = null;
+    var plotted = 0;
     for (var i = 0; i < ids.length; i++) {
       var e = findIndexEntry(ids[i]);
       if (!e || e.lat == null || e.lng == null) continue;
-      L.circleMarker([e.lat, e.lng], {
+      var mk = L.circleMarker([e.lat, e.lng], {
         radius: 7, color: '#1B1814', weight: 1.5,
         fillColor: LR_DISTRICT_COLORS[e.district] || '#C03818', fillOpacity: 1
       }).addTo(listLayer).bindPopup(
@@ -1017,13 +1038,64 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         '<span style="color:#4A433A">' + escapeHtml(e.address || '') + '</span><br>' +
         '<a href="/en/restaurants/' + e.id + '" style="color:#C03818;font-weight:700">View details →</a>'
       );
+      markersById[e.id] = mk;
+      plotted++;
       if (!bounds) bounds = L.latLngBounds([e.lat, e.lng], [e.lat, e.lng]);
       else bounds.extend([e.lat, e.lng]);
     }
     if (bounds && bounds.isValid()) {
       listMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
     }
+    updateMapCaption(plotted, ids.length);
     setTimeout(function () { listMap.invalidateSize(); }, 60);
+  }
+
+  // Caption: make it explicit that the map plots the whole result set while the list paginates
+  function updateMapCaption(plotted, matched) {
+    var cap = document.getElementById('map-caption');
+    if (!cap) return;
+    var txt = '🗺️ Map shows ' + plotted + ' matching restaurants · tap 📍 on a card to locate it';
+    if (matched > plotted) txt += ' (' + (matched - plotted) + ' without coordinates)';
+    cap.textContent = txt;
+  }
+
+  // From /map: tap 📍 on a card → fly the map there (without leaving the list)
+  function flyToId(id) {
+    if (!mapOn) setMapOn(true);
+    ensureListMap();
+    if (!listMap) return;
+    var mk = markersById[id];
+    if (!mk) {
+      var res = currentMatches();
+      updateListMap(res.ids);
+      mk = markersById[id];
+    }
+    if (!mk) return;
+    listMap.flyTo(mk.getLatLng(), 17, { duration: 0.6 });
+    mk.openPopup();
+    // Mobile: the map sits above the list, so scroll it back into view
+    var panel = document.getElementById('map-panel');
+    if (panel && window.matchMedia('(max-width: 999px)').matches) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    setTimeout(function () { listMap.invalidateSize(); }, 140);
+  }
+
+  function setMapOn(on) {
+    mapOn = on;
+    var wrap = document.getElementById('map-panel');
+    if (wrap) wrap.classList.toggle('is-hidden', !mapOn);
+    var mapToggle = document.getElementById('map-toggle');
+    if (mapToggle) {
+      mapToggle.textContent = mapOn ? '🗺️ Hide map' : '🗺️ Show map';
+      mapToggle.setAttribute('aria-expanded', mapOn ? 'true' : 'false');
+    }
+    if (mapOn) {
+      ensureListMap();
+      var r2 = currentMatches();
+      updateListMap(r2.ids);
+      if (listMap) setTimeout(function () { listMap.invalidateSize(); }, 80);
+    }
   }
 
 
@@ -1135,7 +1207,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     for (var vi = 0; vi < visibleIds.length; vi++) visibleSet[visibleIds[vi]] = true;
 
     // Cards + map fusion: markers follow the current page of results
-    updateListMap(visibleIds);
+    // Cards + map fusion: markers follow the WHOLE result set (not just this page)
+    // — merged from /map: users want the full picture on the map, list paginates.
+    updateListMap(ids);
 
     // Update distance badges on static SSR cards.
     Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item:not([data-island-card="1"])'), function (el) {
@@ -1314,6 +1388,29 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     rebuildPage();
   }
 
+  // ---- From /map: tap 📍 on a card → fly the map there (delegated; covers SSR + island cards) ----
+  var restListEl = document.getElementById('restaurant-list');
+  if (restListEl) {
+    var mapBtnHit = function (ev) {
+      var t = ev.target && ev.target.closest ? ev.target.closest('.ri-mapbtn') : null;
+      if (!t) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      var id = Number(t.getAttribute('data-id'));
+      if (id) flyToId(id);
+    };
+    restListEl.addEventListener('click', mapBtnHit);
+    restListEl.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Enter' && ev.key !== ' ') return;
+      var t = ev.target && ev.target.closest ? ev.target.closest('.ri-mapbtn') : null;
+      if (!t) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      var id = Number(t.getAttribute('data-id'));
+      if (id) flyToId(id);
+    });
+  }
+
   // ---- Search input: live re-filter on each keystroke ----
   document.getElementById('search-input').addEventListener('input', function () {
     filterList();
@@ -1351,19 +1448,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     // Map on/off (default on: cards + map fusion)
     var mapToggle = document.getElementById('map-toggle');
     if (mapToggle) {
-      mapToggle.addEventListener('click', function () {
-        mapOn = !mapOn;
-        var wrap = document.getElementById('map-panel');
-        if (wrap) wrap.classList.toggle('is-hidden', !mapOn);
-        mapToggle.textContent = mapOn ? '🗺️ Hide map' : '🗺️ Show map';
-        mapToggle.setAttribute('aria-expanded', mapOn ? 'true' : 'false');
-        if (mapOn) {
-          ensureListMap();
-          var r2 = currentMatches();
-          updateListMap(r2.ids.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE));
-          if (listMap) setTimeout(function () { listMap.invalidateSize(); }, 80);
-        }
-      });
+      mapToggle.addEventListener('click', function () { setMapOn(!mapOn); });
     }
 
     // 桌面（≥1000px）：中間分線拖動調地圖闊度、雙擊還原（同 travel 站最新版一致）

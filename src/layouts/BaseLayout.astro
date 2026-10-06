@@ -231,8 +231,6 @@ const allLd = [...baseLdBlocks, ...extraLd];
           <div class="flex items-center gap-1.5 md:gap-2.5 px-3 md:px-0">
             <a href={isZh ? '/restaurants' : '/en/restaurants'}
                class:list={['nav-link', { 'is-current': isCurrent(isZh ? '/restaurants' : '/en/restaurants') }]}><span class="nav-emoji" aria-hidden="true">🍽️</span> {isZh ? '餐廳' : 'Restaurants'}</a>
-            <a href={isZh ? '/map' : '/en/map'}
-               class:list={['nav-link', { 'is-current': isCurrent(isZh ? '/map' : '/en/map') }]}><span class="nav-emoji" aria-hidden="true">🗺️</span> {isZh ? '地圖' : 'Map'}</a>
             <a href={isZh ? '/health' : '/en/health'}
                class:list={['nav-link', { 'is-current': isCurrent(isZh ? '/health' : '/en/health') }]}><span class="nav-emoji" aria-hidden="true">📚</span> {isZh ? '健康' : 'Health'}</a>
             <a href={isZh ? '/news' : '/en/news'}

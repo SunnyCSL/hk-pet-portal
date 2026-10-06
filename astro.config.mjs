@@ -22,6 +22,12 @@ export default defineConfig({
   site: 'https://hk-pet-portal.vercel.app',
   output: 'static',
   adapter: vercel(),
+  // 2026-10-06 合併：/map 已併入 /restaurants（同一頁地圖＋清單＋分區數字）。
+  // 舊連結、書籤、search engine 一律 301 過去。
+  redirects: {
+    '/map': '/restaurants',
+    '/en/map': '/en/restaurants',
+  },
   integrations: [
     mdx(),
     sitemap({

@@ -12,6 +12,16 @@ import { cardFace } from '../lib/card-face';
 
 const districts = [...new Set(restaurants.map((r: { district: string }) => r.district))].sort();
 
+// 合併 /map（2026-10-06）：分區 pills 顯示每區餐廳數，同 /map 嘅分區 chips 一致
+const districtCounts: Record<string, number> = (restaurants as any[]).reduce(
+  (acc: Record<string, number>, r: any) => {
+    const d = r.district || '';
+    if (d) acc[d] = (acc[d] || 0) + 1;
+    return acc;
+  },
+  {}
+);
+
 // v2 (2026-09-19)：列表卡地址唔好再重複行政區名（"元朗 · 新界元朗青山公路…"）。
 // 去掉「香港／九龍／新界」同重複嘅區名，只留街道＋門牌；完整地址留喺詳情頁。
 const shortAddr = (addr: string, district: string): string => {
@@ -192,12 +202,12 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       <div class="flex gap-2.5 w-max md:w-auto md:flex-wrap">
         <a href="/restaurants" onclick="setDistrict(''); return false;"
           class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-brand text-white"
-          id="pill-all">全部</a>
+          id="pill-all">全部 <span class="lr-pill-n">{restaurants.length}</span></a>
         {districts.map((d: string) => (
           <a href={`/restaurants?district=${encodeURIComponent(d)}`} onclick={`setDistrict('${d}'); return false;`}
             class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all no-underline whitespace-nowrap bg-gray-50 text-gray-500 hover:bg-gray-100"
             id={`pill-${d.replace(/\s/g, '')}`}
-          >{d}</a>
+          >{d} <span class="lr-pill-n">{districtCounts[d] || 0}</span></a>
         ))}
       </div>
     </div>
@@ -244,6 +254,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     <button id="map-toggle" class="lr-maptoggle" type="button" aria-expanded="true" aria-controls="map-panel">🗺️ 隱藏地圖</button>
     <div class="lr-mapwrap" id="map-panel">
       <div id="list-map" class="lr-map" aria-label="搜尋結果地圖"></div>
+      <p class="lr-mapcap" id="map-caption">🗺️ 地圖顯示全部符合結果 · 撳卡片嘅 📍 可以喺地圖定位</p>
     </div>
 
     <div class="lr-list">
@@ -261,8 +272,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
           data-prec={r.prec ?? ''}
         >
           <div class="flex items-center gap-3">
-            <img class="rc-thumb shrink-0" src={cardFace(r.id)} alt="" width="84" height="84"
+            <span class="rc-thumbwrap">
+              <img class="rc-thumb shrink-0" src={cardFace(r.id)} alt="" width="84" height="84"
                  loading="lazy" decoding="async" onerror="if(!this.dataset.r){this.dataset.r='1';this.src=this.src;}else{this.setAttribute('data-failed','1')}" />
+              <span class="ri-mapbtn" role="button" tabindex="0" data-id={r.id} title="喺地圖顯示" aria-label="喺地圖顯示">📍</span>
+            </span>
             <div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>
             <div class="min-w-0 flex-1">
               <h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">
@@ -781,8 +795,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + ' data-addr="' + escapeHtml((e.address || '').toLowerCase()) + '"'
       + ' data-key="' + escapeHtml(e.key || '') + '">'
       + '<div class="flex items-center gap-3">'
+      + '<span class="rc-thumbwrap">'
       + '<img class="rc-thumb shrink-0" src="' + cardFaceSrc(e.id) + '" alt="" width="84" height="84"'
       + ' loading="lazy" decoding="async" onerror="this.setAttribute(\'data-failed\',\'1\')" />'
+      + '<span class="ri-mapbtn" role="button" tabindex="0" data-id="' + e.id + '" title="喺地圖顯示" aria-label="喺地圖顯示">📍</span>'
+      + '</span>'
       + '<div class="w-1 h-10 bg-brand/20 rounded-full shrink-0 rc-spine"></div>'
       + '<div class="min-w-0 flex-1">'
       + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">' + escapeHtml(nameZh) + '</h3>'
@@ -881,16 +898,20 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       setTimeout(function () { listMap.invalidateSize(); }, 120);
     } catch (e) { listMap = null; }
   }
+  // 合併 /map：markers 記落 markersById，令清單卡片可以「飛去嗰間」
+  var markersById = {};
   function updateListMap(ids) {
     if (!mapOn) return;
     ensureListMap();
     if (!listMap || !listLayer) return;
     listLayer.clearLayers();
+    markersById = {};
     var bounds = null;
+    var plotted = 0;
     for (var i = 0; i < ids.length; i++) {
       var e = findIndexEntry(ids[i]);
       if (!e || e.lat == null || e.lng == null) continue;
-      L.circleMarker([e.lat, e.lng], {
+      var mk = L.circleMarker([e.lat, e.lng], {
         radius: 7, color: '#1B1814', weight: 1.5,
         fillColor: LR_DISTRICT_COLORS[e.district] || '#C03818', fillOpacity: 1
       }).addTo(listLayer).bindPopup(
@@ -898,13 +919,64 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
         '<span style="color:#4A433A">' + escapeHtml(e.address || '') + '</span><br>' +
         '<a href="/restaurants/' + e.id + '" style="color:#C03818;font-weight:700">查看詳情 →</a>'
       );
+      markersById[e.id] = mk;
+      plotted++;
       if (!bounds) bounds = L.latLngBounds([e.lat, e.lng], [e.lat, e.lng]);
       else bounds.extend([e.lat, e.lng]);
     }
     if (bounds && bounds.isValid()) {
       listMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
     }
+    updateMapCaption(plotted, ids.length);
     setTimeout(function () { listMap.invalidateSize(); }, 60);
+  }
+
+  // 地圖說明：講清楚「地圖係全部結果，清單係每頁 50」
+  function updateMapCaption(plotted, matched) {
+    var cap = document.getElementById('map-caption');
+    if (!cap) return;
+    var txt = '🗺️ 地圖顯示 ' + plotted + ' 間符合結果 · 撳卡片嘅 📍 可以喺地圖定位';
+    if (matched > plotted) txt += '（' + (matched - plotted) + ' 間冇座標）';
+    cap.textContent = txt;
+  }
+
+  // 合併自 /map：撳清單上嘅 📍 → 地圖飛去嗰間（唔會跳去詳情頁）
+  function flyToId(id) {
+    if (!mapOn) setMapOn(true);
+    ensureListMap();
+    if (!listMap) return;
+    var mk = markersById[id];
+    if (!mk) {
+      var res = currentMatches();
+      updateListMap(res.ids);
+      mk = markersById[id];
+    }
+    if (!mk) return;
+    listMap.flyTo(mk.getLatLng(), 17, { duration: 0.6 });
+    mk.openPopup();
+    // 手機：地圖喺清單上面，飛完要拉返去見得到
+    var panel = document.getElementById('map-panel');
+    if (panel && window.matchMedia('(max-width: 999px)').matches) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    setTimeout(function () { listMap.invalidateSize(); }, 140);
+  }
+
+  function setMapOn(on) {
+    mapOn = on;
+    var wrap = document.getElementById('map-panel');
+    if (wrap) wrap.classList.toggle('is-hidden', !mapOn);
+    var mapToggle = document.getElementById('map-toggle');
+    if (mapToggle) {
+      mapToggle.textContent = mapOn ? '🗺️ 隱藏地圖' : '🗺️ 顯示地圖';
+      mapToggle.setAttribute('aria-expanded', mapOn ? 'true' : 'false');
+    }
+    if (mapOn) {
+      ensureListMap();
+      var r2 = currentMatches();
+      updateListMap(r2.ids);
+      if (listMap) setTimeout(function () { listMap.invalidateSize(); }, 80);
+    }
   }
 
   // ---- Pagination / state ----
@@ -1005,8 +1077,9 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     var visibleSet = {};
     for (var vi = 0; vi < visibleIds.length; vi++) visibleSet[visibleIds[vi]] = true;
 
-    // 卡＋地圖融合：地圖 markers 跟住今頁結果更新
-    updateListMap(visibleIds);
+    // 卡＋地圖融合：地圖 markers 跟住成個結果集更新（唔止本頁 50）——
+    // 合併自 /map：用戶要一眼睇晒全部符合結果，清單先分頁。
+    updateListMap(ids);
 
     // Update distance badges on static SSR cards.
     Array.prototype.forEach.call(list.querySelectorAll('.restaurant-item:not([data-island-card="1"])'), function (el) {
@@ -1187,6 +1260,29 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   }
 
   // ---- Pager wiring ----
+  // ---- 合併 /map：撳卡片嘅 📍 → 地圖飛去嗰間（事件委派，SSR 卡同 island 卡都食）----
+  var restListEl = document.getElementById('restaurant-list');
+  if (restListEl) {
+    var mapBtnHit = function (ev) {
+      var t = ev.target && ev.target.closest ? ev.target.closest('.ri-mapbtn') : null;
+      if (!t) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      var id = Number(t.getAttribute('data-id'));
+      if (id) flyToId(id);
+    };
+    restListEl.addEventListener('click', mapBtnHit);
+    restListEl.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Enter' && ev.key !== ' ') return;
+      var t = ev.target && ev.target.closest ? ev.target.closest('.ri-mapbtn') : null;
+      if (!t) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      var id = Number(t.getAttribute('data-id'));
+      if (id) flyToId(id);
+    });
+  }
+
   // ---- Search input: live re-filter on each keystroke ----
   document.getElementById('search-input').addEventListener('input', function () {
     filterList();
@@ -1235,19 +1331,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
     // 地圖開／關（預設開：卡＋地圖融合）
     var mapToggle = document.getElementById('map-toggle');
     if (mapToggle) {
-      mapToggle.addEventListener('click', function () {
-        mapOn = !mapOn;
-        var wrap = document.getElementById('map-panel');
-        if (wrap) wrap.classList.toggle('is-hidden', !mapOn);
-        mapToggle.textContent = mapOn ? '🗺️ 隱藏地圖' : '🗺️ 顯示地圖';
-        mapToggle.setAttribute('aria-expanded', mapOn ? 'true' : 'false');
-        if (mapOn) {
-          ensureListMap();
-          var r2 = currentMatches();
-          updateListMap(r2.ids.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE));
-          if (listMap) setTimeout(function () { listMap.invalidateSize(); }, 80);
-        }
-      });
+      mapToggle.addEventListener('click', function () { setMapOn(!mapOn); });
     }
 
 
