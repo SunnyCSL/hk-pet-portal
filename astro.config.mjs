@@ -27,6 +27,8 @@ export default defineConfig({
   redirects: {
     '/map': '/restaurants',
     '/en/map': '/en/restaurants',
+    // 帶尾斜線嘅 /map/（舊連結都會開到）唔可以變 404 —— 由
+    // public/map/index.html、public/en/map/index.html 兩張 meta-refresh 頁接住。
   },
   integrations: [
     mdx(),
