@@ -4624,14 +4624,6 @@
   "id": 660
  },
  {
-  "name_en": "RAKURAKU RAMEN",
-  "name_zh": "RAKURAKU RAMEN",
-  "district": "觀塘區",
-  "address": "九龍九龍灣宏照道38號企業廣場5期MEGABOX  10樓9&10鋪",
-  "license_no": "2251807397",
-  "id": 662
- },
- {
   "name_en": "Reaction Coffee Roasters",
   "name_zh": "Reaction Coffee Roasters",
   "district": "灣仔區",
@@ -4694,14 +4686,6 @@
   "address": "香港中環德輔道中22號華懋中心一期地庫及地下部分",
   "license_no": "2218816213",
   "id": 673
- },
- {
-  "name_en": "RICKY'S KITCHEN",
-  "name_zh": "RICKY'S KITCHEN",
-  "district": "油尖區",
-  "address": "九龍尖沙咀 河內道 18 號 K11 ART MALL 地庫二層B233A 號舖",
-  "license_no": "2261818561",
-  "id": 674
  },
  {
   "name_en": "RICOS TAPAS RESTAURANT",
@@ -7950,5 +7934,61 @@
   "address": "新界元朗媽橫路7號富來花園地下10號鋪",
   "license_no": "3194802153",
   "id": 1109
+ },
+ {
+  "name_en": "幕多大富蠔",
+  "name_zh": "幕多大富蠔",
+  "district": "中西區",
+  "address": "香港西營盤朝光街3號 兆祥樓地下A部分",
+  "license_no": "3118810727",
+  "id": 1110
+ },
+ {
+  "name_en": "讚好",
+  "name_zh": "讚好",
+  "district": "九龍城區",
+  "address": "九龍湖光街1-7號聯盛大廈地下13號鋪",
+  "license_no": "2252807109",
+  "id": 1111
+ },
+ {
+  "name_en": "BLACK SUGAR",
+  "name_zh": "BLACK SUGAR",
+  "district": "旺角區",
+  "address": "九龍海庭道18號奧海城二期地下G16號舖",
+  "license_no": "3162805159",
+  "id": 1112
+ },
+ {
+  "name_en": "Butlery",
+  "name_zh": "Butlery",
+  "district": "沙田區",
+  "address": "新界沙田   新城市廣場第1期 第4層 479A號舖",
+  "license_no": "2297808941",
+  "id": 1113
+ },
+ {
+  "name_en": "DAB-PA PEKING & SZECHUAN CUISINE",
+  "name_zh": "稻成亞丁京川料理",
+  "district": "油尖區",
+  "address": "九龍柯士甸道西1號圓方1樓1047號舖",
+  "license_no": "2261809271",
+  "id": 1114
+ },
+ {
+  "name_en": "NAN VALLEY",
+  "name_zh": "南谷",
+  "district": "九龍城區",
+  "address": "九龍九龍城啟德啟德體育園 啟德零售館2 3樓M2-317號舖",
+  "license_no": "2252810251",
+  "id": 1115
+ },
+ {
+  "name_en": "YEARS",
+  "name_zh": "素年",
+  "district": "油尖區",
+  "address": "九龍西九文化區博物館道22號 藝術公園地下GF-05號舖及舖前露天座位",
+  "license_no": "3161811443",
+  "id": 1116
  }
 ]
