@@ -1,40 +1,73 @@
 {
-  "audit_date": "2026-10-04",
-  "run_at": "2026-10-04T18:10:24.863887",
-  "db_total": 1103,
+  "audit_date": "2026-10-11",
+  "run_at": "2026-10-11T18:00:51.568704",
+  "db_total": 1110,
   "db_by_status": {
-    "active": 1029,
+    "active": 1036,
     "removed": 29,
     "flagged": 45
   },
   "fehd": {
     "status": "ok",
     "source": "json",
-    "size": 459176,
-    "license_count": 993,
-    "list_update": "2026-10-02"
+    "size": 503683,
+    "license_count": 998,
+    "list_update": "2026-10-09"
   },
   "db_diff": {
-    "new_delistings": [],
+    "new_delistings": [
+      {
+        "license_no": "2251807397",
+        "name": "RAKURAKU RAMEN",
+        "district": "觀塘區",
+        "address": "九龍九龍灣宏照道38號企業廣場5期MEGABOX  10樓9&10鋪"
+      },
+      {
+        "license_no": "2261818561",
+        "name": "RICKY'S KITCHEN",
+        "district": "油尖區",
+        "address": "九龍尖沙咀 河內道 18 號 K11 ART MALL 地庫二層B233A 號舖"
+      }
+    ],
     "newly_permitted_count": 0,
     "newly_permitted_sample": []
   },
   "site_diff": {
-    "site_total": 993,
+    "site_total": 998,
     "site_stale_count": 0,
     "site_stale_sample": [],
     "site_missing_count": 0
   },
   "news_findings": [
-    "狗隻入食肆輿情兩極4日20投訴 食環署袁旭健：初期須適應是預期 (香港01, 14/07/2026)",
-    "狗隻入食肆｜食環署巡查208間未獲批攜狗食肆 發出2宗口頭警告 (香港01, 12/07/2026)",
-    "狗隻友善食肆良好作業及行為指引（全文） (食環署)",
-    "狗隻入食肆｜西灣河無申請食肆疑准食客帶狗入 食環署：已巡查、口頭警告負責人 (am730, 13/07/2026)"
+    "狗隻入食肆輿情兩極4日20投訴 食環署袁旭健：初期須適應是預期",
+    "狗隻友善食肆良好作業及行為指引（全文）",
+    "狗隻入食肆｜西灣河無申請食肆疑准食客帶狗入 食環署：已巡查、口頭警告負責人 | am730",
+    "容許狗隻進入食肆 食署收65宗投訴及發70個口頭警告 31間店退出｜即時新聞｜中港台｜on.cc東網"
   ],
-  "needs_update": false,
-  "news_note": "以上 4 條由 18:01 首跑檢索到；18:10 重跑時搜尋後端回 0 條（後端不穩），故保留首跑結果。全部為 07/2026 政策期舊聞，本週無新增個案。",
-  "audit_actions": [
-    "3 個新除名牌照 (意粉屋銅鑼灣/民豐餃子甜品/Rakuraku利東街) 經 JSON+PDF 雙源核實已唔喺 10月2日版官方名單；查證非同址換新牌照；OpenRice 顯示仍營業中 → 判定退出計劃而非結業",
-    "DB hk_dog_restaurants 該 3 行 status 由 active 改為 flagged 並附證據註記"
-  ]
+  "db_update": {
+    "actioned_at": "2026-10-11T18:05:00+08:00",
+    "source_of_truth": "FEHD getData.php JSON (998 間, 名單更新 2026-10-09)",
+    "checks": [
+      "兩間牌照都唔喺最新 FEHD 名單 (JSON 998 間)",
+      "同址查無其他牌照號碼 → 非換牌",
+      "OpenRice / 品牌官網核實結業與否"
+    ],
+    "updated": [
+      {
+        "license_no": "2261818561",
+        "name": "RICKY'S KITCHEN (祥仔) K11購物藝術館 B2 B233A",
+        "new_status": "removed",
+        "why": "已結業 — OpenRice 標示「祥仔 (K11購物藝術館)(已結業)」;品牌官網 thefoodstoryhk.com 現只剩海港城分店",
+        "source": "OpenRice (openrice.com) + thefoodstoryhk.com/rickyskitchenhk"
+      },
+      {
+        "license_no": "2251807397",
+        "name": "RAKURAKU RAMEN (樂拉麵) MegaBox 10樓9&10號舖",
+        "new_status": "flagged",
+        "why": "OpenRice 顯示仍營業中 → 退出狗隻計劃/准許被撤(非結業)。同品牌灣仔利東街分店(2212816673)已於 10-04 除名, 屬全線退出模式, 待人手確認後可轉 removed",
+        "source": "OpenRice (openrice.com)"
+      }
+    ]
+  },
+  "needs_update": true
 }
