@@ -4600,14 +4600,6 @@
   "id": 656
  },
  {
-  "name_en": "Queen Victoria 8",
-  "name_zh": "八公館",
-  "district": "中西區",
-  "address": "香港中環 域多利皇后街5-8號地下及閣樓",
-  "license_no": "2213148153",
-  "id": 658
- },
- {
   "name_en": "QUE PASA",
   "name_zh": "QUE PASA",
   "district": "灣仔區",
@@ -7848,8 +7840,8 @@
   "id": 1098
  },
  {
-  "name_en": "WA SHARE CAFE AND BAR",
-  "name_zh": "和‧不同咖啡吧",
+  "name_en": "KAGA IZAKAYA",
+  "name_zh": "KAGA IZAKAYA",
   "district": "東區",
   "address": "香港北角和富道114-118,122-126號 康華大廈地下A2號舖",
   "license_no": "2211810252",
@@ -7990,5 +7982,13 @@
   "address": "九龍西九文化區博物館道22號 藝術公園地下GF-05號舖及舖前露天座位",
   "license_no": "3161811443",
   "id": 1116
+ },
+ {
+  "name_en": "Sleepless",
+  "name_zh": "Sleepless",
+  "district": "西貢區",
+  "address": "新界西貢市場街11號地下",
+  "license_no": "3198800784",
+  "id": 1117
  }
 ]
