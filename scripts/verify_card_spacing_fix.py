@@ -11,7 +11,9 @@ import re
 import subprocess
 import sys
 import urllib.request
+from pathlib import Path
 
+REPO = Path(__file__).resolve().parent.parent
 BASE = "https://hk-pet-portal.vercel.app"
 RULE = "h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd{margin:0}"
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"}
@@ -40,12 +42,17 @@ def main() -> int:
     print(f"stale_bundle_replaced={stale not in css_url}")
 
     head = subprocess.run(["git", "log", "-1", "--format=%h %s"], capture_output=True,
-                          text=True, cwd=".").stdout.strip()
-    commit_ok = "margin 重置" in head or "preflight" in head
+                          text=True, cwd=str(REPO)).stdout.strip()
+    css_local = (REPO / "src/styles/ui-v3-book.css").read_text("utf-8")
+    local_rule_ok = "h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }" in css_local
+    log = subprocess.run(["git", "log", "--format=%h %s", "-n", "40"], capture_output=True,
+                         text=True, cwd=str(REPO)).stdout
+    commit_ok = "margin 重置" in log
     print(f"head_commit={head}")
-    print(f"commit_is_fix={commit_ok}")
+    print(f"local_css_has_reset={local_rule_ok}")
+    print(f"fix_commit_in_history={commit_ok}")
 
-    if rule_ok and commit_ok and stale not in css_url:
+    if rule_ok and local_rule_ok and commit_ok and stale not in css_url:
         print("MARKER_OK")
         return 0
     print("FAIL[evidence]")
