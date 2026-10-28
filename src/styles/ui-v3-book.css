@@ -106,6 +106,14 @@
    打贏 UA 預設，但輸俾任何 utility／自家 class（唔會蓋走 text-brand / text-white）。 */
 @layer base {
   a { color: inherit; }
+  /* 🔴 2026-10-28：同一個 scope 問題仲有一半未補 —— UA 預設嘅 h1–h6 / p margin
+     （h3 = 1em = 21px、p = 15px）蓋過元件排版，令資訊卡被撐高、標題同地址走位
+     （/restaurants 每張卡多 40–80px 死位；全站 h/p 共 240+ 個元素中招）。
+     喺 base layer 清零 margin：打贏 UA，但輸俾任何 utility（mt-4 等）同自家 class，
+     所以唔會影響本來有寫 spacing 嘅區塊。 */
+  h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }
+  /* 標題下面嘅副標（例如 /meals）本來靠 UA margin 分開，清零後貼住 —— 補 6px */
+  h1 + p, h2 + p, h3 + p { margin-top: 6px; }
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
