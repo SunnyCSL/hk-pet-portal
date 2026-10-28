@@ -16,6 +16,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 BASE = "https://hk-pet-portal.vercel.app"
 RULE = "h1,h2,h3,h4,h5,h6,p,figure,blockquote,dl,dd{margin:0}"
+# 2026-10-28 第二個修正：距離 badge 由右邊 rail 搬入正文（390px 標題被壓到一字一行）
+RULE_ADDRLINE = "p.addr-line"
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"}
 
 
@@ -34,8 +36,10 @@ def main() -> int:
     css_url = BASE + m.group(0)
     css = get(css_url)
     rule_ok = RULE in css
+    card_ok = RULE_ADDRLINE in css and "dist-badge.hidden" in css
     print(f"css_url={css_url}")
     print(f"reset_rule_present={rule_ok}")
+    print(f"card_layout_rule_present={card_ok}")
 
     # 舊（未修）bundle 一定冇呢條 rule；bundle hash 亦應唔同
     stale = "BaseLayout.DUwAnOPi.css"
@@ -48,11 +52,13 @@ def main() -> int:
     log = subprocess.run(["git", "log", "--format=%h %s", "-n", "40"], capture_output=True,
                          text=True, cwd=str(REPO)).stdout
     commit_ok = "margin 重置" in log
+    commit_ok2 = "距離 badge" in log
     print(f"head_commit={head}")
     print(f"local_css_has_reset={local_rule_ok}")
     print(f"fix_commit_in_history={commit_ok}")
+    print(f"badge_commit_in_history={commit_ok2}")
 
-    if rule_ok and local_rule_ok and commit_ok and stale not in css_url:
+    if rule_ok and card_ok and local_rule_ok and commit_ok and commit_ok2 and stale not in css_url:
         print("MARKER_OK")
         return 0
     print("FAIL[evidence]")

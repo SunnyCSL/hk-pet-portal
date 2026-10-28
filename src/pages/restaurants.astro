@@ -26,7 +26,10 @@ const districtCounts: Record<string, number> = (restaurants as any[]).reduce(
 // 去掉「香港／九龍／新界」同重複嘅區名，只留街道＋門牌；完整地址留喺詳情頁。
 const shortAddr = (addr: string, district: string): string => {
   let s = String(addr || '').replace(/^(香港|九龍|新界)\s*/, '');
-  const base = String(district || '').replace(/區$/, '');
+  // 「南區」／「東區」減「區」只剩一個字（南／東），會誤剪「南區淺水灣…」→「區淺水灣…」，
+  // 所以剩下不足兩個字就用回全名。
+  let base = String(district || '').replace(/區$/, '');
+  if (base.length < 2) base = String(district || '');
   if (base && s.startsWith(base)) s = s.slice(base.length).replace(/^\s+/, '');
   return s;
 };
@@ -293,16 +296,19 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
                   </p>
                 );
               })()}
-              <p class="text-xs text-gray-500 mt-0.5 truncate">
+              <p class="addr-line text-xs text-gray-500 mt-0.5">
                 <span class="inline-flex items-center gap-1">
                   <span class="text-gray-300">📍</span> <span class="sub-area-label" data-addr={r.address} data-name={r.name_zh||''}>{r.district}</span>
                 </span>
                 <span class="mx-1.5 text-gray-200">·</span>
                 <span class="text-gray-300 addr-text">{shortAddr(r.address, r.district)}</span>
               </p>
+              {/* dist-badge 原本喺右邊 rail：390px 手機時「356 米 · 步行 4 分鐘」
+                  (162px) 同箭嘴會將標題欄壓到 0 闊 → 標題一字一行（2026-10-28 Sunny 手機截圖）。
+                  改為放喺地址下面，rail 只留箭嘴。 */}
+              <span class="dist-badge text-xs text-gray-400 hidden whitespace-nowrap"></span>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              <span class="dist-badge text-xs text-gray-400 hidden whitespace-nowrap"></span>
               <span class="text-gray-300 group-hover:text-brand transition-colors">
                 <span class="text-xs">→</span>
               </span>
@@ -804,14 +810,14 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
       + '<div class="min-w-0 flex-1">'
       + '<h3 class="font-semibold text-sm md:text-base text-near-black group-hover:text-brand transition-colors font-display" style="white-space:normal">' + escapeHtml(nameZh) + '</h3>'
       + cuisineChipHtmlZh(e.id)
-      + '<p class="text-xs text-gray-500 mt-0.5 truncate">'
+      + '<p class="addr-line text-xs text-gray-500 mt-0.5">'
       + '<span class="inline-flex items-center gap-1">'
       + '<span class="text-gray-300">📍</span> '
       + '<span class="sub-area-label">' + escapeHtml(subLabel) + '</span>'
       + '</span>' + addrHtml + '</p>'
+      + distHtml
       + '</div>'
       + '<div class="flex items-center gap-2 shrink-0">'
-      + distHtml
       + '<span class="text-gray-300 group-hover:text-brand transition-colors"><span class="text-xs">→</span></span>'
       + '</div>'
       + '</div></a>';
@@ -822,6 +828,7 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   function shortAddr(a, d) {
     var s = String(a || '').replace(/^(香港|九龍|新界)\s*/, '');
     var base = String(d || '').replace(/區$/, '');
+    if (base.length < 2) base = String(d || '');   // 南區／東區：減「區」只剩一個字，會誤剪
     if (base && s.indexOf(base) === 0) s = s.slice(base.length).replace(/^\s+/, '');
     return s;
   }
@@ -830,6 +837,11 @@ const restData: IslandRow[] = (restaurants as any[]).slice(STATIC_COUNT).map((r:
   function trimLabel(s, label) {
     if (!label || s.indexOf(label) !== 0) return s;
     var rest = s.slice(label.length);
+    // 「淺水灣區淺水灣道…」：行政區寫法係 <區名>區，剪走「區」字再剪區名
+    if (/^區/.test(rest)) {
+      var r2 = rest.slice(1).replace(/^\s+/, '');
+      return r2.length >= 4 ? r2 : s;
+    }
     if (rest.length < 5) return s;                 // 剪完太短 → 唔剪
     if (/^[道路街里巷徑坊]/.test(rest)) return s;   // 「山頂道」「元朗路」係街名，唔係重複
     return rest.replace(/^\s+/, '');
