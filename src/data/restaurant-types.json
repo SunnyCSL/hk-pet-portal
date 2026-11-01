@@ -631,12 +631,6 @@
       "咖啡"
     ]
   },
-  "224": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
   "225": {
     "source": "name-infer",
     "types": [
@@ -1295,18 +1289,6 @@
       "茶餐廳"
     ]
   },
-  "537": {
-    "source": "name-infer",
-    "types": [
-      "茶餐廳"
-    ]
-  },
-  "538": {
-    "source": "name-infer",
-    "types": [
-      "茶餐廳"
-    ]
-  },
   "539": {
     "source": "name-infer",
     "types": [
@@ -1318,18 +1300,6 @@
     "types": [
       "中式地方菜",
       "中菜"
-    ]
-  },
-  "540": {
-    "source": "name-infer",
-    "types": [
-      "茶餐廳"
-    ]
-  },
-  "541": {
-    "source": "name-infer",
-    "types": [
-      "茶餐廳"
     ]
   },
   "543": {
