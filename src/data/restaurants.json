@@ -1601,14 +1601,6 @@
  },
  {
   "name_en": "Cafe 100%",
-  "name_zh": "百分百餐廳",
-  "district": "西貢區",
-  "address": "新界西貢將軍澳運亨路1號新都城一期地下G27號鋪(A部分) 及G27號鋪鄰近空間",
-  "license_no": "2298805639",
-  "id": 225
- },
- {
-  "name_en": "Cafe 100%",
   "name_zh": "百份百餐廳",
   "district": "旺角區",
   "address": "九龍大角咀奧柏‧御峰櫸樹街88號地下 G01-G03 & G05(A部份)鋪",
@@ -7958,5 +7950,45 @@
   "address": "新界荃灣馬灣珀欣路 馬灣公園挪亞度假酒店 低層地下(A部份)及露天茶座",
   "license_no": "2292802090",
   "id": 1119
+ },
+ {
+  "name_en": "FEATHER AND BONE",
+  "name_zh": "FEATHER AND BONE",
+  "district": "荃灣區",
+  "address": "新界荃灣大河道100號海之戀商場地下G09號鋪大部份 及G09A號鋪大部份",
+  "license_no": "2292807633",
+  "id": 1120
+ },
+ {
+  "name_en": "Porterhouse",
+  "name_zh": "Porterhouse",
+  "district": "中西區",
+  "address": "香港中環德己立街30-36號加州大廈24樓",
+  "license_no": "2218809594",
+  "id": 1121
+ },
+ {
+  "name_en": "SHACK TAPAZAKA",
+  "name_zh": "SHACK TAPAZAKA",
+  "district": "灣仔區",
+  "address": "香港銅鑼灣耀華街1號地下A鋪",
+  "license_no": "2212813294",
+  "id": 1122
+ },
+ {
+  "name_en": "SMACK",
+  "name_zh": "SMACK",
+  "district": "沙田區",
+  "address": "新界白石角香港科學園第三期12W號大廈 1樓 S161號鋪",
+  "license_no": "3197802419",
+  "id": 1123
+ },
+ {
+  "name_en": "The Conservatory",
+  "name_zh": "The Conservatory",
+  "district": "西貢區",
+  "address": "新界西貢 灣景街26號 地下及閣樓(次要部份) 及鋪前露天茶座",
+  "license_no": "2298800324",
+  "id": 1124
  }
 ]
