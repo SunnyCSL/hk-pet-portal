@@ -1,10 +1,10 @@
 {
   "audit_date": "2026-11-15",
-  "run_at": "2026-11-15T18:00:23.608415",
+  "run_at": "2026-11-15T18:03:07.045401",
   "db_total": 1119,
   "db_by_status": {
-    "active": 1035,
-    "removed": 38,
+    "active": 1026,
+    "removed": 47,
     "flagged": 46
   },
   "fehd": {
@@ -15,80 +15,16 @@
     "list_update": "2026-11-13"
   },
   "db_diff": {
-    "new_delistings": [
-      {
-        "license_no": "2262814849",
-        "name": "百份百餐廳",
-        "district": "旺角區",
-        "address": "九龍大角咀 福利街8號 港灣豪庭廣場地下G71-73(A部份)舖"
-      },
-      {
-        "license_no": "2298002054",
-        "name": "文穎記小廚",
-        "district": "西貢區",
-        "address": "新界西貢 將軍澳坑口村26號地下"
-      },
-      {
-        "license_no": "2212822335",
-        "name": "牛奶冰室",
-        "district": "灣仔區",
-        "address": "香港銅鑼灣駱克道463-483號 銅鑼灣廣場二期地下G04舖(A部份)"
-      },
-      {
-        "license_no": "2218815900",
-        "name": "今鮨天穴",
-        "district": "中西區",
-        "address": "香港中環德輔道中4-4A號渣打銀行大廈地下G2鋪"
-      },
-      {
-        "license_no": "2294811144",
-        "name": "多賀野",
-        "district": "元朗區",
-        "address": "新界元朗朗日路9號形點I 第一層1026號鋪"
-      },
-      {
-        "license_no": "2294811144",
-        "name": "多賀野",
-        "district": "元朗區",
-        "address": "新界元朗朗日路9號形點I 第一層1026號鋪"
-      },
-      {
-        "license_no": "2298805480",
-        "name": "木 兆 小 品",
-        "district": "西貢區",
-        "address": "新界將軍澳唐賢街19號天晉滙2期地下G17號鋪"
-      },
-      {
-        "license_no": "2262814353",
-        "name": "百份百餐廳",
-        "district": "旺角區",
-        "address": "九龍大角咀奧柏‧御峰櫸樹街88號地下 G01-G03 & G05(A部份)鋪"
-      },
-      {
-        "license_no": "2253804356",
-        "name": "ITAMAMA BISTRO & Tao Classic",
-        "district": "黃大仙區",
-        "address": "九龍黃大仙橫頭磡聯合道198號樂富廣場B區 高層地下2樓U210,U211&U213(A部份)"
-      }
-    ],
+    "new_delistings": [],
     "newly_permitted_count": 0,
     "newly_permitted_sample": []
   },
   "site_diff": {
-    "site_total": 998,
-    "site_stale_count": 8,
-    "site_stale_sample": [
-      "2212822335",
-      "2218815900",
-      "2253804356",
-      "2262814353",
-      "2262814849",
-      "2294811144",
-      "2298002054",
-      "2298805480"
-    ],
-    "site_missing_count": 1
+    "site_total": 991,
+    "site_stale_count": 0,
+    "site_stale_sample": [],
+    "site_missing_count": 0
   },
   "news_findings": [],
-  "needs_update": true
+  "needs_update": false
 }
