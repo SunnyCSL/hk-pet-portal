@@ -1600,28 +1600,12 @@
   "id": 222
  },
  {
-  "name_en": "Cafe 100%",
-  "name_zh": "百份百餐廳",
-  "district": "旺角區",
-  "address": "九龍大角咀奧柏‧御峰櫸樹街88號地下 G01-G03 & G05(A部份)鋪",
-  "license_no": "2262814353",
-  "id": 226
- },
- {
   "name_en": "CAFE 100%",
   "name_zh": "百份百餐廳",
   "district": "荃灣區",
   "address": "新界荃灣楊屋道1號荃新天地地下G23號鋪",
   "license_no": "2292810040",
   "id": 227
- },
- {
-  "name_en": "CAFE 100%",
-  "name_zh": "百份百餐廳",
-  "district": "旺角區",
-  "address": "九龍大角咀 福利街8號 港灣豪庭廣場地下G71-73(A部份)舖",
-  "license_no": "2262814849",
-  "id": 228
  },
  {
   "name_en": "CAFE B",
@@ -2904,14 +2888,6 @@
   "id": 410
  },
  {
-  "name_en": "ITAMAMA BISTRO & Tao Classic",
-  "name_zh": "ITAMAMA BISTRO & Tao Classic",
-  "district": "黃大仙區",
-  "address": "九龍黃大仙橫頭磡聯合道198號樂富廣場B區 高層地下2樓U210,U211&U213(A部份)",
-  "license_no": "2253804356",
-  "id": 411
- },
- {
   "name_en": "Itamomo",
   "name_zh": "意樂",
   "district": "九龍城區",
@@ -3608,14 +3584,6 @@
   "id": 510
  },
  {
-  "name_en": "MAN WING KEE RESTAURANT",
-  "name_zh": "文穎記小廚",
-  "district": "西貢區",
-  "address": "新界西貢 將軍澳坑口村26號地下",
-  "license_no": "2298002054",
-  "id": 511
- },
- {
   "name_en": "Marina Kitchen/Marina Café",
   "name_zh": "海灣餐廳/海灣咖啡室",
   "district": "南區",
@@ -3742,14 +3710,6 @@
   "address": "新界大埔優景里63號SILICON LANE 地下3號鋪",
   "license_no": "2295804103",
   "id": 534
- },
- {
-  "name_en": "Milk Cafe",
-  "name_zh": "牛奶冰室",
-  "district": "灣仔區",
-  "address": "香港銅鑼灣駱克道463-483號 銅鑼灣廣場二期地下G04舖(A部份)",
-  "license_no": "2212822335",
-  "id": 535
  },
  {
   "name_en": "MILK CAFE",
@@ -4752,8 +4712,8 @@
   "id": 690
  },
  {
-  "name_en": "Sakana Hibi",
-  "name_zh": "肴日",
+  "name_en": "Zen Ya",
+  "name_zh": "膳屋",
   "district": "九龍城區",
   "address": "九龍啟德協調道12號雙子匯1座12樓1204號鋪",
   "license_no": "2252810349",
@@ -5190,14 +5150,6 @@
   "address": "新界西貢 普通道76號地下",
   "license_no": "2298001361",
   "id": 750
- },
- {
-  "name_en": "SUSHI IMA ODDS ANA TEN",
-  "name_zh": "今鮨天穴",
-  "district": "中西區",
-  "address": "香港中環德輔道中4-4A號渣打銀行大廈地下G2鋪",
-  "license_no": "2218815900",
-  "id": 751
  },
  {
   "name_en": "Sweet Basil Thai Cuisine",
@@ -6432,14 +6384,6 @@
   "id": 927
  },
  {
-  "name_en": "TAKANO RAMEN",
-  "name_zh": "多賀野",
-  "district": "元朗區",
-  "address": "新界元朗朗日路9號形點I 第一層1026號鋪",
-  "license_no": "2294811144",
-  "id": 928
- },
- {
   "name_en": "Ganbei Yakitori Restaurant",
   "name_zh": "乾杯串燒居酒屋",
   "district": "中西區",
@@ -6774,14 +6718,6 @@
   "address": "新界荃灣汀九 青山公路353號 帝景酒店 第2層及第5層 及在第2層及第5層的露天茶座",
   "license_no": "2292801352",
   "id": 972
- },
- {
-  "name_en": "Momo Classic",
-  "name_zh": "木 兆 小 品",
-  "district": "西貢區",
-  "address": "新界將軍澳唐賢街19號天晉滙2期地下G17號鋪",
-  "license_no": "2298805480",
-  "id": 973
  },
  {
   "name_en": "FLYING COCK",
@@ -7990,5 +7926,13 @@
   "address": "新界西貢 灣景街26號 地下及閣樓(次要部份) 及鋪前露天茶座",
   "license_no": "2298800324",
   "id": 1124
+ },
+ {
+  "name_en": "耀仔記",
+  "name_zh": "耀仔記",
+  "district": "屯門區",
+  "address": "新界屯門紫田路35號A座地下(大部份)及鋪前露天座位丈量約份 第132約地段第603號",
+  "license_no": "2293801401",
+  "id": 1125
  }
 ]
