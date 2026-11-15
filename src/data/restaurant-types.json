@@ -631,19 +631,7 @@
       "咖啡"
     ]
   },
-  "226": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
   "227": {
-    "source": "name-infer",
-    "types": [
-      "咖啡"
-    ]
-  },
-  "228": {
     "source": "name-infer",
     "types": [
       "咖啡"
@@ -998,12 +986,6 @@
       "粉麵"
     ]
   },
-  "411": {
-    "source": "name-infer",
-    "types": [
-      "西餐"
-    ]
-  },
   "413": {
     "source": "name-infer",
     "types": [
@@ -1266,12 +1248,6 @@
     ]
   },
   "534": {
-    "source": "name-infer",
-    "types": [
-      "茶餐廳"
-    ]
-  },
-  "535": {
     "source": "name-infer",
     "types": [
       "茶餐廳"
@@ -1719,12 +1695,6 @@
       "西餐"
     ]
   },
-  "751": {
-    "source": "name-infer",
-    "types": [
-      "壽司／刺身"
-    ]
-  },
   "752": {
     "source": "name-infer",
     "types": [
@@ -2076,12 +2046,6 @@
     "source": "name-infer",
     "types": [
       "咖啡"
-    ]
-  },
-  "928": {
-    "source": "name-infer",
-    "types": [
-      "拉麵／烏冬"
     ]
   },
   "929": {
